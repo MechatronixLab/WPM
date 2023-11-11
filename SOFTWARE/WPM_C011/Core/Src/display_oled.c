@@ -7,6 +7,8 @@
 
 #include "display_oled.h"
 
+// TODO: map device commands in the .h file
+
 // https://lexus2k.github.io/ssd1306/group___l_c_d___f_o_n_t_s.html#ga7f8ff37e85ff2ea4e4dfe68a555028ad
 const uint8_t font5x7[] =
 {
@@ -233,7 +235,7 @@ void OLED_DrawLogo(void)
 {
 	uint8_t page 	= 0;
 	uint8_t column  = 0;
-	uint16_t i 		= 0;
+	uint16_t pixel 	= 0;
 
 	for (page = 0; page < 8; page++)
 	{
@@ -241,12 +243,12 @@ void OLED_DrawLogo(void)
 
 		for (column = 0; column < 64; column++)
 		{
-			OLED_SendData(MECHATRONIX_LAB_LOGO[i++]);
+			OLED_SendData(MECHATRONIX_LAB_LOGO[pixel++]);
 		}
 	}
 }
 
-void OLED_DrawFrame(uint8_t * frame_buf)
+void OLED_DrawFrame(uint8_t * frame_buffer)
 {
 	uint8_t page 	= 0;
 	uint8_t column  = 0;
@@ -258,7 +260,7 @@ void OLED_DrawFrame(uint8_t * frame_buf)
 
 		for (column = 0; column < 128; column++)
 		{
-			OLED_SendData(frame_buf[pixel++]);
+			OLED_SendData(frame_buffer[pixel++]);
 		}
 	}
 }
