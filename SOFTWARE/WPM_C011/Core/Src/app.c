@@ -28,7 +28,7 @@ void APP_init(void)
 						   (MAX30102_id >> 8), (MAX30102_id & 0x00FF));
 	CONSOLE_tx(string_buffer);
 
-	OLED_init();
+	OLED_Init();
 
 	//MAX30102_EnableTemperature();
 
@@ -40,6 +40,10 @@ void APP_init(void)
 
 		sprintf(string_buffer, "MAX30102_temperature: %d oC \r\n", MAX30102_temperature);
 		CONSOLE_tx(string_buffer);
+
+		sprintf(string_buffer, "%d oC", MAX30102_temperature);
+		OLED_SetCursor(64, 0);
+		OLED_DrawString((uint8_t *)font5x7, string_buffer);
 
 		HAL_Delay(250);
 

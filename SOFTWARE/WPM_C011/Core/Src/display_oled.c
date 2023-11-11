@@ -146,122 +146,119 @@ const uint8_t MECHATRONIX_LAB_LOGO[] =
 	0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x9f, 0x8f, 0xcf, 0xc7, 0xe3, 0xf1, 0xf8, 0xfc, 0xff, 0xff, 0xff
 };
 
-void OLED_command(uint8_t cmd)
+void OLED_SendCommand(uint8_t command)
 {
-	uint8_t buf[2];
+	uint8_t I2C_buffer[2];
 
-	buf[0] = SSD1306_REG_CMD;
-	buf[1] = cmd;
-	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_ADDR, buf, 2, 1000);
+	I2C_buffer[0] = SSD1306_REG_CMD;
+	I2C_buffer[1] = command;
+	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_ADDR, I2C_buffer, 2, 1000);
 }
 
-void OLED_data(uint8_t data)
+void OLED_SendData(uint8_t data)
 {
-	uint8_t buf[2];
+	uint8_t I2C_buffer[2];
 
-	buf[0] = SSD1306_REG_DATA;
-	buf[1] = data;
-	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_ADDR, buf, 2, 1000);
+	I2C_buffer[0] = SSD1306_REG_DATA;
+	I2C_buffer[1] = data;
+	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_ADDR, I2C_buffer, 2, 1000);
 }
 
-void OLED_cursor(uint8_t x, uint8_t y)
+void OLED_SetCursor(uint8_t x, uint8_t y)
 {
-	OLED_command(0x00 + ( x       & 0x0F));
-	OLED_command(0x10 + ((x >> 4) & 0x0F));
-	OLED_command(0xB0 +   y              );
+	OLED_SendCommand(0x00 + ( x       & 0x0F));
+	OLED_SendCommand(0x10 + ((x >> 4) & 0x0F));
+	OLED_SendCommand(0xB0 +   y              );
 }
 
-void OLED_clear(void)
+void OLED_Clear(void)
 {
-	uint8_t page = 0;
-	uint8_t col  = 0;
+	uint8_t page 	= 0;
+	uint8_t column  = 0;
 
 	for (page = 0; page < 8; page++)
 	{
-		OLED_cursor(0, page);
+		OLED_SetCursor(0, page);
 
-		for (col = 0; col < 128; col++)
+		for (column = 0; column < 128; column++)
 		{
-			OLED_data(0x00);
+			OLED_SendData(0x00);
 		}
 	}
 }
 
-void OLED_logo(void)
+void OLED_Init(void)
 {
-	uint8_t page = 0;
-	uint8_t col  = 0;
-	uint16_t i = 0;
-
-	for (page = 0; page < 8; page++)
-	{
-		OLED_cursor(0, page);
-
-		for (col = 0; col < 64; col++)
-		{
-			OLED_data(MECHATRONIX_LAB_LOGO[i++]);
-		}
-	}
-}
-
-void OLED_init(void)
-{
-//	uint16_t i = 0;
-//	uint16_t j = 0;
-
 	HAL_GPIO_WritePin(OLED_RESET_GPIO_Port, OLED_RESET_Pin, 0);
 	HAL_Delay(100);
 	HAL_GPIO_WritePin(OLED_RESET_GPIO_Port, OLED_RESET_Pin, 1);
 
-	OLED_command(0xAF); 	// Turn on display
-	OLED_command(0xA6);		// Normal mode (dark background)
-	OLED_command(0x20);		// Set memory addressing mode
-	OLED_command(0x02);			// Set Page Mode
-	OLED_command(0x8D);		// Charge pump
-	OLED_command(0x14);			// Charge pump
-	OLED_command(0x81);		// Set contrast
-	OLED_command( 127);			// Default
-	OLED_command(0xC8);		// Pages Remapping
-	OLED_command(0xA1);		// Columns Remapping
+	OLED_SendCommand(0xAF); 	// Turn on display
+	OLED_SendCommand(0xA6);		// Normal mode (dark background)
+	OLED_SendCommand(0x20);		// Set memory addressing mode
+	OLED_SendCommand(0x02);			// Set Page Mode
+	OLED_SendCommand(0x8D);		// Charge pump
+	OLED_SendCommand(0x14);			// Charge pump
+	OLED_SendCommand(0x81);		// Set contrast
+	OLED_SendCommand( 127);			// Default
+	OLED_SendCommand(0xC8);		// Pages Remapping
+	OLED_SendCommand(0xA1);		// Columns Remapping
 
-	OLED_clear();
-	OLED_logo();
+	OLED_Clear();
+	OLED_DrawLogo();
 }
 
-void OLED_frame(uint8_t * frame_buf)
+void OLED_DrawChar(uint8_t * font, uint8_t character)
 {
-	uint8_t page = 0;
-	uint8_t col  = 0;
-	uint16_t pixel = 0;
+	uint8_t column	= 0;
+
+	for (column = 0; column < 5; column++)
+	{
+		OLED_SendData(font[(character - 0x20)*5 + column + 0x04]);
+	}
+}
+
+void OLED_DrawString(uint8_t * font, char * string)
+{
+	uint8_t i 		= 0;
+
+	while(string[i] != '\0')
+	{
+		OLED_DrawChar(font, string[i]);
+		i++;
+	}
+}
+
+void OLED_DrawLogo(void)
+{
+	uint8_t page 	= 0;
+	uint8_t column  = 0;
+	uint16_t i 		= 0;
 
 	for (page = 0; page < 8; page++)
 	{
-		OLED_cursor(0, page);
+		OLED_SetCursor(0, page);
 
-		for (col = 0; col < 128; col++)
+		for (column = 0; column < 64; column++)
 		{
-			OLED_data(frame_buf[pixel++]);
+			OLED_SendData(MECHATRONIX_LAB_LOGO[i++]);
 		}
 	}
 }
 
-void OLED_char(uint8_t * font, uint8_t character)
+void OLED_DrawFrame(uint8_t * frame_buf)
 {
-	uint8_t col  = 0;
+	uint8_t page 	= 0;
+	uint8_t column  = 0;
+	uint16_t pixel 	= 0;
 
-	for (col = 0; col < 5; col++)
+	for (page = 0; page < 8; page++)
 	{
-		OLED_data(font[(character - 0x20)*5 + col + 0x04]);
-	}
-}
+		OLED_SetCursor(0, page);
 
-void OLED_string(uint8_t * font, char * string)
-{
-	uint8_t i = 0;
-
-	while(string[i] != '\0')
-	{
-		OLED_char(font, string[i]);
-		i++;
+		for (column = 0; column < 128; column++)
+		{
+			OLED_SendData(frame_buf[pixel++]);
+		}
 	}
 }
