@@ -17,6 +17,8 @@
 
 #define MAX30102_DEVICE_ADDRESS				0xAE		// I2C device address
 
+#define MAX30102_I2C_TIMEOUT				 50U
+
 // Register Maps
 
 // Status
@@ -54,7 +56,12 @@
 #define MAX30102_REVISION_ID				0xFE
 #define MAX30102_PART_ID					0xFF		// 0x15
 
+void	MAX30102_ReadRegister(uint8_t register_address, uint8_t * I2C_buffer);
+void	MAX30102_ReadRegisters(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);
+void	MAX30102_WriteRegister(uint8_t register_address, uint8_t data);
+void	MAX30102_UpdateRegister(uint8_t register_address, uint8_t mask, uint8_t data);
 
+void	MAX30102_Reset(void);
 
 int16_t MAX30102_GetTemperature(void);
 

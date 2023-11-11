@@ -32,6 +32,10 @@ void APP_init(void)
 	OLED_SetCursor(64, 0);
 	OLED_DrawString((uint8_t *)font5x7, "WPM-C011.001");
 
+	sprintf(string_buffer, "MAX30102 R%d", (MAX30102_id >> 8));
+	OLED_SetCursor(64, 1);
+	OLED_DrawString((uint8_t *)font5x7, string_buffer);
+
 	//MAX30102_EnableTemperature();
 
 	while(1)
@@ -44,7 +48,7 @@ void APP_init(void)
 		CONSOLE_tx(string_buffer);
 
 		sprintf(string_buffer, "%d oC", MAX30102_temperature);
-		OLED_SetCursor(64, 1);
+		OLED_SetCursor(64, 2);
 		OLED_DrawString((uint8_t *)font5x7, string_buffer);
 
 		HAL_Delay(250);
