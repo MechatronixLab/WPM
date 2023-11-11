@@ -7,14 +7,16 @@
 
 #include "app.h"
 #include "console.h"
+#include "display_oled.h"
 #include "max30102.h"
+
 
 #include <stdio.h>
 
-uint16_t	MAX30102_temperature = 0;
-uint16_t	MAX30102_id = 0;
+uint16_t MAX30102_temperature = 0;
+uint16_t MAX30102_id = 0;
 
-char string_buffer[80];
+char 	string_buffer[80];
 
 void APP_init(void)
 {
@@ -23,8 +25,10 @@ void APP_init(void)
 	MAX30102_id = MAX30102_GetPartID();
 
 	sprintf(string_buffer, "MAX30102 - Revision: %3d, ID: 0x%02x \r\n",
-							(MAX30102_id >> 8), (MAX30102_id & 0x00FF));
+						   (MAX30102_id >> 8), (MAX30102_id & 0x00FF));
 	CONSOLE_tx(string_buffer);
+
+	OLED_init();
 
 	//MAX30102_EnableTemperature();
 

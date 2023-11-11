@@ -54,7 +54,8 @@
 #define MAX30102_REVISION_ID				0xFE
 #define MAX30102_PART_ID					0xFF		// 0x15
 
-void 	MAX30102_EnableTemperature(void);
+
+
 int16_t MAX30102_GetTemperature(void);
 
 int16_t MAX30102_GetPartID(void);
