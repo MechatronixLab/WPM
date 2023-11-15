@@ -93,7 +93,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  APP_init();
+  APP_Run();	// Application code runs from here
 
   /* USER CODE END 2 */
 

@@ -18,7 +18,7 @@ uint16_t MAX30102_id = 0;
 
 char 	string_buffer[80];
 
-void APP_init(void)
+void APP_Run(void)
 {
 	CONSOLE_tx("Wearable Patient Monitor V 0.0.1 \r\n");
 
@@ -36,7 +36,8 @@ void APP_init(void)
 	OLED_SetCursor(64, 1);
 	OLED_DrawString((uint8_t *)font5x7, string_buffer);
 
-	//MAX30102_EnableTemperature();
+	MAX30102_Reset();
+	MAX30102_ConfigProximityDetect();
 
 	while(1)
 	{
@@ -44,7 +45,7 @@ void APP_init(void)
 
 		MAX30102_temperature = MAX30102_GetTemperature();
 
-		sprintf(string_buffer, "MAX30102_temperature: %d oC \r\n", MAX30102_temperature);
+		sprintf(string_buffer, "MAX30102 Temperature: %d oC \r\n", MAX30102_temperature);
 		CONSOLE_tx(string_buffer);
 
 		sprintf(string_buffer, "%d oC", MAX30102_temperature);

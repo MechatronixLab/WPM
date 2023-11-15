@@ -10,8 +10,6 @@
 
 #include "main.h"
 
-#include "gpio.h"
-
-void APP_init(void);
+void APP_Run(void);
 
 #endif /* INC_APP_H_ */

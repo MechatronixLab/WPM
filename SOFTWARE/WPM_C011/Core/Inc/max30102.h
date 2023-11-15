@@ -22,46 +22,48 @@
 // Register Maps
 
 // Status
-#define MAX330102_INTERRUPT_STATUS_1		0x00
-#define MAX330102_INTERRUPT_STATUS_2		0x01
-#define MAX330102_INTERRUPT_STATUS_3		0x02
-#define MAX330102_INTERRUPT_STATUS_4		0x03
+#define MAX30102_INTERRUPT_STATUS_1			0x00
+#define MAX30102_INTERRUPT_STATUS_2			0x01
+#define MAX30102_INTERRUPT_STATUS_3			0x02
+#define MAX30102_INTERRUPT_STATUS_4			0x03
 
 // FIFO
 #define MAX30102_FIFO_WRITE_POINTER			0x04
 #define MAX30102_FIFO_OVERFLOW_COUNTER		0x05
 #define MAX30102_FIFO_READ_POINTER			0x06
-#define MAX30102_FIFO_DARA					0x07
+#define MAX30102_FIFO_DATA					0x07
 
 // Configuration
 #define MAX30102_FIFO_CONFIG				0x08
 #define MAX30102_MODE_CONFIG				0x09
 #define MAX30102_SPO2_CONFIG				0x0A
-	// RESERVED								0x0B
+								// RESERVED	0x0B
 #define MAX30102_LED_PULSE_AMPLITUDE_1		0x0C
 #define MAX30102_LED_PULSE_AMPLITUDE_2		0x0D
-	// RESERVED								0x0E
-	// RESERVED								0x0F
+								// RESERVED	0x0E
+								// RESERVED	0x0F
 #define MAX30102_MULTI_LED_MODE_CONTROL_12	0x11
 #define MAX30102_MULTI_LED_MODE_CONTROL_34	0x12
-	// RESERVED								0x13 - 0x1E
+								// RESERVED	0x13 - 0x1E
 
 // Die Temperature
 #define MAX30102_DIE_TEMPERATURE_INTEGER	0x1F
 #define MAX30102_DIE_TEMPERATURE_FRACTION	0x20
 #define MAX30102_DIE_TEMPERATURE_CONFIG		0x21
-	// RESERVED								0x22 - 0x2F
+								// RESERVED	0x22 - 0x2F
 
 // Part ID
 #define MAX30102_REVISION_ID				0xFE
 #define MAX30102_PART_ID					0xFF		// 0x15
 
-void	MAX30102_ReadRegister(uint8_t register_address, uint8_t * I2C_buffer);
-void	MAX30102_ReadRegisters(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);
-void	MAX30102_WriteRegister(uint8_t register_address, uint8_t data);
-void	MAX30102_UpdateRegister(uint8_t register_address, uint8_t mask, uint8_t data);
+//void	MAX30102_ReadRegister  (uint8_t register_address, uint8_t * I2C_buffer);
+void	MAX30102_Read  	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);
+void	MAX30102_Write 	(uint8_t register_address, uint8_t data);
+void	MAX30102_Update	(uint8_t register_address, uint8_t mask, uint8_t data);
 
 void	MAX30102_Reset(void);
+
+void	MAX30102_ConfigProximityDetect(void);
 
 int16_t MAX30102_GetTemperature(void);
 
