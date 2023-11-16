@@ -39,6 +39,9 @@ void APP_Run(void)
 	MAX30102_Reset();
 	MAX30102_ConfigProximityDetect();
 
+	OLED_Clear();
+	OLED_DrawLine(0, 0, 10, 0);
+
 	while(1)
 	{
 		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);

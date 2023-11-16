@@ -152,18 +152,18 @@ void OLED_SendCommand(uint8_t command)
 {
 	uint8_t I2C_buffer[2];
 
-	I2C_buffer[0] = SSD1306_REG_CMD;
+	I2C_buffer[0] = SSD1306_REGISTER_COMMAND;
 	I2C_buffer[1] = command;
-	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_ADDR, I2C_buffer, 2, 1000);
+	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_DEVICE_ADDRESS, I2C_buffer, 2, 1000);
 }
 
 void OLED_SendData(uint8_t data)
 {
 	uint8_t I2C_buffer[2];
 
-	I2C_buffer[0] = SSD1306_REG_DATA;
+	I2C_buffer[0] = SSD1306_REGISTER_DATA;
 	I2C_buffer[1] = data;
-	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_ADDR, I2C_buffer, 2, 1000);
+	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_DEVICE_ADDRESS, I2C_buffer, 2, 1000);
 }
 
 void OLED_SetCursor(uint8_t x, uint8_t y)
@@ -171,6 +171,12 @@ void OLED_SetCursor(uint8_t x, uint8_t y)
 	OLED_SendCommand(0x00 + ( x       & 0x0F));
 	OLED_SendCommand(0x10 + ((x >> 4) & 0x0F));
 	OLED_SendCommand(0xB0 +   y              );
+}
+
+void OLED_SetPixel(uint8_t x, uint8_t y)
+{
+	OLED_SetCursor(x, y);
+	OLED_SendData(0x01);
 }
 
 void OLED_Clear(void)
@@ -262,5 +268,27 @@ void OLED_DrawFrame(uint8_t * frame_buffer)
 		{
 			OLED_SendData(frame_buffer[pixel++]);
 		}
+	}
+}
+
+void OLED_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf)
+{
+	uint8_t  counter = 0;
+	uint32_t x, y, dx, dy;
+
+	x = xi;
+	y = yi * 1000;
+
+	dx = (xf - xi);
+	dy = (yf - yi) * 1000;
+
+	for (counter = 0; counter < dx; counter++)
+	{
+		y = yi + (x++ - xi) * dy / dx;
+		if (y - (1000 * counter) > 500)
+		{
+			y += 1000;
+		}
+		OLED_SetPixel(x, y/1000);
 	}
 }
