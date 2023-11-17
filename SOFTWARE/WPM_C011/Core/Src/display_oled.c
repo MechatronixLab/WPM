@@ -166,17 +166,18 @@ void OLED_SendData(uint8_t data)
 	HAL_I2C_Master_Transmit(&hi2c1, SSD1306_DEVICE_ADDRESS, I2C_buffer, 2, 1000);
 }
 
-void OLED_SetCursor(uint8_t x, uint8_t y)
+void OLED_SetCursor(uint8_t x, uint8_t page)
 {
 	OLED_SendCommand(0x00 + ( x       & 0x0F));
 	OLED_SendCommand(0x10 + ((x >> 4) & 0x0F));
-	OLED_SendCommand(0xB0 +   y              );
+
+	OLED_SendCommand(0xB0 + page);
 }
 
 void OLED_SetPixel(uint8_t x, uint8_t y)
 {
-	OLED_SetCursor(x, y);
-	OLED_SendData(0x01);
+	OLED_SetCursor(x, (y / 8));
+	OLED_SendData(0x01 << (y % 8));
 }
 
 void OLED_Clear(void)
@@ -195,14 +196,34 @@ void OLED_Clear(void)
 	}
 }
 
+void OLED_Sleep(void)
+{
+	OLED_SendCommand(0xAE); 	// Turn off screen
+}
+
+void OLED_WakeUp(void)
+{
+	OLED_SendCommand(0xAF); 	// Turn on screen
+}
+
+void OLED_DarkBG(void)
+{
+	OLED_SendCommand(0xA6);		// Dark background (Normal Display)
+}
+
+void OLED_LightBG(void)
+{
+	OLED_SendCommand(0xA7);		// Light background (Inverse Display)
+}
+
 void OLED_Init(void)
 {
 	HAL_GPIO_WritePin(OLED_RESET_GPIO_Port, OLED_RESET_Pin, 0);
 	HAL_Delay(100);
 	HAL_GPIO_WritePin(OLED_RESET_GPIO_Port, OLED_RESET_Pin, 1);
 
-	OLED_SendCommand(0xAF); 	// Turn on display
-	OLED_SendCommand(0xA6);		// Normal mode (dark background)
+	OLED_WakeUp(); 				// Turn on display
+	OLED_DarkBG();				// Normal mode (dark background)
 	OLED_SendCommand(0x20);		// Set memory addressing mode
 	OLED_SendCommand(0x02);			// Set Page Mode
 	OLED_SendCommand(0x8D);		// Charge pump
@@ -228,12 +249,12 @@ void OLED_DrawChar(uint8_t * font, uint8_t character)
 
 void OLED_DrawString(uint8_t * font, char * string)
 {
-	uint8_t i 		= 0;
+	uint8_t index	= 0;
 
-	while(string[i] != '\0')
+	while(string[index] != '\0')
 	{
-		OLED_DrawChar(font, string[i]);
-		i++;
+		OLED_DrawChar(font, string[index]);
+		index++;
 	}
 }
 
@@ -273,22 +294,24 @@ void OLED_DrawFrame(uint8_t * frame_buffer)
 
 void OLED_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf)
 {
-	uint8_t  counter = 0;
-	uint32_t x, y, dx, dy;
+	uint8_t counter = 0;
+	int32_t x, y, dx, dy;
 
 	x = xi;
 	y = yi * 1000;
 
-	dx = (xf - xi);
-	dy = (yf - yi) * 1000;
+	dx = (xf - xi + 1);
+	dy = (yf - yi + 1) * 1000;
 
 	for (counter = 0; counter < dx; counter++)
 	{
-		y = yi + (x++ - xi) * dy / dx;
+		y = yi + (x - xi) * dy / dx;
 		if (y - (1000 * counter) > 500)
 		{
 			y += 1000;
 		}
-		OLED_SetPixel(x, y/1000);
+		OLED_SetPixel(x, (y / 1000));
+
+		x++;
 	}
 }

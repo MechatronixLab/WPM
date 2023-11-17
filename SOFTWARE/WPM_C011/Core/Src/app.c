@@ -40,7 +40,20 @@ void APP_Run(void)
 	MAX30102_ConfigProximityDetect();
 
 	OLED_Clear();
-	OLED_DrawLine(0, 0, 10, 0);
+	OLED_DrawLine(  0,  0, 127, 63);
+
+	OLED_Clear();
+	OLED_DrawLine(127,  0,   0, 63);
+
+	OLED_Clear();
+	OLED_DrawLine(127,  0,   0, 63);
+
+	OLED_Clear();
+	OLED_DrawLine(127,  0,   0, 63);
+
+//	OLED_DrawLine(  0, 31, 127, 31);
+//	OLED_DrawLine( 63,  0,  63, 63);
+//	OLED_DrawLine(  0, 63, 127,  0);
 
 	while(1)
 	{
@@ -55,9 +68,13 @@ void APP_Run(void)
 		OLED_SetCursor(64, 2);
 		OLED_DrawString((uint8_t *)font5x7, string_buffer);
 
-		HAL_Delay(250);
+		HAL_Delay(500);
+
+		OLED_LightBG();
 
 		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
-		HAL_Delay(250);
+		HAL_Delay(500);
+
+		OLED_DarkBG();
 	}
 }

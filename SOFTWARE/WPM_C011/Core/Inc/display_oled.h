@@ -10,6 +10,8 @@
 
 #include "i2c.h"
 
+#include <stdlib.h>
+
 #define SSD1306_REGISTER_COMMAND	0x80
 #define SSD1306_REGISTER_DATA		0x40
 #define SSD1306_DEVICE_ADDRESS	   (0x3C << 1)
@@ -22,6 +24,11 @@ void OLED_SetCursor(uint8_t x, uint8_t y);
 void OLED_SetPixel(uint8_t x, uint8_t y);
 void OLED_Clear(void);
 void OLED_Init(void);
+
+void OLED_Sleep(void);
+void OLED_WakeUp(void);
+void OLED_DarkBG(void);
+void OLED_LightBG(void);
 
 void OLED_DrawChar(uint8_t * font, uint8_t character);
 void OLED_DrawString(uint8_t * font, char * string);
