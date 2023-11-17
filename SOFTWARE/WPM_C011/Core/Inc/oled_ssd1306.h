@@ -5,8 +5,8 @@
  *      Author: Andre
  */
 
-#ifndef INC_DISPLAY_OLED_H_
-#define INC_DISPLAY_OLED_H_
+#ifndef INC_OLED_SSD1306_H_
+#define INC_OLED_SSD1306_H_
 
 #include "i2c.h"
 
@@ -36,6 +36,7 @@ void OLED_DrawLogo(void);
 void OLED_DrawFrame(uint8_t * frame_buffer);
 void OLED_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf);
 
-void OLED_DrawLineH(uint8_t xi, uint8_t yi, uint8_t w);
+void OLED_DrawLineH(uint8_t xi, uint8_t yi, uint8_t width);
+void OLED_DrawLineV(uint8_t xi, uint8_t yi, uint8_t height);
 
-#endif /* INC_DISPLAY_OLED_H_ */
+#endif /* INC_OLED_SSD1306_H_ */

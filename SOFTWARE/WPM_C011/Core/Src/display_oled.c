@@ -5,7 +5,7 @@
  *      Author: Andre
  */
 
-#include "display_oled.h"
+#include <oled_ssd1306.h>
 
 // TODO: map device commands in the .h file
 
@@ -316,13 +316,24 @@ void OLED_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf)
 	}
 }
 
-void OLED_DrawLineH(uint8_t xi, uint8_t yi, uint8_t w)
+void OLED_DrawLineH(uint8_t xi, uint8_t yi, uint8_t width)
 {
 	uint8_t counter = 0;
 
-	for (counter = 0; counter < w; counter++)
+	for (counter = 0; counter < width; counter++)
 	{
 		OLED_SetPixel(xi, yi);
 		xi++;
+	}
+}
+
+void OLED_DrawLineV(uint8_t xi, uint8_t yi, uint8_t height)
+{
+	uint8_t counter = 0;
+
+	for (counter = 0; counter < height; counter++)
+	{
+		OLED_SetPixel(xi, yi);
+		yi++;
 	}
 }
