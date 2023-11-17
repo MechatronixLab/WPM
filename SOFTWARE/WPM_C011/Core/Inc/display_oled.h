@@ -36,4 +36,6 @@ void OLED_DrawLogo(void);
 void OLED_DrawFrame(uint8_t * frame_buffer);
 void OLED_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf);
 
+void OLED_DrawLineH(uint8_t xi, uint8_t yi, uint8_t w);
+
 #endif /* INC_DISPLAY_OLED_H_ */

@@ -43,7 +43,8 @@ void APP_Run(void)
 	OLED_DrawLine(  0,  0, 127, 63);
 
 	OLED_Clear();
-	OLED_DrawLine(127,  0,   0, 63);
+	OLED_DrawLine(  0,  0, 127,  0);
+	OLED_DrawLineH(0, 2, 128);
 
 	OLED_Clear();
 	OLED_DrawLine(127,  0,   0, 63);
