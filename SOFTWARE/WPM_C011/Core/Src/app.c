@@ -47,14 +47,6 @@ void APP_Run(void)
 	OLED_DrawLineH(0, 2, 128);
 
 	OLED_Clear();
-	OLED_DrawLine(127,  0,   0, 63);
-
-	OLED_Clear();
-	OLED_DrawLine(127,  0,   0, 63);
-
-//	OLED_DrawLine(  0, 31, 127, 31);
-//	OLED_DrawLine( 63,  0,  63, 63);
-//	OLED_DrawLine(  0, 63, 127,  0);
 
 	while(1)
 	{

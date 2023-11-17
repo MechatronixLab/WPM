@@ -318,7 +318,7 @@ void OLED_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf)
 
 void OLED_DrawLineH(uint8_t xi, uint8_t yi, uint8_t w)
 {
-	int8_t counter = 0;
+	uint8_t counter = 0;
 
 	for (counter = 0; counter < w; counter++)
 	{
