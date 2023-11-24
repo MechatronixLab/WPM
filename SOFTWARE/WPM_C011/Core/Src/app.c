@@ -14,6 +14,7 @@
 #include "console.h"
 #include "max30102.h"
 #include "oled_ssd1306.h"
+#include "wsen-isds.h"
 
 #include <stdio.h>
 
@@ -61,6 +62,18 @@ void APP_Run(void)
 
 	OLED_Clear();
 
+	if (ISDS_CommunicationCheck())
+	{
+		OLED_SetCursor(0, 2);
+		OLED_DrawString((uint8_t *)font5x7, "ISDS Status: OK");
+
+	}
+	else
+	{
+		OLED_SetCursor(0, 2);
+		OLED_DrawString((uint8_t *)font5x7, "ISDS Status: FAIL");
+	}
+
 	while(1)
 	{
 		if (flag_ADC_EOC)
@@ -91,6 +104,10 @@ void APP_Run(void)
 
 			sprintf(string_buffer, "MAX30102 : %3d oC", MAX30102_temperature);
 			OLED_SetCursor(0, 1);
+			OLED_DrawString((uint8_t *)font5x7, string_buffer);
+
+			sprintf(string_buffer, "WSEN-ISDS: %3d oC", MAX30102_temperature);
+			OLED_SetCursor(0, 2);
 			OLED_DrawString((uint8_t *)font5x7, string_buffer);
 
 

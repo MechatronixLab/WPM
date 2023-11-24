@@ -12,9 +12,10 @@
 
 #include <stdlib.h>
 
+#define SSD1306_DEVICE_ADDRESS	   (0x3C << 1)
+
 #define SSD1306_REGISTER_COMMAND	0x80
 #define SSD1306_REGISTER_DATA		0x40
-#define SSD1306_DEVICE_ADDRESS	   (0x3C << 1)
 
 extern const uint8_t font5x7[];
 
