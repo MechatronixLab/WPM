@@ -14,6 +14,9 @@
 
 #define ISDS_I2C_TIMEOUT		50U
 
+#define ISDS_T_OUT_L			0x20
+#define ISDS_T_OUT_L			0x21
+
 uint8_t ISDS_CommunicationCheck(void);
 
 #endif /* INC_WSEN_ISDS_H_ */
