@@ -16,6 +16,6 @@ uint16_t adc_mV[2];		// Vetor para armazenar tensões no ADC (0 a 3300 mV)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {	// Interrupção que ocorre quando um conjunto de conversões é finalizado
 	flag_ADC_EOC = 1;								// Seta flag para tratamento no main()
-	HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);	// Altera estado do LED1 para indicar funionamento do ADC
+	//HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);	// Altera estado do LED1 para indicar funionamento do ADC
 }
 

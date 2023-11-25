@@ -14,11 +14,17 @@
 
 #define ISDS_I2C_TIMEOUT		50U
 
+#define ISDS_X_AXIS				0U
+#define ISDS_Y_AXIS				1U
+#define ISDS_Z_AXIS				2U
+
 // Register Map
 
 					// RESERVED	0x00 - 0x05
 #define ISDS_FIFO_CTRL1			0x06
 #define ISDS_FIFO_CTRL2			0x07
+#define ISDS_FIFO_TIMER_EN				0x80
+#define ISDS_FIFO_TEMP_EN				0x08
 #define ISDS_FIFO_CTRL3			0x08
 #define ISDS_FIFO_CTRL4			0x09
 #define ISDS_FIFO_CTRL5			0x0A
@@ -81,9 +87,28 @@
 #define ISDS_Z_OFS_USR			0x75
 					// RESERVED	0x76 - 0x7F
 
-void	ISDS_SoftReset(void);
+typedef struct
+{
+	int16_t acceleration[3];
+	int16_t angular_rate[3];
+	int16_t temperature;
+} ISDI_data_t;
+
+extern ISDI_data_t ISDI_measurements;
+
+
+
+
 
 uint8_t ISDS_CommunicationCheck(void);
+
+uint8_t	ISDS_SoftReset(void);
+
+void	ISDS_Init(void);
+
+int16_t	ISDS_GetTemperature(void);
+
+void 	ISDS_GetData(ISDI_data_t * measurements);
 
 
 #endif /* INC_WSEN_ISDS_H_ */

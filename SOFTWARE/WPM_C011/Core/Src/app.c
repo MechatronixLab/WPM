@@ -22,10 +22,14 @@ uint16_t MAX30102_temperature = 0;
 uint16_t MAX30102_id = 0;
 
 int16_t  STM32C0_temperature = 0;
+int16_t  ISDS_temperature = 0;
+
 
 char 	string_buffer[80];
 
 uint8_t i = 0;
+
+uint8_t screen_counter = 0;
 
 void APP_Run(void)
 {
@@ -62,10 +66,12 @@ void APP_Run(void)
 
 	OLED_Clear();
 
-	if (ISDS_CommunicationCheck())
+	if (ISDS_SoftReset() == 0)
 	{
 		OLED_SetCursor(0, 2);
 		OLED_DrawString((uint8_t *)font5x7, "ISDS Status: OK");
+
+		ISDS_Init();
 
 	}
 	else
@@ -78,46 +84,57 @@ void APP_Run(void)
 	{
 		if (flag_ADC_EOC)
 		{
-			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
+			ISDS_GetData(&ISDI_measurements);
 
-			for (i = 0; i < ADC_ACTIVE_CHANNELS; i++)	// Conversão das leituras do ADC em tensão (mV)
-			{
-				adc_mV[i] = 3300 * adc_buffer[i] / 4095;
-			}
-
-			sprintf(string_buffer, "VR: %4d mV", adc_mV[0]);
-			OLED_SetCursor(0, 3);
-			OLED_DrawString((uint8_t *)font5x7, string_buffer);
-
-			sprintf(string_buffer, "VT: %4d mV", adc_mV[1]);
-			OLED_SetCursor(0, 4);
-			OLED_DrawString((uint8_t *)font5x7, string_buffer);
-
-			STM32C0_temperature  = (adc_mV[1] - 684) * 100 / 253;
-			MAX30102_temperature = MAX30102_GetTemperature();
-
-
-			sprintf(string_buffer, "STM32C011: %3d oC", STM32C0_temperature);
-			OLED_SetCursor(0, 0);
-			OLED_DrawString((uint8_t *)font5x7, string_buffer);
-
-
-			sprintf(string_buffer, "MAX30102 : %3d oC", MAX30102_temperature);
-			OLED_SetCursor(0, 1);
-			OLED_DrawString((uint8_t *)font5x7, string_buffer);
-
-			sprintf(string_buffer, "WSEN-ISDS: %3d oC", MAX30102_temperature);
-			OLED_SetCursor(0, 2);
-			OLED_DrawString((uint8_t *)font5x7, string_buffer);
-
-
-
-			sprintf(string_buffer, "MAX30102 T: %d oC \r\n", MAX30102_temperature);
+			sprintf(string_buffer, "Angular Rate: x: %d , y: %d , z: %d \r\n",
+									ISDI_measurements.angular_rate[ISDS_X_AXIS],
+									ISDI_measurements.angular_rate[ISDS_Y_AXIS],
+									ISDI_measurements.angular_rate[ISDS_Z_AXIS]);
 			CONSOLE_tx(string_buffer);
 
-			flag_ADC_EOC = 0;
+			screen_counter++;
 
-			HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
+			if (screen_counter == 100)	// 40ms
+			{
+				screen_counter = 0;
+
+
+				for (i = 0; i < ADC_ACTIVE_CHANNELS; i++)	// Conversão das leituras do ADC em tensão (mV)
+				{
+					adc_mV[i] = 3300 * adc_buffer[i] / 4095;
+				}
+
+				STM32C0_temperature  = (adc_mV[1] - 684) * 100 / 253;
+
+
+				HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
+				MAX30102_temperature = MAX30102_GetTemperature();
+				HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 0);
+
+				sprintf(string_buffer, "VR: %4d mV", adc_mV[0]);
+				OLED_SetCursor(0, 3);
+				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+
+				sprintf(string_buffer, "VT: %4d mV", adc_mV[1]);
+				OLED_SetCursor(0, 4);
+				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+
+				sprintf(string_buffer, "STM32C011: %3d oC", STM32C0_temperature);
+				OLED_SetCursor(0, 0);
+				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+
+				sprintf(string_buffer, "MAX30102 : %3d oC", MAX30102_temperature);
+				OLED_SetCursor(0, 1);
+				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+
+				sprintf(string_buffer, "WSEN-ISDS: %3d.%2d oC",
+										ISDI_measurements.temperature/100,
+										ISDI_measurements.temperature%100);
+				OLED_SetCursor(0, 2);
+				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+			}
+
+			flag_ADC_EOC = 0;
 		}
 	}
 }

@@ -95,7 +95,7 @@ int16_t MAX30102_GetTemperature(void)
 
 	MAX30102_Write(MAX30102_DIE_TEMPERATURE_CONFIG, 0x01);
 
-	HAL_Delay(50);	// Datasheet states 29ms for T ADC acquisition time
+	HAL_Delay(30);	// Datasheet states 29ms for T ADC acquisition time
 
 	MAX30102_Read(MAX30102_DIE_TEMPERATURE_INTEGER, 2, I2C_buffer);
 
