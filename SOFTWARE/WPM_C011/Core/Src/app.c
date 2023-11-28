@@ -86,13 +86,15 @@ void APP_Run(void)
 		{
 			ISDS_GetData(&ISDS_measurements);
 
-			sprintf(string_buffer, "Angular Rate: x: %4d , y: %4d , z: %4d, Acceleration: x: %4d , y: %4d , z: %4d \r\n",
+			sprintf(string_buffer, "Angular Rate: x: %4d, y: %4d, z: %4d, Acceleration: x: %4d, y: %4d, z: %4d \r\n",
 									ISDS_measurements.angular_rate[ISDS_X_AXIS],
 									ISDS_measurements.angular_rate[ISDS_Y_AXIS],
 									ISDS_measurements.angular_rate[ISDS_Z_AXIS],
 									ISDS_measurements.acceleration[ISDS_X_AXIS],
 									ISDS_measurements.acceleration[ISDS_Y_AXIS],
-									ISDS_measurements.acceleration[ISDS_Z_AXIS]);
+									ISDS_measurements.acceleration[ISDS_Z_AXIS]); /*,
+									ISDS_measurements.temperature / 100,
+									ISDS_measurements.temperature % 100);*/
 			CONSOLE_tx(string_buffer);
 
 			screen_counter++;
