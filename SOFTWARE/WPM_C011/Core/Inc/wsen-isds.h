@@ -92,9 +92,9 @@ typedef struct
 	int16_t acceleration[3];
 	int16_t angular_rate[3];
 	int16_t temperature;
-} ISDI_data_t;
+} ISDS_data_t;
 
-extern ISDI_data_t ISDI_measurements;
+extern ISDS_data_t ISDS_measurements;
 
 
 
@@ -108,7 +108,7 @@ void	ISDS_Init(void);
 
 int16_t	ISDS_GetTemperature(void);
 
-void 	ISDS_GetData(ISDI_data_t * measurements);
+void 	ISDS_GetData(ISDS_data_t * measurements);
 
 
 #endif /* INC_WSEN_ISDS_H_ */

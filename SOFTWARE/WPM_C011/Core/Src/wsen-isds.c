@@ -7,7 +7,7 @@
 
 #include "wsen-isds.h"
 
-ISDI_data_t ISDI_measurements;
+ISDS_data_t ISDS_measurements;
 
 uint8_t ISDS_CommunicationCheck(void)
 {
@@ -148,39 +148,25 @@ int16_t	ISDS_GetTemperature(void)
 	return temperature;
 }
 
-void 	ISDS_GetData(ISDI_data_t * measurements)
+void 	ISDS_GetData(ISDS_data_t * measurements)
 {
 	uint8_t I2C_buffer[14];
 
 	I2C_buffer[0] = ISDS_T_OUT_L;
 
 	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 8, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 14, ISDS_I2C_TIMEOUT);
 
-	measurements->temperature = (int16_t) ( (I2C_buffer[1] << 8)  + I2C_buffer[0] );
-	//measurements->temperature = (int16_t) ((float) measurements->temperature * 0.390625f + 25.0f);
+	measurements->temperature 				= (int16_t) ((I2C_buffer[ 1] << 8) | I2C_buffer[ 0] );
+	measurements->temperature = (int16_t) ((float) measurements->temperature * 0.390625f + 25.0f);
 
-//	I2C_buffer[0] = ISDS_G_X_OUT_L;
-//
-//	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-//	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
+	measurements->angular_rate[ISDS_X_AXIS] = (int16_t) ((I2C_buffer[ 3] << 8) | I2C_buffer[ 2]) * 70 / 1000;	// mdps
+	measurements->angular_rate[ISDS_Y_AXIS] = (int16_t) ((I2C_buffer[ 5] << 8) | I2C_buffer[ 4]) * 70 / 1000;	// mdps
+	measurements->angular_rate[ISDS_Z_AXIS] = (int16_t) ((I2C_buffer[ 7] << 8) | I2C_buffer[ 6]) * 70 / 1000;	// mdps
 
-	measurements->angular_rate[ISDS_X_AXIS] = (int16_t) ( (I2C_buffer[3] << 8)  + I2C_buffer[2] );
-	//measurements->angular_rate[0] =
-
-//	I2C_buffer[0] = ISDS_G_Y_OUT_L;
-//
-//	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-//	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
-
-	measurements->angular_rate[ISDS_Y_AXIS] = (int16_t) ( (I2C_buffer[5] << 8)  + I2C_buffer[4] );
-
-//	I2C_buffer[0] = ISDS_G_Z_OUT_L;
-//
-//	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-//	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
-
-	measurements->angular_rate[ISDS_Z_AXIS] = (int16_t) ( (I2C_buffer[7] << 8)  + I2C_buffer[6] );
+	measurements->acceleration[ISDS_X_AXIS] = (int16_t) ((I2C_buffer[ 9] << 8) | I2C_buffer[ 8]) * 488 / 1000;	// mg
+	measurements->acceleration[ISDS_Y_AXIS] = (int16_t) ((I2C_buffer[11] << 8) | I2C_buffer[10]) * 488 / 1000;	// mg
+	measurements->acceleration[ISDS_Z_AXIS] = (int16_t) ((I2C_buffer[13] << 8) | I2C_buffer[12]) * 488 / 1000;	// mg
 }
 
 
