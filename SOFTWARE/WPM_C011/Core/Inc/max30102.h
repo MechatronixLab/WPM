@@ -17,7 +17,7 @@
 
 #define MAX30102_DEVICE_ADDRESS				0xAE		// I2C device address
 
-#define MAX30102_I2C_TIMEOUT				 50U
+#define MAX30102_I2C_TIMEOUT				  50
 
 // Register Maps
 

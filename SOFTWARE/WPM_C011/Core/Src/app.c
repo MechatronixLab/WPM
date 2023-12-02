@@ -12,6 +12,7 @@
 
 #include "adconverter.h"
 #include "console.h"
+#include "graphics.h"
 #include "max30102.h"
 #include "oled_ssd1306.h"
 #include "wsen-isds.h"
@@ -42,12 +43,14 @@ void APP_Run(void)
 	CONSOLE_tx(string_buffer);
 
 	OLED_Init();
+	GFX_DrawLogo();
+
 	OLED_SetCursor(64, 0);
-	OLED_DrawString((uint8_t *)font5x7, "WPM-C011.001");
+	GFX_DrawString((uint8_t *)GFX_font_5x7, "WPM-C011.001");
 
 	sprintf(string_buffer, "MAX30102 R%d", (MAX30102_id >> 8));
 	OLED_SetCursor(64, 1);
-	OLED_DrawString((uint8_t *)font5x7, string_buffer);
+	GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 	MAX30102_Reset();
 	MAX30102_ConfigProximityDetect();
@@ -60,19 +63,26 @@ void APP_Run(void)
 //	}
 //	OLED_DrawFrame(OLED_frame_buffer);
 
-	OLED_DrawLine(  0,  0, 127,  7);
-	OLED_DrawLine(  0,  0, 127, 15);
-	OLED_DrawLine(  0,  0, 127, 31);
-	OLED_DrawLine(  0,  0, 127, 63);
+	GFX_DrawLine(   0,   0, 127,   7);
+	GFX_DrawLine(   0,   0, 127,  15);
+	GFX_DrawLine(   0,   0, 127,  31);
+	GFX_DrawLine(   0,   0, 127,  63);
 
-	OLED_DrawLine(  0,  0,  64, 63);
+	GFX_DrawLine(   0,   0,  64,  63);
 
-	OLED_DrawLine(  0, 32,  32, 63);
+	GFX_DrawLine(   0,  32,  32,  63);
 
+	GFX_ClearFrame(GFX_frame_buffer);
 	OLED_Clear();
-	OLED_DrawLine(  0,  0, 127,  0);
-	OLED_DrawHorizontalLine(0, 2, 128);
-	OLED_DrawVerticalLine(63, 0, 63);
+
+	GFX_DrawLine(  32,  32,  63,  63);
+	GFX_DrawLine(   0,  32,  32,  63);
+
+
+
+	GFX_DrawLine(  0,  0, 127,  0);
+	GFX_DrawHorizontalLine(0, 2, 128);
+	GFX_DrawVerticalLine(63, 0, 63);
 
 	HAL_ADCEx_Calibration_Start(&hadc1);									// Rotina de calibração do ADC
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_buffer, ADC_ACTIVE_CHANNELS);	// Inicia operação do ADC com DMA para canais ativos
@@ -83,7 +93,7 @@ void APP_Run(void)
 	if (ISDS_SoftReset() == 0)
 	{
 		OLED_SetCursor(0, 2);
-		OLED_DrawString((uint8_t *)font5x7, "ISDS Status: OK");
+		GFX_DrawString((uint8_t *)GFX_font_5x7, "ISDS Status: OK");
 
 		ISDS_Init();
 
@@ -91,7 +101,7 @@ void APP_Run(void)
 	else
 	{
 		OLED_SetCursor(0, 2);
-		OLED_DrawString((uint8_t *)font5x7, "ISDS Status: FAIL");
+		GFX_DrawString((uint8_t *)GFX_font_5x7, "ISDS Status: FAIL");
 	}
 
 	while(1)
@@ -133,25 +143,25 @@ void APP_Run(void)
 
 				sprintf(string_buffer, "VR: %4d mV", adc_mV[0]);
 				OLED_SetCursor(0, 3);
-				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				sprintf(string_buffer, "VT: %4d mV", adc_mV[1]);
 				OLED_SetCursor(0, 4);
-				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				sprintf(string_buffer, "STM32C011: %3d oC", STM32C0_temperature);
 				OLED_SetCursor(0, 0);
-				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				sprintf(string_buffer, "MAX30102 : %3d oC", MAX30102_temperature);
 				OLED_SetCursor(0, 1);
-				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				sprintf(string_buffer, "WSEN-ISDS: %3d.%2d oC",
 										ISDS_measurements.temperature/100,
 										ISDS_measurements.temperature%100);
 				OLED_SetCursor(0, 2);
-				OLED_DrawString((uint8_t *)font5x7, string_buffer);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 			}
 
 			flag_ADC_EOC = 0;
