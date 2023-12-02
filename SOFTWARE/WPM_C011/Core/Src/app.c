@@ -27,7 +27,7 @@ int16_t  ISDS_temperature = 0;
 
 char 	string_buffer[128];
 
-uint8_t i = 0;
+uint16_t i = 0;
 
 uint8_t screen_counter = 0;
 
@@ -53,12 +53,26 @@ void APP_Run(void)
 	MAX30102_ConfigProximityDetect();
 
 	OLED_Clear();
+
+//	for (i = 0; i < 1024; i++)
+//	{
+//		OLED_frame_buffer[i] = i & 0xFF;
+//	}
+//	OLED_DrawFrame(OLED_frame_buffer);
+
+	OLED_DrawLine(  0,  0, 127,  7);
+	OLED_DrawLine(  0,  0, 127, 15);
+	OLED_DrawLine(  0,  0, 127, 31);
 	OLED_DrawLine(  0,  0, 127, 63);
+
+	OLED_DrawLine(  0,  0,  64, 63);
+
+	OLED_DrawLine(  0, 32,  32, 63);
 
 	OLED_Clear();
 	OLED_DrawLine(  0,  0, 127,  0);
-	OLED_DrawLineH(0, 2, 128);
-	OLED_DrawLineV(63, 0, 63);
+	OLED_DrawHorizontalLine(0, 2, 128);
+	OLED_DrawVerticalLine(63, 0, 63);
 
 	HAL_ADCEx_Calibration_Start(&hadc1);									// Rotina de calibração do ADC
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_buffer, ADC_ACTIVE_CHANNELS);	// Inicia operação do ADC com DMA para canais ativos
@@ -86,15 +100,16 @@ void APP_Run(void)
 		{
 			ISDS_GetData(&ISDS_measurements);
 
-			sprintf(string_buffer, "Angular Rate: x: %4d, y: %4d, z: %4d, Acceleration: x: %4d, y: %4d, z: %4d \r\n",
+			//sprintf(string_buffer, "Angular Rate: x: %4d, y: %4d, z: %4d, Acceleration: x: %4d, y: %4d, z: %4d, Temperature: %3d.%02d oC \r\n",
+			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC \r\n",
 									ISDS_measurements.angular_rate[ISDS_X_AXIS],
 									ISDS_measurements.angular_rate[ISDS_Y_AXIS],
 									ISDS_measurements.angular_rate[ISDS_Z_AXIS],
 									ISDS_measurements.acceleration[ISDS_X_AXIS],
 									ISDS_measurements.acceleration[ISDS_Y_AXIS],
-									ISDS_measurements.acceleration[ISDS_Z_AXIS]); /*,
+									ISDS_measurements.acceleration[ISDS_Z_AXIS],
 									ISDS_measurements.temperature / 100,
-									ISDS_measurements.temperature % 100);*/
+								abs(ISDS_measurements.temperature % 100));
 			CONSOLE_tx(string_buffer);
 
 			screen_counter++;

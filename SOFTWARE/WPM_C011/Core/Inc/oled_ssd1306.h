@@ -17,6 +17,7 @@
 #define SSD1306_REGISTER_COMMAND	0x80
 #define SSD1306_REGISTER_DATA		0x40
 
+extern uint8_t OLED_frame_buffer[1024];
 extern const uint8_t font5x7[];
 
 void OLED_SendCommand(uint8_t command);
@@ -37,7 +38,7 @@ void OLED_DrawLogo(void);
 void OLED_DrawFrame(uint8_t * frame_buffer);
 void OLED_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf);
 
-void OLED_DrawLineH(uint8_t xi, uint8_t yi, uint8_t width);
-void OLED_DrawLineV(uint8_t xi, uint8_t yi, uint8_t height);
+void OLED_DrawHorizontalLine(uint8_t xi, uint8_t yi, uint8_t width);
+void OLED_DrawVerticalLine(uint8_t xi, uint8_t yi, uint8_t height);
 
 #endif /* INC_OLED_SSD1306_H_ */
