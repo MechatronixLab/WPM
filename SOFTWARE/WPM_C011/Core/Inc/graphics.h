@@ -29,9 +29,13 @@ void GFX_DrawChar(uint8_t * font, uint8_t character);
 void GFX_DrawString(uint8_t * font, char * string);
 void GFX_DrawLogo(void);
 void GFX_DrawFrame(uint8_t * frame_buffer);
-void GFX_DrawLine(uint8_t xi, uint8_t yi, uint8_t xf, uint8_t yf);
 
-void GFX_DrawHorizontalLine(uint8_t xi, uint8_t yi, uint8_t width);
-void GFX_DrawVerticalLine(uint8_t xi, uint8_t yi, uint8_t height);
+void GFX_DrawHorizontalLine	(uint8_t x, uint8_t y, uint8_t dx);
+void GFX_DrawVerticalLine	(uint8_t x, uint8_t y, uint8_t dy);
+void GFX_DrawDiagonalLine	(uint8_t x, uint8_t y, uint8_t dx_dy);
+
+void GFX_DrawLine(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy);
+
+void GFX_DrawRectangle(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy);
 
 #endif /* INC_GRAPHICS_H_ */

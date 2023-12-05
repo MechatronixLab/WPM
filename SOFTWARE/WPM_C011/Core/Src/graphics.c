@@ -214,37 +214,66 @@ void GFX_DrawFrame(uint8_t * frame_buffer)
 	}
 }
 
-void GFX_DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
+void GFX_DrawHorizontalLine	(uint8_t x, uint8_t y, uint8_t dx)
+{
+	uint8_t counter = 0;
+
+	for (counter = 0; counter < dx; counter++)
+	{
+		GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+		x++;
+	}
+}
+
+void GFX_DrawVerticalLine	(uint8_t x, uint8_t y, uint8_t dy)
+{
+	uint8_t counter = 0;
+
+	for (counter = 0; counter < dy; counter++)
+	{
+		GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+		y++;
+	}
+}
+
+void GFX_DrawDiagonalLine	(uint8_t x, uint8_t y, uint8_t dx_dy)
+{
+	uint8_t counter = 0;
+
+	for (counter = 0; counter < dx_dy; counter++)
+	{
+		GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+		x++;
+		y++;
+	}
+}
+
+void GFX_DrawLine(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy)
 {
 	// Based on Bresenham algorithm. Source:
 	// http://www.phatcode.net/res/224/files/html/ch35/35-01.html
 
-	int32_t x, y, dx, dy, dy2, dy2_dx2, error;
+	int32_t dy2, dy2_dx2, error;
 
-	x = x0;
-	y = y0;
 
-	dx = (x1 - x0);
-	dy = (y1 - y0);
-
-	dy2 = 2*dy;
-	dy2_dx2 = dy2 - 2 * dx;
-	error = dy2 - dx;
-
-	if 		(dx ==  1)
+	if 		(dx ==  0)
 	{
-		GFX_DrawVerticalLine(x0, y0, dy);
+		GFX_DrawVerticalLine(x, y, dy);
 	}
-	else if (dy ==  1)
+	else if (dy ==  0)
 	{
-		GFX_DrawHorizontalLine(x0, y0, dx);
+		GFX_DrawHorizontalLine(x, y, dx);
 	}
 	else if (dx == dy)
 	{
-		// diagonal 45°
+		GFX_DrawDiagonalLine(x, y, dx);	// Diagonal (45°)
 	}
 	else if (abs(dx) >= dy)
 	{
+		dy2 = 2*dy;
+		dy2_dx2 = dy2 - 2 * dx;
+		error = dy2 - dx;
+
 		GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
 		while (x < dx)
 		{
@@ -266,24 +295,14 @@ void GFX_DrawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	GFX_DrawFrame(GFX_frame_buffer);
 }
 
-void GFX_DrawHorizontalLine(uint8_t xi, uint8_t yi, uint8_t width)
+void GFX_DrawRectangle(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy)
 {
 	uint8_t counter = 0;
 
-	for (counter = 0; counter < width; counter++)
+	for (counter = 0; counter < dy; counter++)
 	{
-		OLED_SetPixel(xi, yi);
-		xi++;
+		GFX_DrawHorizontalLine(x, (y + counter), dx);
 	}
+	GFX_DrawFrame(GFX_frame_buffer);
 }
 
-void GFX_DrawVerticalLine(uint8_t xi, uint8_t yi, uint8_t height)
-{
-	uint8_t counter = 0;
-
-	for (counter = 0; counter < height; counter++)
-	{
-		OLED_SetPixel(xi, yi);
-		yi++;
-	}
-}
