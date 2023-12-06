@@ -324,19 +324,6 @@ void GFX_DrawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1)
 	dx = x1 - x0;
 	dy = y1 - y0;
 
-//	if 		(dx ==  0)
-//	{
-//		GFX_DrawVerticalLine(x0, y0, dy);
-//	}
-//	else if (dy ==  0)
-//	{
-//		GFX_DrawHorizontalLine(x0, y0, dx);
-//	}
-//	else if (dx == dy)
-//	{
-//		GFX_DrawDiagonalLine(x0, y0, dx);	// Diagonal (45°)
-//	}
-//	else
 	if (dx > 0)
 	{
 		if (dx > dy)
