@@ -34,8 +34,14 @@ void GFX_DrawHorizontalLine	(uint8_t x, uint8_t y, uint8_t dx);
 void GFX_DrawVerticalLine	(uint8_t x, uint8_t y, uint8_t dy);
 void GFX_DrawDiagonalLine	(uint8_t x, uint8_t y, uint8_t dx_dy);
 
-void GFX_DrawLine(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy);
+void GFX_DrawLineOctant0	(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy, int8_t x_direction);
+void GFX_DrawLineOctant1	(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy, int8_t x_direction);
 
-void GFX_DrawRectangle(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy);
+void GFX_DrawLine			(int8_t x0, int8_t y0, int8_t x1, int8_t y1);
+void GFX_DrawTriangle (int8_t x0, int8_t y0, int8_t x1, int8_t y1, int8_t x2, int8_t y2);
+
+void GFX_FillRectangle(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy);
+
+
 
 #endif /* INC_GRAPHICS_H_ */

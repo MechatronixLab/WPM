@@ -248,54 +248,130 @@ void GFX_DrawDiagonalLine	(uint8_t x, uint8_t y, uint8_t dx_dy)
 	}
 }
 
-void GFX_DrawLine(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy)
+void GFX_DrawLineOctant0	(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy, int8_t x_direction)
+{
+	int32_t dy2, dy2_dx2, error;
+
+	dy2 = 2*dy;
+	dy2_dx2 = dy2 - 2 * dx;
+	error = dy2 - (int32_t) dx;
+
+	GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+	while (dx--)
+	{
+		if (error > 0)
+		{
+			y++;
+			error += dy2_dx2;
+		}
+		else
+		{
+			error += dy2;
+		}
+
+		x += x_direction;
+
+		GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+	}
+}
+
+void GFX_DrawLineOctant1	(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy, int8_t x_direction)
+{
+	int32_t dx2, dx2_dy2, error;
+
+	dx2 = 2*dx;
+	dx2_dy2 = dx2 - 2 * dy;
+	error = dx2 - (int32_t) dy;
+
+	GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+	while (dy--)
+	{
+		if (error > 0)
+		{
+			x += x_direction;
+			error += dx2_dy2;
+		}
+		else
+		{
+			error += dx2;
+		}
+
+		y++;
+
+		GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+	}
+}
+
+void GFX_DrawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1)
 {
 	// Based on Bresenham algorithm. Source:
 	// http://www.phatcode.net/res/224/files/html/ch35/35-01.html
 
-	int32_t dy2, dy2_dx2, error;
+	int8_t dx, dy;
+	int8_t swap_aux;
 
+	if (y0 > y1)
+	{
+		swap_aux = y0;
+		y0 = y1;
+		y1 = swap_aux;
 
-	if 		(dx ==  0)
-	{
-		GFX_DrawVerticalLine(x, y, dy);
+		swap_aux = x0;
+		x0 = x1;
+		x1 = swap_aux;
 	}
-	else if (dy ==  0)
-	{
-		GFX_DrawHorizontalLine(x, y, dx);
-	}
-	else if (dx == dy)
-	{
-		GFX_DrawDiagonalLine(x, y, dx);	// Diagonal (45°)
-	}
-	else if (abs(dx) >= dy)
-	{
-		dy2 = 2*dy;
-		dy2_dx2 = dy2 - 2 * dx;
-		error = dy2 - dx;
 
-		GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
-		while (x < dx)
+	dx = x1 - x0;
+	dy = y1 - y0;
+
+//	if 		(dx ==  0)
+//	{
+//		GFX_DrawVerticalLine(x0, y0, dy);
+//	}
+//	else if (dy ==  0)
+//	{
+//		GFX_DrawHorizontalLine(x0, y0, dx);
+//	}
+//	else if (dx == dy)
+//	{
+//		GFX_DrawDiagonalLine(x0, y0, dx);	// Diagonal (45°)
+//	}
+//	else
+	if (dx > 0)
+	{
+		if (dx > dy)
 		{
-			if (error > 0)
-			{
-				y++;
-				error += dy2_dx2;
-			}
-			else
-			{
-				error += dy2;
-			}
+			GFX_DrawLineOctant0(x0, y0, dx, dy, 1);
+		}
+		else
+		{
+			GFX_DrawLineOctant1(x0, y0, dx, dy, 1);
+		}
+	}
+	else
+	{
+		dx = -dx;
 
-			x++;
-
-			GFX_frame_buffer[x + 128 * (y / 8)] |= 0x01 << (y % 8);
+		if (dx > dy)
+		{
+			GFX_DrawLineOctant0(x0, y0, dx, dy, -1);
+		}
+		else
+		{
+			GFX_DrawLineOctant1(x0, y0, dx, dy, -1);
 		}
 	}
 	GFX_DrawFrame(GFX_frame_buffer);
 }
 
-void GFX_DrawRectangle(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy)
+void GFX_DrawTriangle (int8_t x0, int8_t y0, int8_t x1, int8_t y1, int8_t x2, int8_t y2)
+{
+	GFX_DrawLine(x0, y0, x1, y1);
+	GFX_DrawLine(x1, y1, x2, y2);
+	GFX_DrawLine(x2, y2, x0, y0);
+}
+
+void GFX_FillRectangle(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy)
 {
 	uint8_t counter = 0;
 

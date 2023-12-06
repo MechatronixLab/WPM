@@ -84,14 +84,39 @@ void APP_Run(void)
 //	GFX_DrawHorizontalLine(0, 2, 128);
 //	GFX_DrawVerticalLine(63, 0, 63);
 
-	GFX_DrawLine(  0,  0, 128,  0);
-	GFX_DrawLine(  0,  0,   0, 63);
-	GFX_DrawLine(127,  0,   0, 63);
-	GFX_DrawLine(  0, 63, 128,  0);
+//	GFX_DrawLine(  0,  0, 128,  0);
+//	GFX_DrawLine(  0,  0,   0, 63);
+//	GFX_DrawLine(127,  0,   0, 63);
+//	GFX_DrawLine(  0, 63, 128,  0);
+//
+//	GFX_DrawLine(  0,  0,  64, 64);
+//
+//	GFX_DrawRectangle(15, 15, (128-32), (64-32));
 
-	GFX_DrawLine(  0,  0,  64, 64);
+	GFX_ClearFrame(GFX_frame_buffer);
+	OLED_Clear();
 
-	GFX_DrawRectangle(15, 15, (128-32), (64-32));
+	GFX_DrawLine(63, 31, 127, 31);
+	GFX_DrawLine(63, 31, 127, 47);
+	GFX_DrawLine(63, 31, 127, 63);
+	GFX_DrawLine(63, 31,  95, 63);
+	GFX_DrawLine(63, 31,  63, 63);
+	GFX_DrawLine(63, 31,  31, 63);
+	GFX_DrawLine(63, 31,   0, 63);
+	GFX_DrawLine(63, 31,   0, 47);
+	GFX_DrawLine(63, 31,   0, 31);
+	GFX_DrawLine(63, 31,   0, 15);
+	GFX_DrawLine(63, 31,   0,  0);
+	GFX_DrawLine(63, 31,  31,  0);
+	GFX_DrawLine(63, 31,  63,  0);
+	GFX_DrawLine(63, 31,  95,  0);
+	GFX_DrawLine(63, 31, 127,  0);
+	GFX_DrawLine(63, 31, 127, 15);
+
+	GFX_ClearFrame(GFX_frame_buffer);
+	OLED_Clear();
+
+	GFX_DrawTriangle(24, 12, 96, 48, 32, 60);
 
 	HAL_ADCEx_Calibration_Start(&hadc1);									// Rotina de calibração do ADC
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)adc_buffer, ADC_ACTIVE_CHANNELS);	// Inicia operação do ADC com DMA para canais ativos
