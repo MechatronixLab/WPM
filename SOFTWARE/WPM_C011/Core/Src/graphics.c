@@ -304,7 +304,7 @@ void GFX_DrawLineOctant1	(uint8_t x, uint8_t y, uint8_t dx, uint8_t dy, int8_t x
 
 void GFX_DrawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1)
 {
-	// Based on Bresenham algorithm. Source:
+	// Based on Bresenham's algorithm. Source:
 	// http://www.phatcode.net/res/224/files/html/ch35/35-01.html
 
 	int8_t dx, dy;
