@@ -64,6 +64,8 @@ void	MAX30102_Reset(void);
 
 void	MAX30102_ConfigProximityDetect(void);
 
+void 	MAX30102_GetDataMulti(uint8_t * I2C_buffer);
+
 int16_t MAX30102_GetTemperature(void);
 
 int16_t MAX30102_GetPartID(void);

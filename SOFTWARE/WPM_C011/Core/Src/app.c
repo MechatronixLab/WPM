@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 
+uint32_t MAX30102_red = 0;
+uint32_t MAX30102_infra_red = 0;
 uint16_t MAX30102_temperature = 0;
 uint16_t MAX30102_id = 0;
 
@@ -27,6 +29,8 @@ int16_t  ISDS_temperature = 0;
 
 
 char 	string_buffer[128];
+
+uint8_t I2C_buffer[128];
 
 uint16_t i = 0;
 
@@ -144,8 +148,18 @@ void APP_Run(void)
 		{
 			ISDS_GetData(&ISDS_measurements);
 
+			MAX30102_GetDataMulti(I2C_buffer);
+
+			MAX30102_red 		= ((I2C_buffer[0] << 16) & 0x03)
+								  | I2C_buffer[1] <<  8
+								  | I2C_buffer[2];
+
+			MAX30102_infra_red 	= ((I2C_buffer[3] << 16) & 0x03)
+								  | I2C_buffer[4] <<  8
+							      | I2C_buffer[5];
+
 			//sprintf(string_buffer, "Angular Rate: x: %4d, y: %4d, z: %4d, Acceleration: x: %4d, y: %4d, z: %4d, Temperature: %3d.%02d oC \r\n",
-			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC \r\n",
+			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
 									ISDS_measurements.angular_rate[ISDS_X_AXIS],
 									ISDS_measurements.angular_rate[ISDS_Y_AXIS],
 									ISDS_measurements.angular_rate[ISDS_Z_AXIS],
@@ -153,7 +167,9 @@ void APP_Run(void)
 									ISDS_measurements.acceleration[ISDS_Y_AXIS],
 									ISDS_measurements.acceleration[ISDS_Z_AXIS],
 									ISDS_measurements.temperature / 100,
-								abs(ISDS_measurements.temperature % 100));
+								abs(ISDS_measurements.temperature % 100),
+									MAX30102_red,
+									MAX30102_infra_red);
 			CONSOLE_tx(string_buffer);
 
 			screen_counter++;
@@ -197,6 +213,8 @@ void APP_Run(void)
 				OLED_SetCursor(0, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 			}
+
+
 
 			flag_ADC_EOC = 0;
 		}

@@ -78,14 +78,25 @@ void	MAX30102_ConfigProximityDetect(void)
 
 	MAX30102_Write(0x0A, 0x07);	// 100Hz, 100us
 
-	MAX30102_Write(0x0C, 0xFF);	// LED1: 7 mA
-	MAX30102_Write(0x0D, 0xFF);	// LED2: 7 mA
+	MAX30102_Write(0x0C, 0x10);	// LED1: 7 mA
+	MAX30102_Write(0x0D, 0x10);	// LED2: 7 mA
 
 	MAX30102_Write(0x10, 0x24);	// Proximity LED PA
 
 	MAX30102_Write(0x11, 0x21);	// Slot 2 = IR, Slot 1 = RED
 
 	MAX30102_Write(0x30, 0x20);
+}
+
+void 	MAX30102_GetDataMulti(uint8_t * I2C_buffer)
+{
+	uint8_t fifo_write_pointer = 0;
+
+	MAX30102_Read(MAX30102_FIFO_WRITE_POINTER, 1, I2C_buffer);
+
+	fifo_write_pointer = I2C_buffer[0];
+
+	MAX30102_Read(MAX30102_FIFO_DATA, 6, I2C_buffer);
 }
 
 int16_t MAX30102_GetTemperature(void)
