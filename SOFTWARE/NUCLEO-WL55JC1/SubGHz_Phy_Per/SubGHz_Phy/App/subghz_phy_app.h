@@ -38,8 +38,8 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* MODEM type: one shall be 1 the other shall be 0 */
-#define USE_MODEM_LORA  0
-#define USE_MODEM_FSK   1
+#define USE_MODEM_LORA  1
+#define USE_MODEM_FSK   0
 
 #define RF_FREQUENCY                                869100000 /* Hz */
 
