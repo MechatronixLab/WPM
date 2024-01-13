@@ -1843,7 +1843,7 @@ static void RadioIrqProcess( void )
         if( ( RadioEvents != NULL ) && ( RadioEvents->RxTimeout != NULL ) )
         {
             RadioEvents->RxTimeout( );
-            MW_LOG( TS_ON, VLEVEL_M,  "HDR KO\r\n" );
+            MW_LOG( TS_ON, VLEVEL_M,  "HEADER ERROR!\r\n" );
         }
         break;
 
