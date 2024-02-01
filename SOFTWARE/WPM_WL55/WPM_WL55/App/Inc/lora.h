@@ -18,6 +18,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "cli.h"
+
 #define RF_FREQUENCY                                915000000	// 915 MHz
 #define TX_OUTPUT_POWER                             14        	// dBm
 #define LORA_BANDWIDTH                              2       	// Maps to const RadioLoRaBandwidths_t Bandwidths; 500 kHz
@@ -54,7 +56,7 @@ typedef struct
 extern void (*volatile eventReceptor)(pingPongFSM_t *const fsm);
 extern PacketParams_t packetParams;  // TODO: this is lazy
 
-void radioInit(void);
+void LORA_RadioInit(void);
 void RadioOnDioIrq(RadioIrqMasks_t radioIrq);
 void eventTxDone(pingPongFSM_t *const fsm);
 void eventRxDone(pingPongFSM_t *const fsm);

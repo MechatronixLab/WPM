@@ -10,13 +10,10 @@
 
 #include "main.h"
 
-
+#include "cli.h"
 #include "lora.h"
 
-
-
-
-
 void APP_Init(void);
+void APP_Run (void);
 
 #endif /* INC_APP_H_ */

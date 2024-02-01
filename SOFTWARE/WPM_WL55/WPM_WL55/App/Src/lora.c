@@ -5,6 +5,10 @@
  *      Author: Eng. André A. M. Araújo
  */
 
+// References:
+// https://forum.digikey.com/t/using-the-low-level-sub-ghz-radio-driver-for-the-stm32wl-series/18253
+// https://github.com/eewiki/stm32wl_radioDriver_pingPong/tree/main
+
 #include "lora.h"
 
 void (*volatile eventReceptor)(pingPongFSM_t *const fsm);
@@ -16,49 +20,60 @@ const RadioLoRaBandwidths_t Bandwidths[] = { LORA_BW_125, LORA_BW_250, LORA_BW_5
   * @brief  Initialize the Sub-GHz radio and dependent hardware.
   * @retval None
   */
-void radioInit(void)
+void LORA_RadioInit(void)
 {
-  // Initialize the hardware (SPI bus, TCXO control, RF switch)
-  SUBGRF_Init(RadioOnDioIrq);
+	char string_buffer[64];
 
-  // Use DCDC converter if `DCDC_ENABLE` is defined in radio_conf.h
-  // "By default, the SMPS clock detection is disabled and must be enabled before enabling the SMPS." (6.1 in RM0453)
-  SUBGRF_WriteRegister(SUBGHZ_SMPSC0R, (SUBGRF_ReadRegister(SUBGHZ_SMPSC0R) | SMPS_CLK_DET_ENABLE));
-  SUBGRF_SetRegulatorMode();
+	CLI_Write("LoRa modulation \r\n");
+	sprintf(string_buffer, "Frequency: %d MHz \r\n", RF_FREQUENCY/1000000);
+	CLI_Write(string_buffer);
+	sprintf(string_buffer, "Bandwidth: %d kHz \r\n", (1 << LORA_BANDWIDTH) * 125);
+	CLI_Write(string_buffer);
+	sprintf(string_buffer, "Spreading Factor: %d \r\n", LORA_SPREADING_FACTOR);
+	CLI_Write(string_buffer);
+	CLI_NewLine();
 
-  // Use the whole 256-byte buffer for both TX and RX
-  SUBGRF_SetBufferBaseAddress(0x00, 0x00);
+	// Initialize the hardware (SPI bus, TCXO control, RF switch)
+	SUBGRF_Init(RadioOnDioIrq);
 
-  SUBGRF_SetRfFrequency(RF_FREQUENCY);
-  SUBGRF_SetRfTxPower(TX_OUTPUT_POWER);
-  SUBGRF_SetStopRxTimerOnPreambleDetect(false);
+	// Use DCDC converter if `DCDC_ENABLE` is defined in radio_conf.h
+	// "By default, the SMPS clock detection is disabled and must be enabled before enabling the SMPS." (6.1 in RM0453)
+	SUBGRF_WriteRegister(SUBGHZ_SMPSC0R, (SUBGRF_ReadRegister(SUBGHZ_SMPSC0R) | SMPS_CLK_DET_ENABLE));
+	SUBGRF_SetRegulatorMode();
 
-  SUBGRF_SetPacketType(PACKET_TYPE_LORA);
+	// Use the whole 256-byte buffer for both TX and RX
+	SUBGRF_SetBufferBaseAddress(0x00, 0x00);
 
-  SUBGRF_WriteRegister( REG_LR_SYNCWORD, ( LORA_MAC_PRIVATE_SYNCWORD >> 8 ) & 0xFF );
-  SUBGRF_WriteRegister( REG_LR_SYNCWORD + 1, LORA_MAC_PRIVATE_SYNCWORD & 0xFF );
+	SUBGRF_SetRfFrequency(RF_FREQUENCY);
+	SUBGRF_SetRfTxPower(TX_OUTPUT_POWER);
+	SUBGRF_SetStopRxTimerOnPreambleDetect(false);
 
-  ModulationParams_t modulationParams;
-  modulationParams.PacketType = PACKET_TYPE_LORA;
-  modulationParams.Params.LoRa.Bandwidth = Bandwidths[LORA_BANDWIDTH];
-  modulationParams.Params.LoRa.CodingRate = (RadioLoRaCodingRates_t)LORA_CODINGRATE;
-  modulationParams.Params.LoRa.LowDatarateOptimize = 0x00;
-  modulationParams.Params.LoRa.SpreadingFactor = (RadioLoRaSpreadingFactors_t)LORA_SPREADING_FACTOR;
-  SUBGRF_SetModulationParams(&modulationParams);
+	SUBGRF_SetPacketType(PACKET_TYPE_LORA);
 
-  packetParams.PacketType = PACKET_TYPE_LORA;
-  packetParams.Params.LoRa.CrcMode = LORA_CRC_ON;
-  packetParams.Params.LoRa.HeaderType = LORA_PACKET_VARIABLE_LENGTH;
-  packetParams.Params.LoRa.InvertIQ = LORA_IQ_NORMAL;
-  packetParams.Params.LoRa.PayloadLength = 0xFF;
-  packetParams.Params.LoRa.PreambleLength = LORA_PREAMBLE_LENGTH;
-  SUBGRF_SetPacketParams(&packetParams);
+	SUBGRF_WriteRegister( REG_LR_SYNCWORD, ( LORA_MAC_PRIVATE_SYNCWORD >> 8 ) & 0xFF );
+	SUBGRF_WriteRegister( REG_LR_SYNCWORD + 1, LORA_MAC_PRIVATE_SYNCWORD & 0xFF );
 
-  //SUBGRF_SetLoRaSymbNumTimeout(LORA_SYMBOL_TIMEOUT);
+	ModulationParams_t modulationParams;
+	modulationParams.PacketType = PACKET_TYPE_LORA;
+	modulationParams.Params.LoRa.Bandwidth = Bandwidths[LORA_BANDWIDTH];
+	modulationParams.Params.LoRa.CodingRate = (RadioLoRaCodingRates_t)LORA_CODINGRATE;
+	modulationParams.Params.LoRa.LowDatarateOptimize = 0x00;
+	modulationParams.Params.LoRa.SpreadingFactor = (RadioLoRaSpreadingFactors_t)LORA_SPREADING_FACTOR;
+	SUBGRF_SetModulationParams(&modulationParams);
 
-  // WORKAROUND - Optimizing the Inverted IQ Operation, see DS_SX1261-2_V1.2 datasheet chapter 15.4
-  // RegIqPolaritySetup @address 0x0736
-  SUBGRF_WriteRegister( 0x0736, SUBGRF_ReadRegister( 0x0736 ) | ( 1 << 2 ) );
+	packetParams.PacketType = PACKET_TYPE_LORA;
+	packetParams.Params.LoRa.CrcMode = LORA_CRC_ON;
+	packetParams.Params.LoRa.HeaderType = LORA_PACKET_VARIABLE_LENGTH;
+	packetParams.Params.LoRa.InvertIQ = LORA_IQ_NORMAL;
+	packetParams.Params.LoRa.PayloadLength = 0xFF;
+	packetParams.Params.LoRa.PreambleLength = LORA_PREAMBLE_LENGTH;
+	SUBGRF_SetPacketParams(&packetParams);
+
+	//SUBGRF_SetLoRaSymbNumTimeout(LORA_SYMBOL_TIMEOUT);
+
+	// WORKAROUND - Optimizing the Inverted IQ Operation, see DS_SX1261-2_V1.2 datasheet chapter 15.4
+	// RegIqPolaritySetup @address 0x0736
+	SUBGRF_WriteRegister( 0x0736, SUBGRF_ReadRegister( 0x0736 ) | ( 1 << 2 ) );
 }
 
 
