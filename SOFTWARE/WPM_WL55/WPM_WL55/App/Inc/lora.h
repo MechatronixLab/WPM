@@ -20,13 +20,13 @@
 
 #include "cli.h"
 
-#define RF_FREQUENCY                                915000000	// 915 MHz
-#define TX_OUTPUT_POWER                             14        	// dBm
-#define LORA_BANDWIDTH                              2       	// Maps to const RadioLoRaBandwidths_t Bandwidths; 500 kHz
-#define LORA_SPREADING_FACTOR                       11			// SF
-#define LORA_CODINGRATE                             1			// 4/5
-#define LORA_PREAMBLE_LENGTH                        8         	/* Same for Tx and Rx */
-#define LORA_SYMBOL_TIMEOUT                         5         	/* Symbols */
+#define LORA_RF_FREQUENCY		915000000	// 915 MHz
+#define LORA_TX_POWER         	14	      	// dBm
+#define LORA_BANDWIDTH      	2      		// Maps to const RadioLoRaBandwidths_t Bandwidths; 500 kHz
+#define LORA_SPREADING_FACTOR 	11			// SF
+#define LORA_CODINGRATE       	1			// 4/5
+#define LORA_PREAMBLE_LENGTH  	8     	  	// Same for Tx and Rx
+#define LORA_SYMBOL_TIMEOUT    	5      	 	// Symbols
 
 typedef enum
 {
@@ -53,11 +53,8 @@ typedef struct
   uint8_t rxSize;
 } pingPongFSM_t;
 
-extern void (*volatile eventReceptor)(pingPongFSM_t *const fsm);
-extern PacketParams_t packetParams;  // TODO: this is lazy
-
 void LORA_RadioInit(void);
-void RadioOnDioIrq(RadioIrqMasks_t radioIrq);
+void LORA_RadioIRQ(RadioIrqMasks_t radioIrq);
 void eventTxDone(pingPongFSM_t *const fsm);
 void eventRxDone(pingPongFSM_t *const fsm);
 void eventTxTimeout(pingPongFSM_t *const fsm);
@@ -68,5 +65,10 @@ void enterSlaveRx(pingPongFSM_t *const fsm);
 void enterMasterTx(pingPongFSM_t *const fsm);
 void enterSlaveTx(pingPongFSM_t *const fsm);
 void transitionRxDone(pingPongFSM_t *const fsm);
+
+void LORA_FSM_Init(void);
+void LORA_Process(void);
+
+void LORA_Tx(char * lora_tx_buffer);
 
 #endif /* INC_LORA_H_ */

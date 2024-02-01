@@ -14,6 +14,9 @@
 void (*volatile eventReceptor)(pingPongFSM_t *const fsm);
 PacketParams_t packetParams;  // TODO: this is lazy
 
+static pingPongFSM_t fsm;
+static char uartBuff[100];
+
 const RadioLoRaBandwidths_t Bandwidths[] = { LORA_BW_125, LORA_BW_250, LORA_BW_500 };
 
 /**
@@ -25,7 +28,7 @@ void LORA_RadioInit(void)
 	char string_buffer[64];
 
 	CLI_Write("LoRa modulation \r\n");
-	sprintf(string_buffer, "Frequency: %d MHz \r\n", RF_FREQUENCY/1000000);
+	sprintf(string_buffer, "Frequency: %d MHz \r\n", LORA_RF_FREQUENCY/1000000);
 	CLI_Write(string_buffer);
 	sprintf(string_buffer, "Bandwidth: %d kHz \r\n", (1 << LORA_BANDWIDTH) * 125);
 	CLI_Write(string_buffer);
@@ -34,7 +37,7 @@ void LORA_RadioInit(void)
 	CLI_NewLine();
 
 	// Initialize the hardware (SPI bus, TCXO control, RF switch)
-	SUBGRF_Init(RadioOnDioIrq);
+	SUBGRF_Init(LORA_RadioIRQ);
 
 	// Use DCDC converter if `DCDC_ENABLE` is defined in radio_conf.h
 	// "By default, the SMPS clock detection is disabled and must be enabled before enabling the SMPS." (6.1 in RM0453)
@@ -44,8 +47,8 @@ void LORA_RadioInit(void)
 	// Use the whole 256-byte buffer for both TX and RX
 	SUBGRF_SetBufferBaseAddress(0x00, 0x00);
 
-	SUBGRF_SetRfFrequency(RF_FREQUENCY);
-	SUBGRF_SetRfTxPower(TX_OUTPUT_POWER);
+	SUBGRF_SetRfFrequency(LORA_RF_FREQUENCY);
+	SUBGRF_SetRfTxPower(LORA_TX_POWER);
 	SUBGRF_SetStopRxTimerOnPreambleDetect(false);
 
 	SUBGRF_SetPacketType(PACKET_TYPE_LORA);
@@ -82,7 +85,7 @@ void LORA_RadioInit(void)
   * @param  radioIrq  interrupt pending status information
   * @retval None
   */
-void RadioOnDioIrq(RadioIrqMasks_t radioIrq)
+void LORA_RadioIRQ(RadioIrqMasks_t radioIrq)
 {
   switch (radioIrq)
   {
@@ -441,4 +444,69 @@ void transitionRxDone(pingPongFSM_t *const fsm)
 
   sprintf(uartBuff, "RssiValue=%d dBm, SnrValue=%d Hz\r\n", packetStatus.Params.LoRa.RssiPkt, packetStatus.Params.LoRa.SnrPkt);
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
+}
+
+
+
+
+
+void LORA_FSM_Init(void)
+{
+	// get random number
+	uint32_t rnd = 0;
+	SUBGRF_SetDioIrqParams(IRQ_RADIO_NONE, IRQ_RADIO_NONE, IRQ_RADIO_NONE, IRQ_RADIO_NONE);
+	rnd = SUBGRF_GetRandom();
+
+	fsm.state = STATE_NULL;
+	fsm.subState = SSTATE_NULL;
+	fsm.rxTimeout = 3000; // 3000 ms
+	fsm.rxMargin = 200;   // 200 ms
+	fsm.randomDelay = rnd >> 22; // [0, 1023] ms
+	sprintf(uartBuff, "rand=%lu\r\n", fsm.randomDelay);
+	HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
+
+	HAL_Delay(fsm.randomDelay);
+	SUBGRF_SetDioIrqParams( IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR,
+						  IRQ_RX_DONE | IRQ_RX_TX_TIMEOUT | IRQ_CRC_ERROR,
+						  IRQ_RADIO_NONE,
+						  IRQ_RADIO_NONE );
+	SUBGRF_SetSwitch(RFO_LP, RFSWITCH_RX);
+	SUBGRF_SetRx(fsm.rxTimeout << 6);
+	fsm.state = STATE_MASTER;
+	fsm.subState = SSTATE_RX;
+
+	LORA_Tx("LoRa config complete!");	// TODO: Works but breaks state machine
+}
+
+void LORA_Process(void)
+{
+	if (eventReceptor != NULL)
+	{
+		BSP_LED_On(LED_GREEN);
+
+		eventReceptor(&fsm);
+		eventReceptor = NULL;
+
+		BSP_LED_Off(LED_GREEN);
+	}
+}
+
+void LORA_Tx(char * lora_tx_buffer)
+{
+//	HAL_Delay(fsm->rxMargin);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)"...PING\r\n", 9, HAL_MAX_DELAY);
+//	HAL_UART_Transmit(&huart2, (uint8_t *)"Master Tx start\r\n", 17, HAL_MAX_DELAY);
+
+	CLI_Write("Starting LoRa transmission... \r\n");
+	SUBGRF_SetDioIrqParams( IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
+						  IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
+						  IRQ_RADIO_NONE,
+						  IRQ_RADIO_NONE );
+	SUBGRF_SetSwitch(RFO_LP, RFSWITCH_TX);
+	// Workaround 5.1 in DS.SX1261-2.W.APP (before each packet transmission)
+	SUBGRF_WriteRegister(0x0889, (SUBGRF_ReadRegister(0x0889) | 0x04));
+	packetParams.Params.LoRa.PayloadLength = strlen(lora_tx_buffer);
+	SUBGRF_SetPacketParams(&packetParams);
+	SUBGRF_SendPayload((uint8_t *)lora_tx_buffer, packetParams.Params.LoRa.PayloadLength, 0);
+	CLI_Write("LoRa packet transmitted \r\n");
 }
