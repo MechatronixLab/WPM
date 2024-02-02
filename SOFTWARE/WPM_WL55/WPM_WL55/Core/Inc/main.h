@@ -73,6 +73,8 @@ void Error_Handler(void);
 #define B1_GPIO_Port GPIOA
 #define FE_CTRL2_Pin GPIO_PIN_5
 #define FE_CTRL2_GPIO_Port GPIOC
+#define OLED_RESET_Pin GPIO_PIN_1
+#define OLED_RESET_GPIO_Port GPIOB
 #define FE_CTRL1_Pin GPIO_PIN_4
 #define FE_CTRL1_GPIO_Port GPIOC
 #define B3_Pin GPIO_PIN_6

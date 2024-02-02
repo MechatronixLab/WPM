@@ -2,6 +2,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "subghz.h"
 #include "usart.h"
 #include "gpio.h"
@@ -66,6 +67,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_SUBGHZ_Init();
+  MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
 
   APP_Init();

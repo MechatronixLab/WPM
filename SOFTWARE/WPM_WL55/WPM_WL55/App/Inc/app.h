@@ -12,6 +12,8 @@
 
 #include "cli.h"
 #include "lora.h"
+#include "graphics.h"
+#include "oled_ssd1306.h"
 
 void APP_Init(void);
 void APP_Run (void);
