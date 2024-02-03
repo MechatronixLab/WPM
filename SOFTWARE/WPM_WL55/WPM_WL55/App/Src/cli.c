@@ -9,7 +9,8 @@
 
 void CLI_Write(char * buffer)
 {
-	HAL_UART_Transmit(&huart2, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
+	HAL_UART_Transmit(&CLI_UART_HANDLE,
+			(uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
 }
 
 void CLI_NewLine(void)

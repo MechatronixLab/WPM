@@ -7,6 +7,8 @@
 
 #include "isr.h"
 
+uint8_t	ISR_interrupt_flag = 0;
+
 void ISR_StartInterruptTimer(void)
 {
 	HAL_TIM_Base_Start_IT(&htim16);
@@ -14,5 +16,6 @@ void ISR_StartInterruptTimer(void)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	BSP_LED_Toggle(LED_RED);
+	// Flag for interrupt routines to be handled in the main loop: APP_Run();
+	ISR_interrupt_flag = 1;
 }

@@ -11,11 +11,9 @@
 #include "gpio.h"
 #include "i2c.h"
 
-#define SSD1306_I2C_HANDLE			hi2c3
-
-#define SSD1306_DEVICE_ADDRESS	   (0x3C << 1)
-
-#define SSD1306_I2C_TIMEOUT			  50
+#define SSD1306_I2C_HANDLE			hi2c3	// Change here if using other I2C
+#define SSD1306_DEVICE_ADDRESS		0x78	// (0x3C << 1)
+#define SSD1306_I2C_TIMEOUT			50
 
 #define SSD1306_REGISTER_COMMAND	0x80
 #define SSD1306_REGISTER_DATA		0x40

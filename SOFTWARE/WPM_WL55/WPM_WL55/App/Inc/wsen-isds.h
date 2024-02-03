@@ -2,7 +2,7 @@
  * wsen-isds.h
  *
  *  Created on: Nov 24, 2023
- *      Author: Andre
+ *      Author: Eng. André A. M. Araújo
  */
 
 #ifndef INC_WSEN_ISDS_H_
@@ -10,8 +10,8 @@
 
 #include "i2c.h"
 
-#define ISDS_I2C_HANDLE			hi2c3
-#define ISDS_DEVICE_ADDRESS		(0x6B << 1)
+#define ISDS_I2C_HANDLE		hi2c3	// Change here if using other I2C
+#define ISDS_DEVICE_ADDRESS	0xD6	// 0x6B << 1
 
 #define ISDS_I2C_TIMEOUT		50U
 
@@ -96,10 +96,6 @@ typedef struct
 } ISDS_data_t;
 
 extern ISDS_data_t ISDS_measurements;
-
-
-
-
 
 uint8_t ISDS_CommunicationCheck(void);
 

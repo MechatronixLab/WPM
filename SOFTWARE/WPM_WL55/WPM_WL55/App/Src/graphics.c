@@ -2,7 +2,7 @@
  * graphics.c
  *
  *  Created on: Feb 2, 2024
- *      Author: Andre
+ *      Author: Eng. André A. M. Araújo
  */
 
 #include "graphics.h"

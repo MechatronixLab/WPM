@@ -2,7 +2,7 @@
  * wsen-isds.c
  *
  *  Created on: Nov 24, 2023
- *      Author: Andre
+ *      Author: Eng. André A. M. Araújo
  */
 
 #include "wsen-isds.h"

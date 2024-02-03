@@ -7,20 +7,25 @@
 
 #include "app.h"
 
-extern UART_HandleTypeDef huart2;
-
-
-
 void APP_Init(void)
 {
 	uint8_t 	i = 0;
 	uint16_t	dt = 100;
 
+	char string_buffer[64];
+
+	sprintf(string_buffer,
+			  "| Version: %d.%d.%d                        | \r\n",
+			     V_MAJOR, V_MINOR, V_PATCH);
+
 	CLI_NewLine();
-	CLI_Write("------------------------ \r\n");
-	CLI_Write("Wearable Patient Monitor \r\n");
-	CLI_Write("Version: 0.0.1 \r\n");
-	CLI_Write("------------------------ \r\n");
+	CLI_Write(" ---------------------------------------  \r\n");
+	CLI_Write("| Wearable Patient Monitor              | \r\n");
+	CLI_Write(string_buffer);										// Version
+	CLI_Write("| Developed by Eng. Andre A. M. Araujo  | \r\n");
+	CLI_Write("| https://github.com/MechatronixLab/WPM | \r\n");
+	CLI_Write(" ---------------------------------------  \r\n");
+
 	CLI_NewLine();
 
 	OLED_Init();
@@ -43,6 +48,15 @@ void APP_Init(void)
 	LORA_RadioInit();
 	LORA_FSM_Init();
 
+	if(ISDS_CommunicationCheck() == 0)
+	{
+		ISDS_SoftReset();
+		ISDS_Init();
+	}
+
+	MAX30102_Reset();
+	MAX30102_ConfigProximityDetect();
+
 	ISR_StartInterruptTimer();
 
 	APP_Run();
@@ -53,21 +67,48 @@ void APP_Run(void)
 	uint32_t counter = 0;
 	char string_buffer[64];
 
+	uint16_t MAX30102_temperature = 0;
+	uint32_t MAX30102_red = 0;
+	uint32_t MAX30102_infra_red = 0;
+	uint8_t  MAX30102_buffer[128];
+
 	while(1)
 	{	//LORA_Process();
-		BSP_LED_On(LED_BLUE);
-
-		sprintf(string_buffer, "TX: %lu", counter);
-
-		LORA_Tx(string_buffer);
-
-		OLED_SetCursor(66, 2);
-		GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
-
+		BSP_LED_Toggle(LED_BLUE);
 		HAL_Delay(250);
-		BSP_LED_Off(LED_BLUE);
-		HAL_Delay(750);
 
-		counter++;
+		if (ISR_interrupt_flag)
+		{
+			ISR_interrupt_flag = 0;
+
+			ISDS_GetData(&ISDS_measurements);
+
+			sprintf(string_buffer, "%3d.%02d oC",
+									ISDS_measurements.temperature / 100,
+								abs(ISDS_measurements.temperature % 100));
+			OLED_SetCursor(66, 2);
+			GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+			MAX30102_GetDataMulti(MAX30102_buffer);
+			MAX30102_red 		= ((MAX30102_buffer[0] << 16) & 0x03)
+								  | MAX30102_buffer[1] <<  8
+								  | MAX30102_buffer[2];
+
+			MAX30102_infra_red 	= ((MAX30102_buffer[3] << 16) & 0x03)
+								  | MAX30102_buffer[4] <<  8
+								  | MAX30102_buffer[5];
+			MAX30102_temperature = MAX30102_GetTemperature();
+			sprintf(string_buffer, "%3d oC", MAX30102_temperature);
+			OLED_SetCursor(66, 3);
+			GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+			sprintf(string_buffer, "TX: %lu", counter);
+			LORA_Tx(string_buffer);
+
+			OLED_SetCursor(66, 7);
+			GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+			counter++;
+		}
 	}
 }

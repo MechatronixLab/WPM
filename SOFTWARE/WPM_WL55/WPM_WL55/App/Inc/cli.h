@@ -12,7 +12,9 @@
 
 #include <string.h>
 
-extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef 	huart2;
+
+#define CLI_UART_HANDLE		huart2		// Change here if using other UART
 
 void CLI_Write(char * buffer);
 void CLI_NewLine(void);
