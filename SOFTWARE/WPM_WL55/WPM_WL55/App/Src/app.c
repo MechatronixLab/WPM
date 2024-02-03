@@ -43,6 +43,8 @@ void APP_Init(void)
 	LORA_RadioInit();
 	LORA_FSM_Init();
 
+	ISR_StartInterruptTimer();
+
 	APP_Run();
 }
 

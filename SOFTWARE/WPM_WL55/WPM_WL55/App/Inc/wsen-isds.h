@@ -10,6 +10,7 @@
 
 #include "i2c.h"
 
+#define ISDS_I2C_HANDLE			hi2c3
 #define ISDS_DEVICE_ADDRESS		(0x6B << 1)
 
 #define ISDS_I2C_TIMEOUT		50U

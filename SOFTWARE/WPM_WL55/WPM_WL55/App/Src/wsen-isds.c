@@ -16,8 +16,8 @@ uint8_t ISDS_CommunicationCheck(void)
 
 	I2C_buffer[0] = ISDS_DEVICE_ID;
 
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Receive (&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
 
 	if (I2C_buffer[0] == 0x6A)
 	{
@@ -38,14 +38,14 @@ uint8_t	ISDS_SoftReset(void)
 	I2C_buffer[0] = ISDS_CTRL3_C;
 	I2C_buffer[1] = 0x01;
 
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
 
 	HAL_Delay(1);
 
 	I2C_buffer[0] = ISDS_CTRL3_C;
 	I2C_buffer[1] = 0x80;
 
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
 
 	HAL_Delay(20);
 
@@ -61,11 +61,11 @@ void	ISDS_Init(void)
 	// Select output data rate 208 Hz
 	I2C_buffer[0] = ISDS_CTRL1_XL;
 	I2C_buffer[1] = 0x54;
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
 
 	I2C_buffer[0] = ISDS_CTRL2_G;
 	I2C_buffer[1] = 0x5C;
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
 
 //	I2C_buffer[0] = ISDS_CTRL6_C;
 //	I2C_buffer[1] = 0x8;
@@ -79,7 +79,7 @@ void	ISDS_Init(void)
 	// Enable automatic address increment
 	I2C_buffer[0] = ISDS_CTRL3_C;
 	I2C_buffer[1] = 0x04;
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
 //
 //	// Select bandwidth: ODR/2 Hz
 //	// Select full scale: +/- 16 g, +/- 2000 dps
@@ -102,8 +102,8 @@ void	ISDS_Init(void)
 	// Read XLDA and GDA bit in status register
 	I2C_buffer[0] = ISDS_STATUS_REG;
 
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Receive (&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
 
 	// If XLDA and GDA == 0, no data
 
@@ -130,8 +130,8 @@ int16_t	ISDS_GetTemperature(void)
 
 	I2C_buffer[0] = ISDS_T_OUT_L;
 
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Receive (&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 2, ISDS_I2C_TIMEOUT);
 
 	temperature = (int16_t) ( (I2C_buffer[1] << 8)  + I2C_buffer[0] );
 	//temperature = (int16_t) ((float) temperature * 0.390625f + 25.0f);
@@ -145,8 +145,8 @@ void 	ISDS_GetData(ISDS_data_t * measurements)
 
 	I2C_buffer[0] = ISDS_T_OUT_L;
 
-	HAL_I2C_Master_Transmit(&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
-	HAL_I2C_Master_Receive (&hi2c1, ISDS_DEVICE_ADDRESS, I2C_buffer, 14, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 1, ISDS_I2C_TIMEOUT);
+	HAL_I2C_Master_Receive (&ISDS_I2C_HANDLE, ISDS_DEVICE_ADDRESS, I2C_buffer, 14, ISDS_I2C_TIMEOUT);
 
 	measurements->temperature 				= (int16_t) ((I2C_buffer[ 1] << 8) | I2C_buffer[ 0]) * 391 / 1000;
 	//measurements->temperature = (int16_t) ((float) measurements->temperature * 0.390625f + 25.0f);

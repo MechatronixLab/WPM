@@ -15,7 +15,7 @@ void OLED_SendCommand(uint8_t command)
 
 	I2C_buffer[0] = SSD1306_REGISTER_COMMAND;
 	I2C_buffer[1] = command;
-	HAL_I2C_Master_Transmit(&hi2c3, SSD1306_DEVICE_ADDRESS, I2C_buffer, 2, SSD1306_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&SSD1306_I2C_HANDLE, SSD1306_DEVICE_ADDRESS, I2C_buffer, 2, SSD1306_I2C_TIMEOUT);
 }
 
 void OLED_SendData(uint8_t data)
@@ -24,7 +24,7 @@ void OLED_SendData(uint8_t data)
 
 	I2C_buffer[0] = SSD1306_REGISTER_DATA;
 	I2C_buffer[1] = data;
-	HAL_I2C_Master_Transmit(&hi2c3, SSD1306_DEVICE_ADDRESS, I2C_buffer, 2, SSD1306_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(&SSD1306_I2C_HANDLE, SSD1306_DEVICE_ADDRESS, I2C_buffer, 2, SSD1306_I2C_TIMEOUT);
 }
 
 void OLED_SetCursor(uint8_t x, uint8_t page)

@@ -12,8 +12,10 @@
 
 #include "cli.h"
 #include "lora.h"
+#include "isr.h"
 #include "graphics.h"
 #include "oled_ssd1306.h"
+#include "wsen-isds.h"
 
 void APP_Init(void);
 void APP_Run (void);
