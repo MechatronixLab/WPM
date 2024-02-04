@@ -5,6 +5,10 @@
  *      Author: Eng. André A. M. Araújo
  */
 
+// Datasheet:
+// we-online.com/components/products/manual/
+//	2536030320001_Manual_UM_WSEN-ISDS_2536030320001_rev1.2.pdf
+
 #ifndef INC_WSEN_ISDS_H_
 #define INC_WSEN_ISDS_H_
 
@@ -96,6 +100,9 @@ typedef struct
 } ISDS_data_t;
 
 extern ISDS_data_t ISDS_measurements;
+
+void	ISDS_Read  	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);
+void	ISDS_Write 	(uint8_t register_address, uint8_t data);
 
 uint8_t ISDS_CommunicationCheck(void);
 

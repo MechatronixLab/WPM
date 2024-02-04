@@ -16,7 +16,7 @@
 #include "i2c.h"
 
 #define MAX3010_I2C_HANDLE		hi2c3	// Change here if using other I2C
-#define MAX30102_DEVICE_ADDRESS	0xAE	// I2C device address
+#define MAX30102_DEVICE_ADDRESS	0xAE	// 0x57 << 1
 #define MAX30102_I2C_TIMEOUT	50
 
 // Register Maps

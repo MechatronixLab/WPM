@@ -25,7 +25,6 @@ void APP_Init(void)
 	CLI_Write("| Developed by Eng. Andre A. M. Araujo  | \r\n");
 	CLI_Write("| https://github.com/MechatronixLab/WPM | \r\n");
 	CLI_Write(" ---------------------------------------  \r\n");
-
 	CLI_NewLine();
 
 	OLED_Init();
@@ -53,6 +52,10 @@ void APP_Init(void)
 		ISDS_SoftReset();
 		ISDS_Init();
 	}
+	else
+	{
+		CLI_Write("Error communicating with IMU! \r\n");
+	}
 
 	MAX30102_Reset();
 	MAX30102_ConfigProximityDetect();
@@ -64,51 +67,68 @@ void APP_Init(void)
 
 void APP_Run(void)
 {
-	uint32_t counter = 0;
+	uint32_t LORA_TX_counter = 0;
+	uint8_t	 interrupt_counter = 0;
 	char string_buffer[64];
 
 	uint16_t MAX30102_temperature = 0;
 	uint32_t MAX30102_red = 0;
-	uint32_t MAX30102_infra_red = 0;
+	uint32_t MAX30102_infrared = 0;
 	uint8_t  MAX30102_buffer[128];
+
+	int16_t	ISDS_temperature = 0;
 
 	while(1)
 	{	//LORA_Process();
-		BSP_LED_Toggle(LED_BLUE);
-		HAL_Delay(250);
-
 		if (ISR_interrupt_flag)
 		{
 			ISR_interrupt_flag = 0;
+			interrupt_counter++;
 
 			ISDS_GetData(&ISDS_measurements);
 
-			sprintf(string_buffer, "%3d.%02d oC",
-									ISDS_measurements.temperature / 100,
-								abs(ISDS_measurements.temperature % 100));
-			OLED_SetCursor(66, 2);
-			GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
-
 			MAX30102_GetDataMulti(MAX30102_buffer);
-			MAX30102_red 		= ((MAX30102_buffer[0] << 16) & 0x03)
-								  | MAX30102_buffer[1] <<  8
-								  | MAX30102_buffer[2];
 
-			MAX30102_infra_red 	= ((MAX30102_buffer[3] << 16) & 0x03)
-								  | MAX30102_buffer[4] <<  8
-								  | MAX30102_buffer[5];
-			MAX30102_temperature = MAX30102_GetTemperature();
-			sprintf(string_buffer, "%3d oC", MAX30102_temperature);
-			OLED_SetCursor(66, 3);
-			GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+			MAX30102_red 	  = ((MAX30102_buffer[0] << 16) & 0x03)	// 18-bit
+							    | MAX30102_buffer[1] <<  8
+							    | MAX30102_buffer[2];
 
-			sprintf(string_buffer, "TX: %lu", counter);
-			LORA_Tx(string_buffer);
+			MAX30102_infrared = ((MAX30102_buffer[3] << 16) & 0x03)	// 18-bit
+							    | MAX30102_buffer[4] <<  8
+							    | MAX30102_buffer[5];
 
-			OLED_SetCursor(66, 7);
-			GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+			if (interrupt_counter == 100)
+			{
+				BSP_LED_On(LED_GREEN);
 
-			counter++;
+				interrupt_counter = 0;
+
+//				sprintf(string_buffer, "%3d.%02d oC",
+//										ISDS_measurements.temperature / 100,
+//									abs(ISDS_measurements.temperature % 100));
+
+				ISDS_temperature = ISDS_GetTemperature();
+				sprintf(string_buffer, "%3d.%02d oC",
+										ISDS_temperature / 100,
+									abs(ISDS_temperature % 100));
+				OLED_SetCursor(66, 2);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+				MAX30102_temperature = MAX30102_GetTemperature();	// Takes 30ms
+				sprintf(string_buffer, "%3d oC", MAX30102_temperature);
+				OLED_SetCursor(66, 3);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+				sprintf(string_buffer, "TX: %lu", LORA_TX_counter);
+				LORA_Tx(string_buffer);
+
+				OLED_SetCursor(66, 7);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+				LORA_TX_counter++;
+
+				BSP_LED_Off(LED_GREEN);
+			}
 		}
 	}
 }

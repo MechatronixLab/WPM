@@ -22,6 +22,8 @@
 
 /* USER CODE BEGIN 0 */
 
+#include "isr.h"
+
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim1;
@@ -106,9 +108,9 @@ void MX_TIM16_Init(void)
 
   /* USER CODE END TIM16_Init 1 */
   htim16.Instance = TIM16;
-  htim16.Init.Prescaler = (48000 - 1);
+  htim16.Init.Prescaler = TIM16_PSC;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = (1000 - 1);
+  htim16.Init.Period = TIM16_ARR;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim16.Init.RepetitionCounter = 0;
   htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
