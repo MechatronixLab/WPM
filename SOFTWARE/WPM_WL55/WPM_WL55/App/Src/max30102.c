@@ -68,8 +68,8 @@ void	MAX30102_ConfigProximityDetect(void)
 
 	MAX30102_Write(0x0A, 0x77);	// RGE 16384 nA, 100 Hz, 410.75 us (18-bit res.)
 
-	MAX30102_Write(0x0C, 80);	// LED1: 25.0 mA
-	MAX30102_Write(0x0D, 80);	// LED2: 25.0 mA
+	MAX30102_Write(0x0C, 100);	// LED1: 10.0 mA
+	MAX30102_Write(0x0D, 100);	// LED2: 10.0 mA
 
 	MAX30102_Write(0x10, 0x24);	// Proximity LED PA
 
