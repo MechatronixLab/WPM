@@ -5,17 +5,9 @@
  *      Author: André A. M. Araújo
  */
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #include "max30102.h"
-
-//void	MAX30102_ReadRegister(uint8_t register_address, uint8_t * I2C_buffer)
-//{
-//	I2C_buffer[0] = register_address;
-//
-//	HAL_I2C_Master_Transmit(&hi2c1, MAX30102_DEVICE_ADDRESS, I2C_buffer, 1, MAX30102_I2C_TIMEOUT);
-//	HAL_I2C_Master_Receive (&hi2c1, MAX30102_DEVICE_ADDRESS, I2C_buffer, 1, MAX30102_I2C_TIMEOUT);
-//}
 
 void	MAX30102_Read	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer)
 {
@@ -74,10 +66,10 @@ void	MAX30102_ConfigProximityDetect(void)
 
 	MAX30102_Write(0x09, 0x07);	// Multi LED mode
 
-	MAX30102_Write(0x0A, 0x47);	// 100Hz, 100us	(TODO: Maybe increase RGE?)
+	MAX30102_Write(0x0A, 0x77);	// RGE 16384 nA, 100 Hz, 410.75 us (18-bit res.)
 
-	MAX30102_Write(0x0C, 0x3F);	// LED1: 7 mA
-	MAX30102_Write(0x0D, 0x3F);	// LED2: 7 mA
+	MAX30102_Write(0x0C, 80);	// LED1: 25.0 mA
+	MAX30102_Write(0x0D, 80);	// LED2: 25.0 mA
 
 	MAX30102_Write(0x10, 0x24);	// Proximity LED PA
 
@@ -88,11 +80,11 @@ void	MAX30102_ConfigProximityDetect(void)
 
 void 	MAX30102_GetDataMulti(uint8_t * I2C_buffer)
 {
-	uint8_t fifo_write_pointer = 0;
+//	uint8_t fifo_write_pointer = 0;
 
 	MAX30102_Read(MAX30102_FIFO_WRITE_POINTER, 1, I2C_buffer);
 
-	fifo_write_pointer = I2C_buffer[0];
+//	fifo_write_pointer = I2C_buffer[0];
 
 	MAX30102_Read(MAX30102_FIFO_DATA, 6, I2C_buffer);
 }
