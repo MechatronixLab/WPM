@@ -63,8 +63,6 @@ void	MAX30102_Reset(void)
 //   max3010x-ev-kits-recommended-configurations-and-operating-profiles.pdf
 void	MAX30102_ConfigProximityDetect(void)
 {
-	//uint8_t I2C_buffer[2];
-
 	MAX30102_Write(MAX30102_INTERRUPT_STATUS_3, 0xD0);	// Enable PPG_RDY and PROX_INT
 
 	MAX30102_Write(0x03, 0x00);
@@ -76,10 +74,10 @@ void	MAX30102_ConfigProximityDetect(void)
 
 	MAX30102_Write(0x09, 0x07);	// Multi LED mode
 
-	MAX30102_Write(0x0A, 0x07);	// 100Hz, 100us
+	MAX30102_Write(0x0A, 0x47);	// 100Hz, 100us	(TODO: Maybe increase RGE?)
 
-	MAX30102_Write(0x0C, 0x10);	// LED1: 7 mA
-	MAX30102_Write(0x0D, 0x10);	// LED2: 7 mA
+	MAX30102_Write(0x0C, 0x3F);	// LED1: 7 mA
+	MAX30102_Write(0x0D, 0x3F);	// LED2: 7 mA
 
 	MAX30102_Write(0x10, 0x24);	// Proximity LED PA
 

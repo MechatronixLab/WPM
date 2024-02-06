@@ -5,13 +5,11 @@
  *      Author: André A. M. Araújo
  */
 
-#ifndef INC_MAX30102_H_
-#define INC_MAX30102_H_
-
-///////////////////////////////////////////////////////////////////////////////
-
 // Device datasheet:
 // analog.com/media/en/technical-documentation/data-sheets/MAX30102.pdf
+
+#ifndef INC_MAX30102_H_
+#define INC_MAX30102_H_
 
 #include "i2c.h"
 
@@ -55,7 +53,6 @@
 #define MAX30102_REVISION_ID				0xFE
 #define MAX30102_PART_ID					0xFF		// 0x15
 
-//void	MAX30102_ReadRegister  (uint8_t register_address, uint8_t * I2C_buffer);
 void	MAX30102_Read  	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);
 void	MAX30102_Write 	(uint8_t register_address, uint8_t data);
 void	MAX30102_Update	(uint8_t register_address, uint8_t mask, uint8_t data);

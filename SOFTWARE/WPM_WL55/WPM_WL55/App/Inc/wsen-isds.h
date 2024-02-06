@@ -5,7 +5,7 @@
  *      Author: Eng. André A. M. Araújo
  */
 
-// Datasheet:
+// Device datasheet:
 // we-online.com/components/products/manual/
 //	2536030320001_Manual_UM_WSEN-ISDS_2536030320001_rev1.2.pdf
 

@@ -69,7 +69,7 @@ void APP_Run(void)
 {
 	uint32_t LORA_TX_counter = 0;
 	uint8_t	 interrupt_counter = 0;
-	char string_buffer[64];
+	char string_buffer[128];
 
 	uint16_t MAX30102_temperature = 0;
 	uint32_t MAX30102_red = 0;
@@ -89,13 +89,26 @@ void APP_Run(void)
 
 			MAX30102_GetDataMulti(MAX30102_buffer);
 
-			MAX30102_red 	  = ((MAX30102_buffer[0] << 16) & 0x03)	// 18-bit
+			MAX30102_red 	  = ((MAX30102_buffer[0] & 0x03) << 16)	// 18-bit
 							    | MAX30102_buffer[1] <<  8
 							    | MAX30102_buffer[2];
 
-			MAX30102_infrared = ((MAX30102_buffer[3] << 16) & 0x03)	// 18-bit
+			MAX30102_infrared = ((MAX30102_buffer[3] & 0x03) << 16)	// 18-bit
 							    | MAX30102_buffer[4] <<  8
 							    | MAX30102_buffer[5];
+
+			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
+								ISDS_measurements.angular_rate[ISDS_X_AXIS],
+								ISDS_measurements.angular_rate[ISDS_Y_AXIS],
+								ISDS_measurements.angular_rate[ISDS_Z_AXIS],
+								ISDS_measurements.acceleration[ISDS_X_AXIS],
+								ISDS_measurements.acceleration[ISDS_Y_AXIS],
+								ISDS_measurements.acceleration[ISDS_Z_AXIS],
+								ISDS_measurements.temperature / 100,
+							abs(ISDS_measurements.temperature % 100),
+								MAX30102_red,
+								MAX30102_infrared);
+			CLI_Write(string_buffer);
 
 			if (interrupt_counter == 100)
 			{
@@ -121,11 +134,10 @@ void APP_Run(void)
 
 				sprintf(string_buffer, "TX: %lu", LORA_TX_counter);
 				LORA_Tx(string_buffer);
+				LORA_TX_counter++;
 
 				OLED_SetCursor(66, 7);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
-
-				LORA_TX_counter++;
 
 				BSP_LED_Off(LED_GREEN);
 			}

@@ -497,7 +497,7 @@ void LORA_Tx(char * lora_tx_buffer)
 //	HAL_UART_Transmit(&huart2, (uint8_t *)"...PING\r\n", 9, HAL_MAX_DELAY);
 //	HAL_UART_Transmit(&huart2, (uint8_t *)"Master Tx start\r\n", 17, HAL_MAX_DELAY);
 
-	CLI_Write("Starting LoRa transmission... \r\n");
+//	CLI_Write("Starting LoRa transmission... \r\n");
 	SUBGRF_SetDioIrqParams( IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
 						  IRQ_TX_DONE | IRQ_RX_TX_TIMEOUT,
 						  IRQ_RADIO_NONE,
@@ -508,5 +508,5 @@ void LORA_Tx(char * lora_tx_buffer)
 	packetParams.Params.LoRa.PayloadLength = strlen(lora_tx_buffer);
 	SUBGRF_SetPacketParams(&packetParams);
 	SUBGRF_SendPayload((uint8_t *)lora_tx_buffer, packetParams.Params.LoRa.PayloadLength, 0);
-	CLI_Write("LoRa packet transmitted \r\n");
+//	CLI_Write("LoRa packet transmitted \r\n");
 }
