@@ -29,7 +29,7 @@
 
 // Console
 #include "cli.h"
-//#include "console.h"
+#include "console.h"
 
 // Version
 #include "version.h"

@@ -9,28 +9,13 @@
 
 void APP_Init(void)
 {
-	char string_buffer[64];
-
-	sprintf(string_buffer,
-			  "| Version: %d.%d.%d                        | \r\n",
-			     V_MAJOR, V_MINOR, V_PATCH);
-
-	CLI_NewLine();
-	CLI_Write(" ---------------------------------------  \r\n");
-	CLI_Write("| Wearable Patient Monitor              | \r\n");
-	CLI_Write(string_buffer);										// Version
-	CLI_Write("| Developed by Eng. Andre A. M. Araujo  | \r\n");
-	CLI_Write("| https://github.com/MechatronixLab/WPM | \r\n");
-	CLI_Write(" ---------------------------------------  \r\n");
-	CLI_NewLine();
-
+	CONSOLE_Init();
 	DISPLAY_Init();
 
-
-
 	LORA_RadioInit();
-	LORA_FSM_Init();
+	LORA_FSM_Init();	// TODO: Can I remove this?
 
+	// TODO: move to imu.c
 	if(ISDS_CommunicationCheck() == 0)
 	{
 		ISDS_SoftReset();
@@ -41,6 +26,7 @@ void APP_Init(void)
 		CLI_Write("Error communicating with IMU! \r\n");
 	}
 
+	// TODO: move to oximetry.c
 	MAX30102_Reset();
 	MAX30102_ConfigProximityDetect();
 
@@ -55,7 +41,7 @@ void APP_Run(void)
 	uint8_t	 interrupt_counter = 0;
 	char string_buffer[128];
 
-	uint16_t MAX30102_temperature = 0;
+//	uint16_t MAX30102_temperature = 0;
 
 	int16_t	ISDS_temperature = 0;
 
