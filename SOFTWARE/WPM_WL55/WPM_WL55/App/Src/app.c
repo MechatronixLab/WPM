@@ -174,7 +174,7 @@ void APP_Run(void)
 			CLI_Write(string_buffer);
 
 
-			if (interrupt_counter == 100)	// 1 Hz
+			if (interrupt_counter == 50)	// 1 Hz
 			{
 				interrupt_counter = 0;
 
@@ -183,7 +183,7 @@ void APP_Run(void)
 //									abs(ISDS_measurements.temperature % 100));
 
 				BSP_LED_On(LED_GREEN);
-				MAXIM_HeartRate_SpO2((uint32_t *)circular_infrared.buffer, 500,
+				MAXIM_HeartRate_SpO2((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD,
 						             (uint32_t *)circular_red.buffer,
 									 &spo2, &spo2_valid,
 									 &heart_rate, &heart_rate_valid);

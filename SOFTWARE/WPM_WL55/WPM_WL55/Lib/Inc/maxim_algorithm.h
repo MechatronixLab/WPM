@@ -80,7 +80,7 @@
 
 #define true 1
 #define false 0
-#define FS 100
+#define FS 50
 #define BUFFER_SIZE  (FS* 5)
 #define HR_FIFO_SIZE 7
 #define MA4_SIZE  4 // DO NOT CHANGE

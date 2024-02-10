@@ -13,7 +13,7 @@
 extern TIM_HandleTypeDef htim16;
 
 #define TIM16_PSC (48000 - 1)
-#define TIM16_ARR (10 - 1)
+#define TIM16_ARR (20 - 1)
 
 extern uint8_t	ISR_interrupt_flag;
 
