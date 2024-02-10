@@ -10,6 +10,7 @@
 
 #include "main.h"
 
+// App
 #include "cli.h"
 #include "lora.h"
 #include "isr.h"
@@ -17,8 +18,11 @@
 #include "max30102.h"
 #include "oled_ssd1306.h"
 #include "wsen-isds.h"
-
 #include "version.h"
+
+// Tools
+#include "average.h"
+#include "circular_buffer.h"
 
 void APP_Init(void);
 void APP_Run (void);

@@ -81,6 +81,15 @@ void APP_Run(void)
 	ISDS_data_t ISDS_measurements;
 	MAX30102_data_t MAX30102_measurements;
 
+	uint32_t buffer1[MOVING_AVERAGE_PERIOD];
+	circular_buffer_t circular_buffer1 =
+	{
+			.buffer = buffer1,
+			.head = 0,
+			.tail = 0,
+			.buffer_size = MOVING_AVERAGE_PERIOD
+	};
+
 	while(1)
 	{	//LORA_Process();
 		if (ISR_interrupt_flag)
@@ -104,6 +113,8 @@ void APP_Run(void)
 								MAX30102_measurements.red,
 								MAX30102_measurements.infrared);
 			CLI_Write(string_buffer);
+
+			AVG_CircularBufferPush(&circular_buffer1, (uint32_t) (ISDS_measurements.temperature / 100));
 
 			if (interrupt_counter == 100)
 			{
