@@ -93,7 +93,8 @@ static const uint8_t ELEKTOR_LOGO_64x32[] =
 
 void DISPLAY_Init(void)
 {
-	uint16_t dt = 2000;
+	uint16_t dt = 100;
+	uint8_t i = 0;
 
 	OLED_Init();
 	GFX_DrawLogo( 0, 0,64,64, (uint8_t *) MECHATRONIX_LAB_LOGO_64x64);
@@ -108,7 +109,17 @@ void DISPLAY_Init(void)
 	OLED_SetCursor(64, 7);
 	GFX_DrawString((uint8_t *)GFX_font_5x7, "A.M.ARAUJO");
 
-	HAL_Delay(dt);
+	for (i = 0; i < 6; i++)	// Sweep LEDs thrice
+	{
+		HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+		HAL_Delay(dt);
+		HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
+		HAL_Delay(dt);
+		HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+		HAL_Delay(dt);
+	}
+
+	HAL_Delay(14 * dt);
 
 	OLED_SetCursor(64, 0);
 	GFX_DrawString((uint8_t *)GFX_font_5x7, "WPM-WL55  ");
@@ -117,7 +128,7 @@ void DISPLAY_Init(void)
 	OLED_SetCursor(64, 2);
 	GFX_DrawString((uint8_t *)GFX_font_5x7, "2024.02.29");
 
-	HAL_Delay(dt);
+	HAL_Delay(20 * dt);
 
 	OLED_Clear();
 
@@ -137,7 +148,7 @@ void DISPLAY_Init(void)
 	GFX_DrawLogo(64, 0,64,32, (uint8_t *) ST_LOGO_64x32);
 	GFX_DrawLogo(64, 4,64,32, (uint8_t *) ELEKTOR_LOGO_64x32);
 
-	HAL_Delay(dt);
+	HAL_Delay(20 * dt);
 
 	OLED_Clear();
 }
