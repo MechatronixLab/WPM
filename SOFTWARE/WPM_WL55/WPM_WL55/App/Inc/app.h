@@ -24,6 +24,9 @@
 #include "average.h"
 #include "circular_buffer.h"
 
+// Standard Libraries
+#include <math.h>
+
 void APP_Init(void);
 void APP_Run (void);
 

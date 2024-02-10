@@ -10,7 +10,7 @@
 
 #include "average.h"
 
-uint32_t AVERAGE_ComputeMovingAverage(uint32_t * array, uint16_t length)
+uint32_t AVERAGE_avg(uint32_t * array, uint16_t length)
 {
 	uint16_t index = 0;
 	uint64_t  average = 0;

@@ -12,6 +12,6 @@
 
 #define MOVING_AVERAGE_PERIOD	200u
 
-uint32_t AVERAGE_ComputeMovingAverage(uint32_t * array, uint16_t length);
+uint32_t AVERAGE_avg(uint32_t * array, uint16_t length);
 
 #endif /* INC_AVERAGE_H_ */

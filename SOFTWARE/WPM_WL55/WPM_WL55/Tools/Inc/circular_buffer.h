@@ -14,7 +14,7 @@
 
 typedef struct
 {
-	uint32_t * const buffer;
+	int32_t * const buffer;
 	uint16_t	head;
 	uint16_t 	tail;
 	const uint16_t length;

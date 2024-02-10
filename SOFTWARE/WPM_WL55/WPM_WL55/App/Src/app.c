@@ -78,7 +78,7 @@ void APP_Run(void)
 	ISDS_data_t ISDS_measurements;
 	MAX30102_data_t MAX30102_measurements;
 
-	uint32_t buffer_red[MOVING_AVERAGE_PERIOD] = {0};
+	int32_t buffer_red[MOVING_AVERAGE_PERIOD] = {0};
 	circular_buffer_t circular_red =
 	{
 			.buffer = buffer_red,
@@ -87,7 +87,7 @@ void APP_Run(void)
 			.length = MOVING_AVERAGE_PERIOD
 	};
 
-	uint32_t buffer_infrared[MOVING_AVERAGE_PERIOD] = {0};
+	int32_t buffer_infrared[MOVING_AVERAGE_PERIOD] = {0};
 	circular_buffer_t circular_infrared =
 	{
 			.buffer = buffer_infrared,
@@ -96,17 +96,29 @@ void APP_Run(void)
 			.length = MOVING_AVERAGE_PERIOD
 	};
 
-	int32_t average_red = 0;
-	int32_t average_infrared = 0;
+	int32_t buffer_AC_red[MOVING_AVERAGE_PERIOD] = {0};
+	circular_buffer_t circular_AC_red =
+	{
+			.buffer = buffer_AC_red,
+			.head = 0,
+			.tail = 0,
+			.length = MOVING_AVERAGE_PERIOD
+	};
 
-//	uint32_t buffer1[MOVING_AVERAGE_PERIOD];
-//	circular_buffer_t circular_buffer1 =
-//	{
-//			.buffer = buffer1,
-//			.head = 0,
-//			.tail = 0,
-//			.length = MOVING_AVERAGE_PERIOD
-//	};
+	int32_t buffer_AC_infrared[MOVING_AVERAGE_PERIOD] = {0};
+	circular_buffer_t circular_AC_infrared =
+	{
+			.buffer = buffer_AC_infrared,
+			.head = 0,
+			.tail = 0,
+			.length = MOVING_AVERAGE_PERIOD
+	};
+
+	uint32_t average_red = 0;
+	uint32_t average_infrared = 0;
+
+	uint32_t RMS_AC_red = 0;
+	uint32_t RMS_AC_infrared = 0;
 
 	while(1)
 	{	//LORA_Process();
@@ -135,20 +147,25 @@ void APP_Run(void)
 			CIRCULAR_Push(&circular_red, MAX30102_measurements.red);
 			CIRCULAR_Push(&circular_infrared, MAX30102_measurements.infrared);
 
-			average_red 	 = AVERAGE_ComputeMovingAverage((uint32_t *)circular_red.buffer, MOVING_AVERAGE_PERIOD);
-			average_infrared = AVERAGE_ComputeMovingAverage((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD);
+			average_red = AVERAGE_avg((uint32_t *)circular_red.buffer, MOVING_AVERAGE_PERIOD);
+			average_infrared = AVERAGE_avg((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD);
+
+			CIRCULAR_Push(&circular_AC_red, pow((float)(MAX30102_measurements.red - average_red), 2));
+			CIRCULAR_Push(&circular_AC_infrared, pow((float)(MAX30102_measurements.infrared - average_infrared), 2));
+
+			RMS_AC_red = (uint32_t) sqrt(AVERAGE_avg((uint32_t *)circular_AC_red.buffer, MOVING_AVERAGE_PERIOD));
+			RMS_AC_infrared = (uint32_t) sqrt(AVERAGE_avg((uint32_t *)circular_AC_infrared.buffer, MOVING_AVERAGE_PERIOD));
+
 
 			sprintf(string_buffer,
-					"R:%6lu, IR:%6lu, %d, R:%6lu, R_AVG:%6ld, %d, IR:%6lu, IR_AVG:%6ld, %d \r\n",
-					MAX30102_measurements.red,
-					MAX30102_measurements.infrared,
-					0,
+					"R:%6lu, AVG_R:%6lu, AC_R:%6ld, IR:%6lu, AVG_IR:%6lu, AC_IR:%6ld, AC_R:%6ld, AC_IR:%6ld, %d \r\n",
 					MAX30102_measurements.red,
 					average_red,
-					0,
+					RMS_AC_red,
 					MAX30102_measurements.infrared,
 					average_infrared,
-					0);
+					RMS_AC_infrared,
+					RMS_AC_red, RMS_AC_infrared, 0);
 			CLI_Write(string_buffer);
 
 
