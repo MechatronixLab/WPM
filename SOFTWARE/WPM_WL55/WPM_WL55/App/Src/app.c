@@ -120,6 +120,11 @@ void APP_Run(void)
 	uint32_t RMS_AC_red = 0;
 	uint32_t RMS_AC_infrared = 0;
 
+	int32_t spo2;
+	int8_t  spo2_valid;
+	int32_t heart_rate;
+	int8_t  heart_rate_valid;
+
 	while(1)
 	{	//LORA_Process();
 		if (ISR_interrupt_flag)
@@ -171,13 +176,19 @@ void APP_Run(void)
 
 			if (interrupt_counter == 100)	// 1 Hz
 			{
-				BSP_LED_On(LED_GREEN);
-
 				interrupt_counter = 0;
 
 //				sprintf(string_buffer, "%3d.%02d oC",
 //										ISDS_measurements.temperature / 100,
 //									abs(ISDS_measurements.temperature % 100));
+
+				BSP_LED_On(LED_GREEN);
+				MAXIM_HeartRate_SpO2((uint32_t *)circular_infrared.buffer, 500,
+						             (uint32_t *)circular_red.buffer,
+									 &spo2, &spo2_valid,
+									 &heart_rate, &heart_rate_valid);
+
+				BSP_LED_Off(LED_GREEN);
 
 				ISDS_temperature = ISDS_GetTemperature();
 				sprintf(string_buffer, "%3d.%02d oC",
@@ -186,9 +197,31 @@ void APP_Run(void)
 				OLED_SetCursor(66, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				MAX30102_temperature = MAX30102_GetTemperature();	// Takes 30ms
-				sprintf(string_buffer, "%3d oC", MAX30102_temperature);
-				OLED_SetCursor(66, 3);
+//				MAX30102_temperature = MAX30102_GetTemperature();	// Takes 30ms
+//				sprintf(string_buffer, "%3d oC", MAX30102_temperature);
+//				OLED_SetCursor(66, 3);
+//				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+				if (spo2_valid)
+				{
+					sprintf(string_buffer, "SpO2:%3d%% ", (uint16_t)spo2);
+				}
+				else
+				{
+					sprintf(string_buffer, "SpO2:---%% ", (uint16_t)spo2);
+				}
+				OLED_SetCursor(66, 4);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+				if (heart_rate_valid)
+				{
+					sprintf(string_buffer, "HR:%3dbpm ", (uint16_t)heart_rate);
+				}
+				else
+				{
+					sprintf(string_buffer, "HR:---bpm ", (uint16_t)heart_rate);
+				}
+				OLED_SetCursor(66, 5);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				sprintf(string_buffer, "TX: %lu", LORA_TX_counter);
@@ -197,8 +230,6 @@ void APP_Run(void)
 
 				OLED_SetCursor(66, 7);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
-
-				BSP_LED_Off(LED_GREEN);
 			}
 		}
 	}

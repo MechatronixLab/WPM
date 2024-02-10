@@ -10,7 +10,7 @@
 
 #include "main.h"
 
-#define MOVING_AVERAGE_PERIOD	200u
+#define MOVING_AVERAGE_PERIOD	500
 
 uint32_t AVERAGE_avg(uint32_t * array, uint16_t length);
 

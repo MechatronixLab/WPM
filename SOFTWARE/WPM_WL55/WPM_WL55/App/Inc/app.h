@@ -24,6 +24,9 @@
 #include "average.h"
 #include "circular_buffer.h"
 
+// Third Party Libraries
+#include "maxim_algorithm.h"
+
 // Standard Libraries
 #include <math.h>
 
