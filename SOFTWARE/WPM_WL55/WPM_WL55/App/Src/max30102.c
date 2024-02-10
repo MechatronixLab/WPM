@@ -9,6 +9,8 @@
 
 #include "max30102.h"
 
+//MAX30102_data_t MAX30102_measurements;
+
 void	MAX30102_Read	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer)
 {
 	I2C_buffer[0] = register_address;
@@ -68,8 +70,8 @@ void	MAX30102_ConfigProximityDetect(void)
 
 	MAX30102_Write(0x0A, 0x77);	// RGE 16384 nA, 100 Hz, 410.75 us (18-bit res.)
 
-	MAX30102_Write(0x0C, 100);	// LED1: 10.0 mA
-	MAX30102_Write(0x0D, 100);	// LED2: 10.0 mA
+	MAX30102_Write(0x0C,  100);	// LED1: 10.0 mA
+	MAX30102_Write(0x0D,  100);	// LED2: 10.0 mA
 
 	MAX30102_Write(0x10, 0x24);	// Proximity LED PA
 
@@ -78,15 +80,23 @@ void	MAX30102_ConfigProximityDetect(void)
 	MAX30102_Write(0x30, 0x20);
 }
 
-void 	MAX30102_GetDataMulti(uint8_t * I2C_buffer)
+void 	MAX30102_GetDataMulti(MAX30102_data_t * measurements)
 {
-//	uint8_t fifo_write_pointer = 0;
+	uint8_t I2C_buffer[6];
 
 	MAX30102_Read(MAX30102_FIFO_WRITE_POINTER, 1, I2C_buffer);
 
 //	fifo_write_pointer = I2C_buffer[0];
 
 	MAX30102_Read(MAX30102_FIFO_DATA, 6, I2C_buffer);
+
+	measurements->red 	   = ((I2C_buffer[0] & 0x03) << 16)	// 18-bit
+					    	 | I2C_buffer[1] <<  8
+					    	 | I2C_buffer[2];
+
+	measurements->infrared = ((I2C_buffer[3] & 0x03) << 16)	// 18-bit
+					    	 | I2C_buffer[4] <<  8
+					         | I2C_buffer[5];
 }
 
 int16_t MAX30102_GetTemperature(void)

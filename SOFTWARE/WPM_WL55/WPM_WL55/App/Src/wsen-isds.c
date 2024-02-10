@@ -7,8 +7,6 @@
 
 #include "wsen-isds.h"
 
-ISDS_data_t ISDS_measurements;
-
 void	ISDS_Read	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer)
 {
 	I2C_buffer[0] = register_address;

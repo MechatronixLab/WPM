@@ -51,7 +51,14 @@
 
 // Part ID
 #define MAX30102_REVISION_ID				0xFE
-#define MAX30102_PART_ID					0xFF		// 0x15
+#define MAX30102_PART_ID					0xFF	// 0x15
+
+typedef struct
+{
+	uint32_t red;
+	uint32_t infrared;
+	uint16_t temperature;
+} MAX30102_data_t;
 
 void	MAX30102_Read  	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);
 void	MAX30102_Write 	(uint8_t register_address, uint8_t data);
@@ -61,7 +68,7 @@ void	MAX30102_Reset(void);
 
 void	MAX30102_ConfigProximityDetect(void);
 
-void 	MAX30102_GetDataMulti(uint8_t * I2C_buffer);
+void 	MAX30102_GetDataMulti(MAX30102_data_t * measurements);
 
 int16_t MAX30102_GetTemperature(void);
 

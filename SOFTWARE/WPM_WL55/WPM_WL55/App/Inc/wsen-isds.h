@@ -99,8 +99,6 @@ typedef struct
 	int16_t temperature;
 } ISDS_data_t;
 
-extern ISDS_data_t ISDS_measurements;
-
 void	ISDS_Read  	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);
 void	ISDS_Write 	(uint8_t register_address, uint8_t data);
 

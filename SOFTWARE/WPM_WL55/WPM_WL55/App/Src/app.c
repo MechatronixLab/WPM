@@ -72,11 +72,14 @@ void APP_Run(void)
 	char string_buffer[128];
 
 	uint16_t MAX30102_temperature = 0;
-	uint32_t MAX30102_red = 0;
-	uint32_t MAX30102_infrared = 0;
-	uint8_t  MAX30102_buffer[128];
+//	uint32_t MAX30102_red = 0;
+//	uint32_t MAX30102_infrared = 0;
+//	uint8_t  MAX30102_buffer[128];
 
 	int16_t	ISDS_temperature = 0;
+
+	ISDS_data_t ISDS_measurements;
+	MAX30102_data_t MAX30102_measurements;
 
 	while(1)
 	{	//LORA_Process();
@@ -87,15 +90,7 @@ void APP_Run(void)
 
 			ISDS_GetData(&ISDS_measurements);
 
-			MAX30102_GetDataMulti(MAX30102_buffer);
-
-			MAX30102_red 	  = ((MAX30102_buffer[0] & 0x03) << 16)	// 18-bit
-							    | MAX30102_buffer[1] <<  8
-							    | MAX30102_buffer[2];
-
-			MAX30102_infrared = ((MAX30102_buffer[3] & 0x03) << 16)	// 18-bit
-							    | MAX30102_buffer[4] <<  8
-							    | MAX30102_buffer[5];
+			MAX30102_GetDataMulti(&MAX30102_measurements);
 
 			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
 								ISDS_measurements.angular_rate[ISDS_X_AXIS],
@@ -106,8 +101,8 @@ void APP_Run(void)
 								ISDS_measurements.acceleration[ISDS_Z_AXIS],
 								ISDS_measurements.temperature / 100,
 							abs(ISDS_measurements.temperature % 100),
-								MAX30102_red,
-								MAX30102_infrared);
+								MAX30102_measurements.red,
+								MAX30102_measurements.infrared);
 			CLI_Write(string_buffer);
 
 			if (interrupt_counter == 100)
