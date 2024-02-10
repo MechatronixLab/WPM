@@ -27,12 +27,7 @@ void APP_Init(void)
 	CLI_Write(" ---------------------------------------  \r\n");
 	CLI_NewLine();
 
-	OLED_Init();
-	GFX_DrawLogo();
-	OLED_SetCursor(66, 0);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "WPM-WL55");
-	OLED_SetCursor(66, 1);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "V: 0.0.1");
+	DISPLAY_Init();
 
 	for (i = 0; i < 6; i++)	// Sweep LEDs thrice
 	{
@@ -208,7 +203,7 @@ void APP_Run(void)
 				}
 				else
 				{
-					sprintf(string_buffer, "SpO2:---%% ", (uint16_t)spo2);
+					sprintf(string_buffer, "SpO2:---%% ");
 				}
 				OLED_SetCursor(66, 4);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
@@ -219,7 +214,7 @@ void APP_Run(void)
 				}
 				else
 				{
-					sprintf(string_buffer, "HR:---bpm ", (uint16_t)heart_rate);
+					sprintf(string_buffer, "HR:---bpm ");
 				}
 				OLED_SetCursor(66, 5);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);

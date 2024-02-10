@@ -11,13 +11,27 @@
 #include "main.h"
 
 // App
-#include "cli.h"
-#include "lora.h"
+
+
 #include "isr.h"
-#include "graphics.h"
-#include "max30102.h"
+
+// Display
 #include "oled_ssd1306.h"
+#include "graphics.h"
+#include "display.h"
+
+// Sensors
+#include "max30102.h"
 #include "wsen-isds.h"
+
+// LoRa
+#include "lora.h"
+
+// Console
+#include "cli.h"
+//#include "console.h"
+
+// Version
 #include "version.h"
 
 // Tools

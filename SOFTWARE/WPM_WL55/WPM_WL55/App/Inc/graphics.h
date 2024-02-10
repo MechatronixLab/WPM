@@ -27,7 +27,7 @@ void GFX_ClearFrame(uint8_t * frame_buffer);
 
 void GFX_DrawChar(uint8_t * font, uint8_t character);
 void GFX_DrawString(uint8_t * font, char * string);
-void GFX_DrawLogo(void);
+void GFX_DrawLogo(uint8_t c0, uint8_t p0, uint8_t w, uint8_t h, uint8_t * logo);
 void GFX_DrawFrame(uint8_t * frame_buffer);
 
 void GFX_DrawHorizontalLine	(uint8_t x, uint8_t y, uint8_t dx);
