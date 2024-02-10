@@ -15,14 +15,14 @@
 typedef struct
 {
 	uint32_t * const buffer;
-	uint8_t	 head;
-	uint8_t  tail;
-	const uint8_t buffer_size;
+	uint16_t	head;
+	uint16_t 	tail;
+	const uint16_t length;
 }circular_buffer_t;
 
-uint8_t	AVG_CircularBufferFull (circular_buffer_t * c);
-uint8_t AVG_CircularBufferEmpty(circular_buffer_t * c);
-void 	AVG_CircularBufferPush (circular_buffer_t * c, uint32_t data);
-void 	AVG_CircularBufferPop  (circular_buffer_t * c, uint32_t * data);
+uint8_t	CIRCULAR_Full (circular_buffer_t * c);
+uint8_t CIRCULAR_Empty(circular_buffer_t * c);
+void 	CIRCULAR_Push (circular_buffer_t * c, uint32_t data);
+void 	CIRCULAR_Pop  (circular_buffer_t * c, uint32_t * data);
 
 #endif /* INC_CIRCULAR_BUFFER_H_ */

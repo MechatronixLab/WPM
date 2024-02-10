@@ -72,23 +72,41 @@ void APP_Run(void)
 	char string_buffer[128];
 
 	uint16_t MAX30102_temperature = 0;
-//	uint32_t MAX30102_red = 0;
-//	uint32_t MAX30102_infrared = 0;
-//	uint8_t  MAX30102_buffer[128];
 
 	int16_t	ISDS_temperature = 0;
 
 	ISDS_data_t ISDS_measurements;
 	MAX30102_data_t MAX30102_measurements;
 
-	uint32_t buffer1[MOVING_AVERAGE_PERIOD];
-	circular_buffer_t circular_buffer1 =
+	uint32_t buffer_red[MOVING_AVERAGE_PERIOD] = {0};
+	circular_buffer_t circular_red =
 	{
-			.buffer = buffer1,
+			.buffer = buffer_red,
 			.head = 0,
 			.tail = 0,
-			.buffer_size = MOVING_AVERAGE_PERIOD
+			.length = MOVING_AVERAGE_PERIOD
 	};
+
+	uint32_t buffer_infrared[MOVING_AVERAGE_PERIOD] = {0};
+	circular_buffer_t circular_infrared =
+	{
+			.buffer = buffer_infrared,
+			.head = 0,
+			.tail = 0,
+			.length = MOVING_AVERAGE_PERIOD
+	};
+
+	int32_t average_red = 0;
+	int32_t average_infrared = 0;
+
+//	uint32_t buffer1[MOVING_AVERAGE_PERIOD];
+//	circular_buffer_t circular_buffer1 =
+//	{
+//			.buffer = buffer1,
+//			.head = 0,
+//			.tail = 0,
+//			.length = MOVING_AVERAGE_PERIOD
+//	};
 
 	while(1)
 	{	//LORA_Process();
@@ -101,22 +119,40 @@ void APP_Run(void)
 
 			MAX30102_GetDataMulti(&MAX30102_measurements);
 
-			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
-								ISDS_measurements.angular_rate[ISDS_X_AXIS],
-								ISDS_measurements.angular_rate[ISDS_Y_AXIS],
-								ISDS_measurements.angular_rate[ISDS_Z_AXIS],
-								ISDS_measurements.acceleration[ISDS_X_AXIS],
-								ISDS_measurements.acceleration[ISDS_Y_AXIS],
-								ISDS_measurements.acceleration[ISDS_Z_AXIS],
-								ISDS_measurements.temperature / 100,
-							abs(ISDS_measurements.temperature % 100),
-								MAX30102_measurements.red,
-								MAX30102_measurements.infrared);
+//			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
+//								ISDS_measurements.angular_rate[ISDS_X_AXIS],
+//								ISDS_measurements.angular_rate[ISDS_Y_AXIS],
+//								ISDS_measurements.angular_rate[ISDS_Z_AXIS],
+//								ISDS_measurements.acceleration[ISDS_X_AXIS],
+//								ISDS_measurements.acceleration[ISDS_Y_AXIS],
+//								ISDS_measurements.acceleration[ISDS_Z_AXIS],
+//								ISDS_measurements.temperature / 100,
+//							abs(ISDS_measurements.temperature % 100),
+//								MAX30102_measurements.red,
+//								MAX30102_measurements.infrared);
+//			CLI_Write(string_buffer);
+
+			CIRCULAR_Push(&circular_red, MAX30102_measurements.red);
+			CIRCULAR_Push(&circular_infrared, MAX30102_measurements.infrared);
+
+			average_red 	 = AVERAGE_ComputeMovingAverage((uint32_t *)circular_red.buffer, MOVING_AVERAGE_PERIOD);
+			average_infrared = AVERAGE_ComputeMovingAverage((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD);
+
+			sprintf(string_buffer,
+					"R:%6lu, IR:%6lu, %d, R:%6lu, R_AVG:%6ld, %d, IR:%6lu, IR_AVG:%6ld, %d \r\n",
+					MAX30102_measurements.red,
+					MAX30102_measurements.infrared,
+					0,
+					MAX30102_measurements.red,
+					average_red,
+					0,
+					MAX30102_measurements.infrared,
+					average_infrared,
+					0);
 			CLI_Write(string_buffer);
 
-			AVG_CircularBufferPush(&circular_buffer1, (uint32_t) (ISDS_measurements.temperature / 100));
 
-			if (interrupt_counter == 100)
+			if (interrupt_counter == 100)	// 1 Hz
 			{
 				BSP_LED_On(LED_GREEN);
 

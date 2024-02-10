@@ -266,7 +266,6 @@ void GFX_DrawLogo(void)
 			OLED_SendData(ELEKTOR_LOGO_64x32[pixel++]);
 		}
 	}
-
 }
 
 void GFX_DrawFrame(uint8_t * frame_buffer)
