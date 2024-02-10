@@ -11,6 +11,7 @@ static char console_buffer[96] = {0};
 
 void CONSOLE_Init(void)
 {
+	// ascii-art-generator.org/
 	CLI_NewLine();
 	CLI_Write("                         ,lddddddddddddddddddddddddddl,                         \r\n");
 	CLI_Write("                        :KWMMMMMMMMMMMMMMMMMMMMMMMMMMWK:                        \r\n");
@@ -56,14 +57,14 @@ void CONSOLE_Init(void)
 
 	sprintf(console_buffer,
 			  "  |  Version: %d.%d.%d                            | \r\n",
-			     V_MAJOR, V_MINOR, V_PATCH);
+			                 V_MAJOR, V_MINOR, V_PATCH);					// Version
 
 	CLI_NewLine();
 	CLI_Write("   --------------------------------------------  \r\n");
 	CLI_Write("  |                                            | \r\n");
 	CLI_Write("  |  Wearable Patient Monitor                  | \r\n");
 	CLI_Write("  |  WPM-WL55                                  | \r\n");
-	CLI_Write(console_buffer);										// Version
+	CLI_Write(console_buffer);												// Version
 	CLI_Write("  |                                            | \r\n");
 	CLI_Write("  |  Developed by Eng. Andre A. M. Araujo      | \r\n");
 	CLI_Write("  |  https://github.com/MechatronixLab/WPM     | \r\n");
@@ -76,4 +77,3 @@ void CONSOLE_Init(void)
 
 	CLI_NewLine();
 }
-
