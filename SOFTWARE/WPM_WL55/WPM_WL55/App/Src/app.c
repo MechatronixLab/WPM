@@ -37,7 +37,7 @@ void APP_Run(void)
 
 //	uint16_t MAX30102_temperature = 0;
 
-	int16_t	ISDS_temperature = 0;
+//	int16_t	ISDS_temperature = 0;
 
 	IMU_data_t IMU_data = {0};
 
@@ -142,24 +142,25 @@ void APP_Run(void)
 
 			if (interrupt_counter == 50)	// 1 Hz
 			{
+				BSP_LED_On(LED_GREEN);
+
 				interrupt_counter = 0;
 
 //				sprintf(string_buffer, "%3d.%02d oC",
 //										ISDS_measurements.temperature / 100,
 //									abs(ISDS_measurements.temperature % 100));
 
-				BSP_LED_On(LED_GREEN);
+
 				MAXIM_HeartRate_SpO2((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD,
 						             (uint32_t *)circular_red.buffer,
 									 &spo2, &spo2_valid,
 									 &heart_rate, &heart_rate_valid);
 
-				BSP_LED_Off(LED_GREEN);
 
-				ISDS_temperature = ISDS_GetTemperature();
+
 				sprintf(string_buffer, "%3d.%02d oC",
-										ISDS_temperature / 100,
-									abs(ISDS_temperature % 100));
+										IMU_data.temperature / 100,
+									abs(IMU_data.temperature % 100));
 				OLED_SetCursor(66, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
@@ -196,6 +197,8 @@ void APP_Run(void)
 
 				OLED_SetCursor(66, 7);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+				BSP_LED_Off(LED_GREEN);
 			}
 		}
 	}

@@ -30,7 +30,7 @@
 #include "lora.h"
 
 // Console
-#include "cli.h"
+//#include "cli.h"
 #include "console.h"
 
 // Version
