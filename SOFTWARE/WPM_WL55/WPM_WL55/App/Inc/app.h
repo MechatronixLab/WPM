@@ -21,7 +21,10 @@
 #include "display.h"
 
 // Sensors
-#include "max30102.h"
+#include "oximetry.h"
+//#include "max30102.h"
+// Third Party Libraries
+// #include "maxim_algorithm.h"
 
 #include "imu.h"
 //#include "wsen-isds.h"
@@ -40,8 +43,7 @@
 #include "average.h"
 #include "circular_buffer.h"
 
-// Third Party Libraries
-#include "maxim_algorithm.h"
+
 
 // Standard Libraries
 #include <math.h>

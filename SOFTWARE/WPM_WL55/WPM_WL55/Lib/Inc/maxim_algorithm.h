@@ -80,11 +80,11 @@
 
 #define true 1
 #define false 0
-#define FS 50
-#define BUFFER_SIZE  (FS* 5)
-#define HR_FIFO_SIZE 7
-#define MA4_SIZE  4 // DO NOT CHANGE
-#define HAMMING_SIZE  5// DO NOT CHANGE
+#define MAXIM_FS 50
+#define MAXIM_BUFFER_SIZE  (MAXIM_FS* 5)
+#define MAXIM_HR_FIFO_SIZE 7
+#define MAXIM_MA4_SIZE  4 // DO NOT CHANGE
+#define MAXIM_HAMMING_SIZE  5// DO NOT CHANGE
 #define min(x,y) ((x) < (y) ? (x) : (y))
 
 // Moved this part to "maxim_algorithm.c"

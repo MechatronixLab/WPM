@@ -14,15 +14,10 @@ void APP_Init(void)
 
 	IMU_Init();
 
+	OXIMETRY_Init();
+
 	LORA_RadioInit();
 	LORA_FSM_Init();	// TODO: Can I remove this?
-
-	// TODO: move to imu.c
-
-
-	// TODO: move to oximetry.c
-	MAX30102_Reset();
-	MAX30102_ConfigProximityDetect();
 
 	ISR_StartInterruptTimer();
 
@@ -31,65 +26,18 @@ void APP_Init(void)
 
 void APP_Run(void)
 {
+	char string_buffer[128];
+
 	uint32_t LORA_TX_counter = 0;
 	uint8_t	 interrupt_counter = 0;
-	char string_buffer[128];
 
 //	uint16_t MAX30102_temperature = 0;
 
 //	int16_t	ISDS_temperature = 0;
 
-	IMU_data_t IMU_data = {0};
-
-
-	MAX30102_data_t MAX30102_measurements;
-
-	int32_t buffer_red[MOVING_AVERAGE_PERIOD] = {0};
-	circular_buffer_t circular_red =
-	{
-			.buffer = buffer_red,
-			.head = 0,
-			.tail = 0,
-			.length = MOVING_AVERAGE_PERIOD
-	};
-
-	int32_t buffer_infrared[MOVING_AVERAGE_PERIOD] = {0};
-	circular_buffer_t circular_infrared =
-	{
-			.buffer = buffer_infrared,
-			.head = 0,
-			.tail = 0,
-			.length = MOVING_AVERAGE_PERIOD
-	};
-
-	int32_t buffer_AC_red[MOVING_AVERAGE_PERIOD] = {0};
-	circular_buffer_t circular_AC_red =
-	{
-			.buffer = buffer_AC_red,
-			.head = 0,
-			.tail = 0,
-			.length = MOVING_AVERAGE_PERIOD
-	};
-
-	int32_t buffer_AC_infrared[MOVING_AVERAGE_PERIOD] = {0};
-	circular_buffer_t circular_AC_infrared =
-	{
-			.buffer = buffer_AC_infrared,
-			.head = 0,
-			.tail = 0,
-			.length = MOVING_AVERAGE_PERIOD
-	};
-
-	uint32_t average_red = 0;
-	uint32_t average_infrared = 0;
-
-	uint32_t RMS_AC_red = 0;
-	uint32_t RMS_AC_infrared = 0;
-
-	int32_t spo2;
-	int8_t  spo2_valid;
-	int32_t heart_rate;
-	int8_t  heart_rate_valid;
+	IMU_data_t imu_data = {0};
+	OXIMETRY_raw_data_t oximetry_raw_data = {0};
+	OXIMETRY_data_t oximetry_data = {0};
 
 	while(1)
 	{	//LORA_Process();
@@ -98,34 +46,25 @@ void APP_Run(void)
 			ISR_interrupt_flag = 0;
 			interrupt_counter++;
 
-			IMU_GetData(&IMU_data);
+			IMU_GetData(&imu_data);
+			OXIMETRY_GetRawData(&oximetry_raw_data);
 
-			MAX30102_GetDataMulti(&MAX30102_measurements);
+			// TODO: oxim get raw data
 
 			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
-								IMU_data.angular_rate[IMU_X],
-								IMU_data.angular_rate[IMU_Y],
-								IMU_data.angular_rate[IMU_Z],
-								IMU_data.acceleration[IMU_X],
-								IMU_data.acceleration[IMU_Y],
-								IMU_data.acceleration[IMU_Z],
-								IMU_data.temperature / 100,
-							abs(IMU_data.temperature % 100),
-								MAX30102_measurements.red,
-								MAX30102_measurements.infrared);
+								imu_data.angular_rate[IMU_X],
+								imu_data.angular_rate[IMU_Y],
+								imu_data.angular_rate[IMU_Z],
+								imu_data.acceleration[IMU_X],
+								imu_data.acceleration[IMU_Y],
+								imu_data.acceleration[IMU_Z],
+								imu_data.temperature / 100,
+							abs(imu_data.temperature % 100),
+								oximetry_raw_data.red,
+								oximetry_raw_data.infrared);
 			CLI_Write(string_buffer);
 
-			CIRCULAR_Push(&circular_red, MAX30102_measurements.red);
-			CIRCULAR_Push(&circular_infrared, MAX30102_measurements.infrared);
 
-			average_red = AVERAGE_avg((uint32_t *)circular_red.buffer, MOVING_AVERAGE_PERIOD);
-			average_infrared = AVERAGE_avg((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD);
-
-			CIRCULAR_Push(&circular_AC_red, pow((float)(MAX30102_measurements.red - average_red), 2));
-			CIRCULAR_Push(&circular_AC_infrared, pow((float)(MAX30102_measurements.infrared - average_infrared), 2));
-
-			RMS_AC_red = (uint32_t) sqrt(AVERAGE_avg((uint32_t *)circular_AC_red.buffer, MOVING_AVERAGE_PERIOD));
-			RMS_AC_infrared = (uint32_t) sqrt(AVERAGE_avg((uint32_t *)circular_AC_infrared.buffer, MOVING_AVERAGE_PERIOD));
 
 
 //			sprintf(string_buffer,
@@ -146,21 +85,10 @@ void APP_Run(void)
 
 				interrupt_counter = 0;
 
-//				sprintf(string_buffer, "%3d.%02d oC",
-//										ISDS_measurements.temperature / 100,
-//									abs(ISDS_measurements.temperature % 100));
-
-
-				MAXIM_HeartRate_SpO2((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD,
-						             (uint32_t *)circular_red.buffer,
-									 &spo2, &spo2_valid,
-									 &heart_rate, &heart_rate_valid);
-
-
 
 				sprintf(string_buffer, "%3d.%02d oC",
-										IMU_data.temperature / 100,
-									abs(IMU_data.temperature % 100));
+										imu_data.temperature / 100,
+									abs(imu_data.temperature % 100));
 				OLED_SetCursor(66, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
@@ -169,9 +97,11 @@ void APP_Run(void)
 //				OLED_SetCursor(66, 3);
 //				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				if (spo2_valid)
+				OXIMETRY_ProcessData(&oximetry_data);
+
+				if (oximetry_data.spo2 > 0)
 				{
-					sprintf(string_buffer, "SpO2:%3d%% ", (uint16_t)spo2);
+					sprintf(string_buffer, "SpO2:%3d%% ", (uint16_t)oximetry_data.spo2);
 				}
 				else
 				{
@@ -180,9 +110,9 @@ void APP_Run(void)
 				OLED_SetCursor(66, 4);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				if (heart_rate_valid)
+				if (oximetry_data.heart_rate > 0)
 				{
-					sprintf(string_buffer, "HR:%3dbpm ", (uint16_t)heart_rate);
+					sprintf(string_buffer, "HR:%3dbpm ", (uint16_t)oximetry_data.heart_rate);
 				}
 				else
 				{

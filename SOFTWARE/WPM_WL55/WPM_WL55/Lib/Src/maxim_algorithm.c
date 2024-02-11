@@ -87,9 +87,9 @@ const uint8_t uch_spo2_table[184] =
 	3, 2, 1
 };
 
-static  int32_t an_dx[ BUFFER_SIZE-MA4_SIZE]; // delta
-static  int32_t an_x[ BUFFER_SIZE]; //ir
-static  int32_t an_y[ BUFFER_SIZE]; //red
+static  int32_t an_dx[ MAXIM_BUFFER_SIZE-MAXIM_MA4_SIZE]; // delta
+static  int32_t an_x[ MAXIM_BUFFER_SIZE]; //ir
+static  int32_t an_y[ MAXIM_BUFFER_SIZE]; //red
 
 void MAXIM_HeartRate_SpO2(uint32_t *pun_ir_buffer,  int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, int32_t *pn_spo2, int8_t *pch_spo2_valid,
                               int32_t *pn_heart_rate, int8_t  *pch_hr_valid)
@@ -133,26 +133,26 @@ void MAXIM_HeartRate_SpO2(uint32_t *pun_ir_buffer,  int32_t n_ir_buffer_length, 
     for (k=0 ; k<n_ir_buffer_length ; k++ )  an_x[k] =  pun_ir_buffer[k] - un_ir_mean ;
 
     // 4 pt Moving Average
-    for(k=0; k< BUFFER_SIZE-MA4_SIZE; k++){
+    for(k=0; k< MAXIM_BUFFER_SIZE-MAXIM_MA4_SIZE; k++){
         n_denom= ( an_x[k]+an_x[k+1]+ an_x[k+2]+ an_x[k+3]);
         an_x[k]=  n_denom/(int32_t)4;
     }
 
     // get difference of smoothed IR signal
 
-    for( k=0; k<BUFFER_SIZE-MA4_SIZE-1;  k++)
+    for( k=0; k<MAXIM_BUFFER_SIZE-MAXIM_MA4_SIZE-1;  k++)
         an_dx[k]= (an_x[k+1]- an_x[k]);
 
     // 2-pt Moving Average to an_dx
-    for(k=0; k< BUFFER_SIZE-MA4_SIZE-2; k++){
+    for(k=0; k< MAXIM_BUFFER_SIZE-MAXIM_MA4_SIZE-2; k++){
         an_dx[k] =  ( an_dx[k]+an_dx[k+1])/2 ;
     }
 
     // hamming window
     // flip wave form so that we can detect valley with peak detector
-    for ( i=0 ; i<BUFFER_SIZE-HAMMING_SIZE-MA4_SIZE-2 ;i++){
+    for ( i=0 ; i<MAXIM_BUFFER_SIZE-MAXIM_HAMMING_SIZE-MAXIM_MA4_SIZE-2 ;i++){
         s= 0;
-        for( k=i; k<i+ HAMMING_SIZE ;k++){
+        for( k=i; k<i+ MAXIM_HAMMING_SIZE ;k++){
             s -= an_dx[k] *auw_hamm[k-i] ;
                      }
         an_dx[i]= s/ (int32_t)1146; // divide by sum of auw_hamm
@@ -160,12 +160,12 @@ void MAXIM_HeartRate_SpO2(uint32_t *pun_ir_buffer,  int32_t n_ir_buffer_length, 
 
 
     n_th1=0; // threshold calculation
-    for ( k=0 ; k<BUFFER_SIZE-HAMMING_SIZE ;k++){
+    for ( k=0 ; k<MAXIM_BUFFER_SIZE-MAXIM_HAMMING_SIZE ;k++){
         n_th1 += ((an_dx[k]>0)? an_dx[k] : ((int32_t)0-an_dx[k])) ;
     }
-    n_th1= n_th1/ ( BUFFER_SIZE-HAMMING_SIZE);
+    n_th1= n_th1/ ( MAXIM_BUFFER_SIZE-MAXIM_HAMMING_SIZE);
     // peak location is acutally index for sharpest location of raw signal since we flipped the signal
-    maxim_find_peaks( an_dx_peak_locs, &n_npks, an_dx, BUFFER_SIZE-HAMMING_SIZE, n_th1, 8, 5 );//peak_height, peak_distance, max_num_peaks
+    maxim_find_peaks( an_dx_peak_locs, &n_npks, an_dx, MAXIM_BUFFER_SIZE-MAXIM_HAMMING_SIZE, n_th1, 8, 5 );//peak_height, peak_distance, max_num_peaks
 
     n_peak_interval_sum =0;
     if (n_npks>=2){
@@ -181,7 +181,7 @@ void MAXIM_HeartRate_SpO2(uint32_t *pun_ir_buffer,  int32_t n_ir_buffer_length, 
     }
 
     for ( k=0 ; k<n_npks ;k++)
-        an_ir_valley_locs[k]=an_dx_peak_locs[k]+HAMMING_SIZE/2;
+        an_ir_valley_locs[k]=an_dx_peak_locs[k]+MAXIM_HAMMING_SIZE/2;
 
 
     // raw value : RED(=y) and IR(=X)
@@ -197,7 +197,7 @@ void MAXIM_HeartRate_SpO2(uint32_t *pun_ir_buffer,  int32_t n_ir_buffer_length, 
         un_only_once =1;
         m=an_ir_valley_locs[k];
         n_c_min= 16777216;//2^24;
-        if (m+5 <  BUFFER_SIZE-HAMMING_SIZE  && m-5 >0){
+        if (m+5 <  MAXIM_BUFFER_SIZE-MAXIM_HAMMING_SIZE  && m-5 >0){
             for(i= m-5;i<m+5; i++)
                 if (an_x[i]<n_c_min){
                     if (un_only_once >0){
@@ -216,7 +216,7 @@ void MAXIM_HeartRate_SpO2(uint32_t *pun_ir_buffer,  int32_t n_ir_buffer_length, 
        return;
     }
     // 4 pt MA
-    for(k=0; k< BUFFER_SIZE-MA4_SIZE; k++){
+    for(k=0; k< MAXIM_BUFFER_SIZE-MAXIM_MA4_SIZE; k++){
         an_x[k]=( an_x[k]+an_x[k+1]+ an_x[k+2]+ an_x[k+3])/(int32_t)4;
         an_y[k]=( an_y[k]+an_y[k+1]+ an_y[k+2]+ an_y[k+3])/(int32_t)4;
     }
@@ -228,7 +228,7 @@ void MAXIM_HeartRate_SpO2(uint32_t *pun_ir_buffer,  int32_t n_ir_buffer_length, 
 
     for(k=0; k< 5; k++) an_ratio[k]=0;
     for (k=0; k< n_exact_ir_valley_locs_count; k++){
-        if (an_exact_ir_valley_locs[k] > BUFFER_SIZE ){
+        if (an_exact_ir_valley_locs[k] > MAXIM_BUFFER_SIZE ){
             *pn_spo2 =  -999 ; // do not use SPO2 since valley loc is out of range
             *pch_spo2_valid  = 0;
             return;
