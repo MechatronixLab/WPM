@@ -22,7 +22,9 @@
 
 // Sensors
 #include "max30102.h"
-#include "wsen-isds.h"
+
+#include "imu.h"
+//#include "wsen-isds.h"
 
 // LoRa
 #include "lora.h"

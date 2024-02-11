@@ -12,19 +12,13 @@ void APP_Init(void)
 	CONSOLE_Init();
 	DISPLAY_Init();
 
+	IMU_Init();
+
 	LORA_RadioInit();
 	LORA_FSM_Init();	// TODO: Can I remove this?
 
 	// TODO: move to imu.c
-	if(ISDS_CommunicationCheck() == 0)
-	{
-		ISDS_SoftReset();
-		ISDS_Init();
-	}
-	else
-	{
-		CLI_Write("Error communicating with IMU! \r\n");
-	}
+
 
 	// TODO: move to oximetry.c
 	MAX30102_Reset();
@@ -45,7 +39,9 @@ void APP_Run(void)
 
 	int16_t	ISDS_temperature = 0;
 
-	ISDS_data_t ISDS_measurements;
+	IMU_data_t IMU_data = {0};
+
+
 	MAX30102_data_t MAX30102_measurements;
 
 	int32_t buffer_red[MOVING_AVERAGE_PERIOD] = {0};
@@ -102,22 +98,22 @@ void APP_Run(void)
 			ISR_interrupt_flag = 0;
 			interrupt_counter++;
 
-			ISDS_GetData(&ISDS_measurements);
+			IMU_GetData(&IMU_data);
 
 			MAX30102_GetDataMulti(&MAX30102_measurements);
 
-//			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
-//								ISDS_measurements.angular_rate[ISDS_X_AXIS],
-//								ISDS_measurements.angular_rate[ISDS_Y_AXIS],
-//								ISDS_measurements.angular_rate[ISDS_Z_AXIS],
-//								ISDS_measurements.acceleration[ISDS_X_AXIS],
-//								ISDS_measurements.acceleration[ISDS_Y_AXIS],
-//								ISDS_measurements.acceleration[ISDS_Z_AXIS],
-//								ISDS_measurements.temperature / 100,
-//							abs(ISDS_measurements.temperature % 100),
-//								MAX30102_measurements.red,
-//								MAX30102_measurements.infrared);
-//			CLI_Write(string_buffer);
+			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
+								IMU_data.angular_rate[IMU_X],
+								IMU_data.angular_rate[IMU_Y],
+								IMU_data.angular_rate[IMU_Z],
+								IMU_data.acceleration[IMU_X],
+								IMU_data.acceleration[IMU_Y],
+								IMU_data.acceleration[IMU_Z],
+								IMU_data.temperature / 100,
+							abs(IMU_data.temperature % 100),
+								MAX30102_measurements.red,
+								MAX30102_measurements.infrared);
+			CLI_Write(string_buffer);
 
 			CIRCULAR_Push(&circular_red, MAX30102_measurements.red);
 			CIRCULAR_Push(&circular_infrared, MAX30102_measurements.infrared);
@@ -132,16 +128,16 @@ void APP_Run(void)
 			RMS_AC_infrared = (uint32_t) sqrt(AVERAGE_avg((uint32_t *)circular_AC_infrared.buffer, MOVING_AVERAGE_PERIOD));
 
 
-			sprintf(string_buffer,
-					"R:%6lu, AVG_R:%6lu, AC_R:%6ld, IR:%6lu, AVG_IR:%6lu, AC_IR:%6ld, AC_R:%6ld, AC_IR:%6ld, %d \r\n",
-					MAX30102_measurements.red,
-					average_red,
-					RMS_AC_red,
-					MAX30102_measurements.infrared,
-					average_infrared,
-					RMS_AC_infrared,
-					RMS_AC_red, RMS_AC_infrared, 0);
-			CLI_Write(string_buffer);
+//			sprintf(string_buffer,
+//					"R:%6lu, AVG_R:%6lu, AC_R:%6ld, IR:%6lu, AVG_IR:%6lu, AC_IR:%6ld, AC_R:%6ld, AC_IR:%6ld, %d \r\n",
+//					MAX30102_measurements.red,
+//					average_red,
+//					RMS_AC_red,
+//					MAX30102_measurements.infrared,
+//					average_infrared,
+//					RMS_AC_infrared,
+//					RMS_AC_red, RMS_AC_infrared, 0);
+//			CLI_Write(string_buffer);
 
 
 			if (interrupt_counter == 50)	// 1 Hz
