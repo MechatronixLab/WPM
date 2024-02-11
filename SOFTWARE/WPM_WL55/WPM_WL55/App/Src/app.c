@@ -85,13 +85,6 @@ void APP_Run(void)
 
 				interrupt_counter = 0;
 
-
-				sprintf(string_buffer, "%3d.%02d oC",
-										imu_data.temperature / 100,
-									abs(imu_data.temperature % 100));
-				OLED_SetCursor(66, 2);
-				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
-
 //				MAX30102_temperature = MAX30102_GetTemperature();	// Takes 30ms
 //				sprintf(string_buffer, "%3d oC", MAX30102_temperature);
 //				OLED_SetCursor(66, 3);
@@ -107,7 +100,7 @@ void APP_Run(void)
 				{
 					sprintf(string_buffer, "SpO2:---%% ");
 				}
-				OLED_SetCursor(66, 4);
+				OLED_SetCursor(0, 0);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				if (oximetry_data.heart_rate > 0)
@@ -118,14 +111,19 @@ void APP_Run(void)
 				{
 					sprintf(string_buffer, "HR:---bpm ");
 				}
-				OLED_SetCursor(66, 5);
+				OLED_SetCursor(64, 0);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				sprintf(string_buffer, "TX: %lu", LORA_TX_counter);
-				LORA_Tx(string_buffer);
-				LORA_TX_counter++;
+				sprintf(string_buffer, "T:%3d.%02doC",
+										imu_data.temperature / 100,
+									abs(imu_data.temperature % 100));
+				OLED_SetCursor(0, 1);
+				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				OLED_SetCursor(66, 7);
+				LORA_TX_counter++;
+				sprintf(string_buffer, "TX:%5lu", LORA_TX_counter);
+				LORA_Tx(string_buffer);
+				OLED_SetCursor(64, 1);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				BSP_LED_Off(LED_GREEN);

@@ -98,7 +98,7 @@ void OXIMETRY_ProcessData(OXIMETRY_data_t * data)
 	}
 	if(!heart_rate_valid)
 	{
-		heart_rate = 1;
+		heart_rate = -1;
 	}
 
 	data->spo2 = spo2;
