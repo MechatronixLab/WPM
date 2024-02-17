@@ -14,7 +14,7 @@
 //			Code output format: Arduino code
 //			Draw mode: 			Vertical - 1 bit per pixel
 //
-//	Then, copy array contents from the page to this array:
+//	Then, copy array contents from the page to the array:
 static const uint8_t MECHATRONIX_LAB_LOGO_64x64[] =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -155,29 +155,43 @@ void DISPLAY_Init(void)
 
 void DISPLAY_DrawPleth(OXIMETRY_raw_data_t * data)
 {
+	static uint32_t pleth_min =    1 << 19;	// Raw signal is 18-bit wide
+	static uint32_t pleth_max = 0x00000000;
 
-	static uint8_t graph_min;
-	static uint8_t graph_max;
+	static uint8_t  graph_min = 32;
+	static uint8_t  graph_max = 63;
+	static uint16_t graph_x = 0;
+	static uint8_t  graph_y = 0;
 
-	static uint32_t red_min = 0xFFFFFFFF;
-	static uint32_t red_max = 0x00000000;
-
-	static uint8_t graph_x = 0;
-
-	if (data->red > red_max)
+	if (data->red < 1000)	// Finger off sensor
 	{
-		red_max = data->red;
+		data->red = 0;
 	}
 
-	if (data->red < red_min)
+	if (data->red < pleth_min)
 	{
-		red_min = data->red;
+		pleth_min = data->red;
 	}
 
-	graph_min = (uint8_t) data->red / red_min;
+	if (data->red > pleth_max)
+	{
+		pleth_max = data->red;
+	}
 
+	graph_y = (uint8_t) AUX_Map(data->red, pleth_min, pleth_max, graph_min, graph_max);
+	if (graph_y == 0)
+	{
+		graph_y = 63;
+	}
 
+	GFX_DrawLine(graph_x, graph_y, graph_x, 63);
 
-
-
+	graph_x++;
+	if (graph_x > (SCREEN_WIDTH - 1))
+	{
+		graph_x = 0;
+		pleth_min = 1 << 19;
+		pleth_max = 0x00000000;
+		GFX_ClearFrame(GFX_frame_buffer);
+	}
 }

@@ -33,31 +33,9 @@ void APP_Run(void)
 	uint32_t LORA_TX_counter = 0;
 	uint8_t	 interrupt_counter = 0;
 
-//	uint16_t MAX30102_temperature = 0;
-
-//	int16_t	ISDS_temperature = 0;
-
 	IMU_data_t imu_data = {0};
 	OXIMETRY_raw_data_t oximetry_raw_data = {0};
 	OXIMETRY_data_t oximetry_data = {0};
-
-
-
-	uint32_t pleth_min = 1 << 19;
-	uint32_t pleth_max = 0x00000000;
-	uint8_t pleth_x = 0;
-
-	uint8_t graph_min = 32;
-	uint8_t graph_max = 63;
-	uint16_t graph_x = 0;
-	uint8_t graph_y = 0;
-
-	uint8_t graph_x_prev = 0;
-	uint8_t graph_y_prev = 0;
-
-
-
-
 
 	while(1)
 	{	//LORA_Process();
@@ -67,60 +45,13 @@ void APP_Run(void)
 			interrupt_counter++;
 
 			IMU_GetData(&imu_data);
+
 			OXIMETRY_GetRawData(&oximetry_raw_data);
-
-			// TODO: oxim get raw data
-
-
-			if (oximetry_raw_data.red < 1000)
-			{
-				oximetry_raw_data.red = 1;
-			}
-
-			if (oximetry_raw_data.red < pleth_min)
-			{
-				pleth_min = oximetry_raw_data.red;
-			}
-
-			if (oximetry_raw_data.red > pleth_max)
-			{
-				pleth_max = oximetry_raw_data.red;
-			}
-
-
-//			if (pleth_x = 0)
-//			{
-//				graph_min =
-//
-//			}
-
-			graph_y = (uint8_t) AUX_Map(oximetry_raw_data.red, pleth_min, pleth_max, graph_min, graph_max);
-			if (graph_y == 0)
-			{
-				graph_y = 63;
-			}
-
-//			OLED_SetPixel(graph_x, graph_y);
-
-//			GFX_DrawLine(graph_x_prev, graph_y_prev, graph_x, graph_y);
-			GFX_DrawLine(graph_x, graph_y, graph_x, 63);
-
-			graph_x_prev = graph_x;
-			graph_y_prev = graph_y;
-
-			graph_x++;
-			if (graph_x > (SCREEN_WIDTH - 1))
-			{
-				graph_x = 0;
-				graph_x_prev = 63;
-				pleth_min = 1 << 19;
-				pleth_max = 0x00000000;
-				GFX_ClearFrame(GFX_frame_buffer);
-			}
+			DISPLAY_DrawPleth(&oximetry_raw_data);
 
 			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
-								graph_x,
-								graph_y,
+								0,
+								0,
 								0,
 								imu_data.acceleration[IMU_X],
 								imu_data.acceleration[IMU_Y],

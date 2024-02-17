@@ -36,6 +36,5 @@ void OXIMETRY_ProcessData(OXIMETRY_data_t * data);
 // TODO:
 // Map MAX30102 registers and bit fields
 // Recreate Init function accepting configuration parameters as arguments
-// Reorganize Pleth curve plotting into function
 
 #endif /* INC_OXIMETRY_H_ */
