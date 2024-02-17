@@ -77,6 +77,14 @@ void LORA_RadioInit(void)
 	// WORKAROUND - Optimizing the Inverted IQ Operation, see DS_SX1261-2_V1.2 datasheet chapter 15.4
 	// RegIqPolaritySetup @address 0x0736
 	SUBGRF_WriteRegister( 0x0736, SUBGRF_ReadRegister( 0x0736 ) | ( 1 << 2 ) );
+
+
+	LORA_Tx("Wearable Patient Monitor");
+	HAL_Delay(200);
+	LORA_Tx("WPM-WL");
+	HAL_Delay(200);
+	LORA_Tx("Developed by Eng. Andre A. M. Araujo");
+
 }
 
 

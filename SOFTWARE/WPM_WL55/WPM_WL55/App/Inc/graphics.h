@@ -29,8 +29,8 @@ void GFX_DrawChar(uint8_t * font, uint8_t character);
 void GFX_DrawString(uint8_t * font, char * string);
 void GFX_DrawLogo(uint8_t c0, uint8_t p0, uint8_t w, uint8_t h, uint8_t * logo);
 void GFX_DrawFrame(uint8_t * frame_buffer);
-void GFX_DrawHalfFrame(uint8_t * frame_buffer);
-void GFX_DrawFrameArea(uint8_t * frame_buffer, uint8_t xi, uint8_t pagei, uint8_t xf, uint8_t pagef);
+void GFX_DrawHalfFrame(uint8_t * frame_buffer);	// TODO: temporary implementation - fix
+void GFX_DrawFrameArea(uint8_t * frame_buffer, uint8_t xi, uint8_t pagei, uint8_t xf, uint8_t pagef);	// TODO: fix
 
 void GFX_DrawHorizontalLine	(uint8_t x, uint8_t y, uint8_t dx);
 void GFX_DrawVerticalLine	(uint8_t x, uint8_t y, uint8_t dy);

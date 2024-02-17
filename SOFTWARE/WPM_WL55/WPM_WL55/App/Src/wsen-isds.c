@@ -53,7 +53,7 @@ uint8_t	ISDS_SoftReset(void)
 	return ISDS_CommunicationCheck();
 }
 
-void	ISDS_Init(void)
+void	ISDS_Init(void)	// TODO:
 {
 	uint8_t I2C_buffer[2];
 

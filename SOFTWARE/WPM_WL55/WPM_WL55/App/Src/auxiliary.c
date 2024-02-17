@@ -7,7 +7,7 @@
 
 #include "auxiliary.h"
 
-// Moving Averages Algorithm //////////////////////////////////////////////////
+// Moving Averages Algorithm ///////////////////////////////////////////////////
 
 uint32_t AUX_Average(uint32_t * array, uint16_t length)
 {
@@ -23,8 +23,7 @@ uint32_t AUX_Average(uint32_t * array, uint16_t length)
 	return (uint32_t) average;
 }
 
-
-// Circular Buffer Algorithm //////////////////////////////////////////////////
+// Circular Buffer Algorithm ///////////////////////////////////////////////////
 
 // https://embedjournal.com/implementing-circular-buffer-embedded-c/
 
@@ -68,9 +67,9 @@ void 	AUX_CircularBufferPop (circular_buffer_t * c, uint32_t * data)
     c->tail = next;              // tail to next offset.
 }
 
-// Map Algorithm //////////////////////////////////////////////////////////////
+// Map Algorithm ///////////////////////////////////////////////////////////////
 
 int32_t AUX_Map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max)
 {
-  return (int32_t) ((x - 1.0 * in_min) * (1.0 * out_max - 1.0 * out_min) / (1.0 * in_max - 1.0 * in_min) + 1.0 * out_min);
+  return (int32_t) ((1.0 * x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 }

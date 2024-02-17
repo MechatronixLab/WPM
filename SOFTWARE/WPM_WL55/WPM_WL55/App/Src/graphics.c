@@ -7,6 +7,8 @@
 
 #include "graphics.h"
 
+// TODO: Rework functions to use frame buffer
+
 uint8_t GFX_frame_buffer[FRAME_BUFFER_SIZE] = {0};
 
 // 5x7 font:

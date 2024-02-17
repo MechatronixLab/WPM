@@ -104,5 +104,3 @@ void OLED_Init(void)
 
 	OLED_Clear();
 }
-
-

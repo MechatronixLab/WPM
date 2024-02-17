@@ -19,7 +19,7 @@ void APP_Init(void)
 	OXIMETRY_Init();
 
 	LORA_RadioInit();
-	LORA_FSM_Init();	// TODO: Can I remove this?
+	//LORA_FSM_Init();	// TODO: Can I remove this? - YES (for TX; not sure for LoRa RX)
 
 	ISR_StartInterruptTimer();
 
