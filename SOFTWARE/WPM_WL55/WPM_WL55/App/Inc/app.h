@@ -16,7 +16,7 @@
 #include "isr.h"
 
 // Display
-#include "oled_ssd1306.h"
+//#include "oled_ssd1306.h"
 #include "graphics.h"
 #include "display.h"
 
@@ -40,8 +40,8 @@
 #include "version.h"
 
 // Tools
-#include "average.h"
-#include "circular_buffer.h"
+//#include "average.h"
+//#include "circular_buffer.h"
 
 
 

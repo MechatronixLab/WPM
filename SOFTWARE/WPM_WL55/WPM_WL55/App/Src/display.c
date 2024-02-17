@@ -119,36 +119,65 @@ void DISPLAY_Init(void)
 		HAL_Delay(dt);
 	}
 
-	HAL_Delay(14 * dt);
-
-	OLED_SetCursor(64, 0);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "WPM-WL55  ");
-	OLED_SetCursor(64, 1);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "V: 0.0.1  ");
-	OLED_SetCursor(64, 2);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "2024.02.29");
-
-	HAL_Delay(20 * dt);
+//	HAL_Delay(14 * dt);
+//
+//	OLED_SetCursor(64, 0);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "WPM-WL55  ");
+//	OLED_SetCursor(64, 1);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "V: 0.0.1  ");
+//	OLED_SetCursor(64, 2);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "2024.02.29");
+//
+//	HAL_Delay(20 * dt);
+//
+//	OLED_Clear();
+//
+//	OLED_SetCursor(0, 0);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "STM32     ");
+//	OLED_SetCursor(0, 1);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "WIRELESS  ");
+//	OLED_SetCursor(0, 2);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "INNOVATION");
+//	OLED_SetCursor(0, 3);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "DESIGN    ");
+//	OLED_SetCursor(0, 4);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "CONTEST   ");
+//	OLED_SetCursor(0, 7);
+//	GFX_DrawString((uint8_t *)GFX_font_5x7, "2024      ");
+//
+//	GFX_DrawLogo(64, 0,64,32, (uint8_t *) ST_LOGO_64x32);
+//	GFX_DrawLogo(64, 4,64,32, (uint8_t *) ELEKTOR_LOGO_64x32);
+//
+//	HAL_Delay(20 * dt);
 
 	OLED_Clear();
+}
 
-	OLED_SetCursor(0, 0);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "STM32     ");
-	OLED_SetCursor(0, 1);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "WIRELESS  ");
-	OLED_SetCursor(0, 2);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "INNOVATION");
-	OLED_SetCursor(0, 3);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "DESIGN    ");
-	OLED_SetCursor(0, 4);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "CONTEST   ");
-	OLED_SetCursor(0, 7);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "2024      ");
+void DISPLAY_DrawPleth(OXIMETRY_raw_data_t * data)
+{
 
-	GFX_DrawLogo(64, 0,64,32, (uint8_t *) ST_LOGO_64x32);
-	GFX_DrawLogo(64, 4,64,32, (uint8_t *) ELEKTOR_LOGO_64x32);
+	static uint8_t graph_min;
+	static uint8_t graph_max;
 
-	HAL_Delay(20 * dt);
+	static uint32_t red_min = 0xFFFFFFFF;
+	static uint32_t red_max = 0x00000000;
 
-	OLED_Clear();
+	static uint8_t graph_x = 0;
+
+	if (data->red > red_max)
+	{
+		red_max = data->red;
+	}
+
+	if (data->red < red_min)
+	{
+		red_min = data->red;
+	}
+
+	graph_min = (uint8_t) data->red / red_min;
+
+
+
+
+
 }

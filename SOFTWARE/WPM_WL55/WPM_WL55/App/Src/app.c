@@ -39,6 +39,9 @@ void APP_Run(void)
 	OXIMETRY_raw_data_t oximetry_raw_data = {0};
 	OXIMETRY_data_t oximetry_data = {0};
 
+
+	uint8_t graph_x = 0;
+
 	while(1)
 	{	//LORA_Process();
 		if (ISR_interrupt_flag)
@@ -64,6 +67,13 @@ void APP_Run(void)
 								oximetry_raw_data.infrared);
 			CLI_Write(string_buffer);
 
+
+			GFX_DrawLine(graph_x, 63-graph_x, graph_x + 1, 63 - graph_x - 1);
+			graph_x += 2;
+			if (graph_x > 127)
+			{
+				graph_x = 0;
+			}
 
 
 

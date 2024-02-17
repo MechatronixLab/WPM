@@ -13,6 +13,10 @@
 
 #include "main.h"
 
+#include "oximetry.h"
+
 void DISPLAY_Init(void);
+
+void DISPLAY_DrawPleth(OXIMETRY_raw_data_t * data);
 
 #endif /* INC_DISPLAY_H_ */
