@@ -7,10 +7,7 @@
 
 #include "app.h"
 
-int32_t map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max)
-{
-  return (int32_t) ((x - 1.0 * in_min) * (1.0 * out_max - 1.0 * out_min) / (1.0 * in_max - 1.0 * in_min) + 1.0 * out_min);
-}
+
 
 void APP_Init(void)
 {
@@ -97,7 +94,7 @@ void APP_Run(void)
 //
 //			}
 
-			graph_y = (uint8_t) map(oximetry_raw_data.red, pleth_min, pleth_max, graph_min, graph_max);
+			graph_y = (uint8_t) AUX_Map(oximetry_raw_data.red, pleth_min, pleth_max, graph_min, graph_max);
 			if (graph_y == 0)
 			{
 				graph_y = 63;

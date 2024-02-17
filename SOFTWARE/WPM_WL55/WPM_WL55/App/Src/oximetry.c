@@ -61,8 +61,8 @@ void OXIMETRY_GetRawData(OXIMETRY_raw_data_t * data)
 {
 	MAX30102_GetDataMulti(&MAX30102_measurements);
 
-	CIRCULAR_Push(&circular_red     , MAX30102_measurements.red     );
-	CIRCULAR_Push(&circular_infrared, MAX30102_measurements.infrared);
+	AUX_CircularBufferPush(&circular_red     , MAX30102_measurements.red     );
+	AUX_CircularBufferPush(&circular_infrared, MAX30102_measurements.infrared);
 
 //	average_red = AVERAGE_avg((uint32_t *)circular_red.buffer, MOVING_AVERAGE_PERIOD);
 //	average_infrared = AVERAGE_avg((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD);
