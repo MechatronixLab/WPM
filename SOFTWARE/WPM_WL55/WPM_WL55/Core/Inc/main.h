@@ -71,6 +71,7 @@ void Error_Handler(void);
 #define FE_CTRL3_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
 #define B1_GPIO_Port GPIOA
+#define B1_EXTI_IRQn EXTI0_IRQn
 #define FE_CTRL2_Pin GPIO_PIN_5
 #define FE_CTRL2_GPIO_Port GPIOC
 #define OLED_RESET_Pin GPIO_PIN_1
@@ -79,8 +80,10 @@ void Error_Handler(void);
 #define FE_CTRL1_GPIO_Port GPIOC
 #define B3_Pin GPIO_PIN_6
 #define B3_GPIO_Port GPIOC
+#define B3_EXTI_IRQn EXTI9_5_IRQn
 #define B2_Pin GPIO_PIN_1
 #define B2_GPIO_Port GPIOA
+#define B2_EXTI_IRQn EXTI1_IRQn
 #define LED3_Pin GPIO_PIN_11
 #define LED3_GPIO_Port GPIOB
 #define T_VCP_RX_Pin GPIO_PIN_3

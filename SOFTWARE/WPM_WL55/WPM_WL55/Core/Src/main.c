@@ -11,7 +11,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "app.h"
+#include "app.h"	// All main logic within "app.c"
 
 /* USER CODE END Includes */
 
@@ -73,7 +73,8 @@ int main(void)
   MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
 
-  APP_Init();
+  APP_Init();		// Program enters here and never returns:
+  	  	  			// All main logic within "app.c"
 
   /* USER CODE END 2 */
 
