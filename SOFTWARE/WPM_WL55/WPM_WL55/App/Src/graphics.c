@@ -181,6 +181,40 @@ void GFX_DrawFrame(uint8_t * frame_buffer)
 	}
 }
 
+void GFX_DrawHalfFrame(uint8_t * frame_buffer)
+{
+	uint8_t page 	= 0;
+	uint8_t column  = 0;
+	uint16_t sector = 4 * 128;
+
+	for (page = 4; page < 8; page++)
+	{
+		OLED_SetCursor(0, page);
+
+		for (column = 0; column < 128; column++)
+		{
+			OLED_SendData(frame_buffer[sector++]);
+		}
+	}
+}
+
+void GFX_DrawFrameArea(uint8_t * frame_buffer, uint8_t xi, uint8_t pagei, uint8_t xf, uint8_t pagef)
+{
+	uint8_t page 	= 0;
+	uint8_t column  = 0;
+	uint16_t sector = 0;
+
+	for (page = pagei; page < pagef; page++)
+	{
+		OLED_SetCursor(xi, page);
+
+		for (column = xi; column < xf; column++)
+		{
+			OLED_SendData(frame_buffer[xi + (pagei * 8) + sector++]);
+		}
+	}
+}
+
 void GFX_DrawHorizontalLine	(uint8_t x, uint8_t y, uint8_t dx)
 {
 	uint8_t counter = 0;
@@ -315,7 +349,10 @@ void GFX_DrawLine(int8_t x0, int8_t y0, int8_t x1, int8_t y1)
 			GFX_DrawLineOctant1(x0, y0, dx, dy, -1);
 		}
 	}
-	GFX_DrawFrame(GFX_frame_buffer);
+//	GFX_DrawFrame(GFX_frame_buffer);
+
+	//GFX_DrawFrameArea(GFX_frame_buffer, x0, (y0 * 8), x1, (y1 * 8));
+	GFX_DrawHalfFrame(GFX_frame_buffer);
 }
 
 void GFX_DrawTriangle (int8_t x0, int8_t y0, int8_t x1, int8_t y1, int8_t x2, int8_t y2)

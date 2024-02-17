@@ -22,6 +22,7 @@ void OLED_SendCommand(uint8_t command);
 void OLED_SendData(uint8_t data);
 void OLED_SetCursor(uint8_t x, uint8_t y);
 void OLED_SetPixel(uint8_t x, uint8_t y);
+void OLED_ResetPixel(uint8_t x, uint8_t y);
 void OLED_Clear(void);
 void OLED_Init(void);
 

@@ -12,8 +12,10 @@
 
 extern TIM_HandleTypeDef htim16;
 
-#define TIM16_PSC (48000 - 1)
-#define TIM16_ARR (20 - 1)
+#define TIM16_SAMPLE_RATE	25					// Hz
+
+#define TIM16_PSC (48000 - 1)					// 1 kHz
+#define TIM16_ARR (1000/TIM16_SAMPLE_RATE - 1)	// TIM16_SAMPLE_RATE Hz
 
 extern uint8_t	ISR_interrupt_flag;
 

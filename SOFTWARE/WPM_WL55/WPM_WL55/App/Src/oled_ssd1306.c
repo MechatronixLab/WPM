@@ -43,6 +43,12 @@ void OLED_SetPixel(uint8_t x, uint8_t y)
 	OLED_SendData(0x01 << (y % 8));
 }
 
+void OLED_ResetPixel(uint8_t x, uint8_t y)
+{
+	OLED_SetCursor(x, (y / 8));
+	OLED_SendData(0x00);
+}
+
 void OLED_Clear(void)
 {
 	uint8_t page 	= 0;
