@@ -37,6 +37,8 @@ void APP_Run(void)
 	OXIMETRY_raw_data_t oximetry_raw_data = {0};
 	OXIMETRY_data_t oximetry_data = {0};
 
+	BUZZER_SetVolume(125);
+
 	while(1)
 	{	//LORA_Process();
 		if (ISR_interrupt_flag)
@@ -91,6 +93,7 @@ void APP_Run(void)
 			if (interrupt_counter == (1000/(TIM16_ARR + 1)))	// 1 Hz
 			{
 				BSP_LED_On(LED_GREEN);
+				BUZZER_On();
 
 				interrupt_counter = 0;
 
@@ -135,7 +138,9 @@ void APP_Run(void)
 				OLED_SetCursor(64, 1);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
+				HAL_Delay(100);
 				BSP_LED_Off(LED_GREEN);
+				BUZZER_Off();
 			}
 		}
 	}

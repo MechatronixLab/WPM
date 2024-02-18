@@ -18,6 +18,9 @@
 #include "graphics.h"	// TODO: Ideally, should be called from "display.h" only
 #include "display.h"
 
+// Buzzer
+#include "buzzer.h"
+
 // Sensors
 #include "imu.h"
 #include "oximetry.h"

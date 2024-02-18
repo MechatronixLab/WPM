@@ -90,6 +90,8 @@ void Error_Handler(void);
 #define T_VCP_RX_GPIO_Port GPIOA
 #define T_VCP_RXA2_Pin GPIO_PIN_2
 #define T_VCP_RXA2_GPIO_Port GPIOA
+#define BUZZER_Pin GPIO_PIN_8
+#define BUZZER_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
