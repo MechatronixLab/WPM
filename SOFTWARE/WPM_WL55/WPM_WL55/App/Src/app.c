@@ -7,8 +7,6 @@
 
 #include "app.h"
 
-
-
 void APP_Init(void)
 {
 	CONSOLE_Init();

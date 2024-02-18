@@ -78,13 +78,11 @@ void LORA_RadioInit(void)
 	// RegIqPolaritySetup @address 0x0736
 	SUBGRF_WriteRegister( 0x0736, SUBGRF_ReadRegister( 0x0736 ) | ( 1 << 2 ) );
 
-
 	LORA_Tx("Wearable Patient Monitor");
 	HAL_Delay(200);
-	LORA_Tx("WPM-WL");
+	LORA_Tx("WPM-WL55");
 	HAL_Delay(200);
 	LORA_Tx("Developed by Eng. Andre A. M. Araujo");
-
 }
 
 
@@ -453,10 +451,6 @@ void transitionRxDone(pingPongFSM_t *const fsm)
   sprintf(uartBuff, "RssiValue=%d dBm, SnrValue=%d Hz\r\n", packetStatus.Params.LoRa.RssiPkt, packetStatus.Params.LoRa.SnrPkt);
   HAL_UART_Transmit(&huart2, (uint8_t *)uartBuff, strlen(uartBuff), HAL_MAX_DELAY);
 }
-
-
-
-
 
 void LORA_FSM_Init(void)
 {
