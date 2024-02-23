@@ -163,22 +163,22 @@ void DISPLAY_DrawPleth(OXIMETRY_raw_data_t * data)
 	static uint16_t graph_x = 0;
 	static uint8_t  graph_y = 0;
 
-	if (data->red < 1000)	// Finger off sensor
+	if (data->infrared < 1000)	// Finger off sensor
 	{
-		data->red = 0;
+		data->infrared = 0;
 	}
 
-	if (data->red < pleth_min)
+	if (data->infrared < pleth_min)
 	{
-		pleth_min = data->red;
+		pleth_min = data->infrared;
 	}
 
-	if (data->red > pleth_max)
+	if (data->infrared > pleth_max)
 	{
-		pleth_max = data->red;
+		pleth_max = data->infrared;
 	}
 
-	graph_y = (uint8_t) AUX_Map(data->red, pleth_min, pleth_max, graph_min, graph_max);
+	graph_y = (uint8_t) AUX_Map(data->infrared, pleth_min, pleth_max, graph_min, graph_max);
 	if (graph_y == 0)
 	{
 		graph_y = 63;
