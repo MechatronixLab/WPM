@@ -8,28 +8,19 @@
 #ifndef INC_OXIMETRY_H_
 #define INC_OXIMETRY_H_
 
-//#include "app.h"
-
 #include "max30102.h"
 #include "maxim_algorithm.h"
 
 #include "auxiliary.h"
-//#include "isr.h"
 
 #include <math.h>
-
-
 
 #define	OXIMETRY_NUMBER_OF_SAMPLES	MAXIM_BUFFER_SIZE
 
 #define OXIMETRY_SAMPLE_RATE		30u	// Hz
 
-//typedef struct
-//{
-//	uint32_t red;
-//	uint32_t infrared;
-//	uint16_t temperature;
-//} OXIMETRY_raw_data_t;
+#define OXIMETRY_SPO2_AVERAGE		120 	// Samples
+#define OXIMETRY_HR_AVERAGE			120 	// Samples
 
 typedef struct
 {
@@ -49,28 +40,6 @@ typedef struct
 	 uint8_t valid_heart_rate;
 	uint16_t temperature;
 } OXIMETRY_data_t;
-
-//extern int32_t buffer_red[MOVING_AVERAGE_PERIOD];
-//extern int32_t buffer_infrared[MOVING_AVERAGE_PERIOD];
-//extern int32_t buffer_AC2_red[MOVING_AVERAGE_PERIOD];
-//extern int32_t buffer_AC2_infrared[MOVING_AVERAGE_PERIOD];
-
-extern uint32_t DC_red;
-extern uint32_t DC_infrared;
-
-extern uint32_t RMS_AC_red;
-extern uint32_t RMS_AC_infrared;
-
-extern uint32_t ox_spo2;
-
-extern 	float aux1, aux2, ratio;
-
-extern int32_t d_red_dt;
-extern int32_t d_infrared_dt;
-
-extern uint8_t pulse_counter;
-extern uint8_t pulse;
-
 
 void OXIMETRY_Init(void);
 void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data);
