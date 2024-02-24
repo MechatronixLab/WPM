@@ -8,14 +8,21 @@
 #ifndef INC_OXIMETRY_H_
 #define INC_OXIMETRY_H_
 
+//#include "app.h"
+
 #include "max30102.h"
 #include "maxim_algorithm.h"
 
 #include "auxiliary.h"
+//#include "isr.h"
 
 #include <math.h>
 
+
+
 #define	OXIMETRY_NUMBER_OF_SAMPLES	MAXIM_BUFFER_SIZE
+
+#define OXIMETRY_SAMPLE_RATE		30u	// Hz
 
 typedef struct
 {
@@ -45,6 +52,13 @@ extern uint32_t RMS_AC_infrared;
 extern uint32_t ox_spo2;
 
 extern 	float aux1, aux2, ratio;
+
+extern int32_t d_red_dt;
+extern int32_t d_infrared_dt;
+
+extern uint8_t pulse_counter;
+extern uint8_t pulse;
+
 
 void OXIMETRY_Init(void);
 void OXIMETRY_GetRawData(OXIMETRY_raw_data_t * data);

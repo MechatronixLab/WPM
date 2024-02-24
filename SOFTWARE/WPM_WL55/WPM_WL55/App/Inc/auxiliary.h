@@ -12,7 +12,7 @@
 
 // Moving Averages Algorithm ///////////////////////////////////////////////////
 
-#define MOVING_AVERAGE_PERIOD	50
+#define MOVING_AVERAGE_PERIOD	120
 
 float AUX_Average(uint32_t * array, uint16_t length);
 

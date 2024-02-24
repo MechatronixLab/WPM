@@ -76,15 +76,25 @@ void APP_Run(void)
 //								oximetry_raw_data.infrared);
 //			CLI_Write(string_buffer);
 
+//			sprintf(string_buffer,
+//					"R:%6lu, DC_R:%6lu, AC_R:%6ld, IR:%6lu, DC_IR:%6lu, AC_IR:%6ld, RATIO:%f, SpO2:%6ld, %ld \r\n",
+//					oximetry_raw_data.red,
+//					DC_red,
+//					RMS_AC_red,
+//					oximetry_raw_data.infrared,
+//					DC_infrared,
+//					RMS_AC_infrared,
+//					ratio, ox_spo2, 0L);
+//			CLI_Write(string_buffer);
+
+
 			sprintf(string_buffer,
-					"R:%6lu, DC_R:%6lu, AC_R:%6ld, IR:%6lu, DC_IR:%6lu, AC_IR:%6ld, RATIO:%f, SpO2:%6ld, %ld \r\n",
-					oximetry_raw_data.red,
-					DC_red,
+					"AC_R:%6lu, DRDTR:%6ld, -:%6ld, AC_IR:%6lu, DIRDT:%6ld, -:%6ld, RATIO:%f, SpO2:%6ld, %d \r\n",
 					RMS_AC_red,
-					oximetry_raw_data.infrared,
-					DC_infrared,
+					d_red_dt, 0L,
 					RMS_AC_infrared,
-					ratio, ox_spo2, 0L);
+					d_infrared_dt, 0L,
+					ratio, ox_spo2, pulse);
 			CLI_Write(string_buffer);
 
 

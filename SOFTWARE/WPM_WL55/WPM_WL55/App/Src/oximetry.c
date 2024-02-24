@@ -54,6 +54,24 @@ circular_buffer_t circular_ratio =
 		.length = MOVING_AVERAGE_PERIOD
 };
 
+int32_t buffer_pulse_counter[MOVING_AVERAGE_PERIOD] = {0};
+circular_buffer_t circular_pulse_counter =
+{
+		.buffer = buffer_pulse_counter,
+		.head = 0,
+		.tail = 0,
+		.length = MOVING_AVERAGE_PERIOD
+};
+
+int32_t buffer_pulse[MOVING_AVERAGE_PERIOD] = {0};
+circular_buffer_t circular_pulse =
+{
+		.buffer = buffer_pulse,
+		.head = 0,
+		.tail = 0,
+		.length = MOVING_AVERAGE_PERIOD
+};
+
 uint32_t DC_red = 0;
 uint32_t DC_infrared = 0;
 
@@ -72,9 +90,20 @@ float aux1 = 0;
 float aux2 = 0;
 float ratio = 0;
 
+int32_t d_red_dt = 0;
+int32_t d_infrared_dt = 0;
+
+uint8_t pulse_counter = 0;
+uint8_t pulse = 0;
+
 void OXIMETRY_GetRawData(OXIMETRY_raw_data_t * data)
 {
 
+	static int32_t previous_red = 0;
+	static int32_t previous_infrared = 0;
+
+	static uint8_t peak_counter = 0;
+	static uint8_t pulse_detected = 0;
 
 	MAX30102_GetDataMulti(&MAX30102_measurements);
 
@@ -97,10 +126,43 @@ void OXIMETRY_GetRawData(OXIMETRY_raw_data_t * data)
 
 	ratio = AUX_Average((uint32_t *)circular_ratio.buffer, MOVING_AVERAGE_PERIOD);
 
-	ox_spo2 = (uint32_t)(104.0 - 17.0 * ratio);
+	ox_spo2 = (uint32_t)(1040.0 - 170.0 * ratio);
 
-	data->red      = MAX30102_measurements.red;
-	data->infrared = MAX30102_measurements.infrared;
+	d_red_dt 	  = ((int32_t)MAX30102_measurements.red      - previous_red     ) * OXIMETRY_SAMPLE_RATE;
+	d_infrared_dt = ((int32_t)MAX30102_measurements.infrared - previous_infrared) * OXIMETRY_SAMPLE_RATE;
+
+	if (d_red_dt < 0)
+	{
+		peak_counter++;
+		BSP_LED_On(2);
+	}
+	else
+	{
+		peak_counter = 0;
+		BSP_LED_Off(2);
+	}
+
+	if (peak_counter >= 4)
+	{
+		pulse_detected = MOVING_AVERAGE_PERIOD;
+		peak_counter = 0;
+	}
+
+	AUX_CircularBufferPush(&circular_pulse_counter, pulse_detected);
+	pulse_detected = 0;
+
+	pulse_counter = AUX_Average((uint32_t *)circular_pulse_counter.buffer, MOVING_AVERAGE_PERIOD);
+
+	AUX_CircularBufferPush(&circular_pulse, (pulse_counter * 60)/4);	// TODO: remove magic numbers: pulse * 60[s/min] / avergaing_time[s]
+
+	pulse = AUX_Average((uint32_t *)circular_pulse.buffer, MOVING_AVERAGE_PERIOD);
+
+	data->red         = MAX30102_measurements.red;
+	data->infrared    = MAX30102_measurements.infrared;
+
+	previous_red      = MAX30102_measurements.red;
+	previous_infrared = MAX30102_measurements.infrared;
+
 	// TODO: get temperature (need to request conversion before hand, as it takes 30 ms to convert).
 }
 
