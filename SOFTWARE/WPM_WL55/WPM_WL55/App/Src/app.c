@@ -89,7 +89,7 @@ void APP_Run(void)
 
 
 			sprintf(string_buffer,
-					"AC_R:%6lu, DRDTR:%6ld, -:%6ld, AC_IR:%6lu, DIRDT:%6ld, -:%6ld, RATIO:%f, SpO2:%6ld, %d \r\n",
+					"AC_R:%6lu, DRDTR:%6ld, -:%6ld, AC_IR:%6lu, DIRDT:%6ld, -:%6ld, RATIO:%f, SpO2:%6d, %6d \r\n",
 					oximetry_data.RMS_AC_red,
 					oximetry_data.dred_dt, 0L,
 					oximetry_data.RMS_AC_infrared,

@@ -105,12 +105,12 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	static uint8_t peak_counter = 0;
 	static uint8_t pulse_detected = 0;
 
-	static MAX30102_data_t oximetry_data = {0};
+	static MAX30102_data_t max30102_data = {0};
 
-	MAX30102_GetDataMulti(&oximetry_data);
+	MAX30102_GetDataMulti(&max30102_data);
 
-	data->red 	   = oximetry_data.red     ;
-	data->infrared = oximetry_data.infrared;
+	data->red 	   = max30102_data.red     ;
+	data->infrared = max30102_data.infrared;
 
 	AUX_CircularBufferPush(&circular_red     , data->red     );
 	AUX_CircularBufferPush(&circular_infrared, data->infrared);
@@ -131,12 +131,12 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 
 	data->ratio = AUX_Average((uint32_t *)circular_ratio.buffer, MOVING_AVERAGE_PERIOD);
 
-	data->spo2  = (uint32_t)(1040.0 - 170.0 * data->ratio);
+	data->spo2  = (uint16_t)(1040.0 - 170.0 * data->ratio);
 
 	data->dred_dt 	   = ((int32_t)data->red      - previous_red     ) * OXIMETRY_SAMPLE_RATE;
 	data->dinfrared_dt = ((int32_t)data->infrared - previous_infrared) * OXIMETRY_SAMPLE_RATE;
 
-	if (data->dred_dt < 0)
+	if (data->dred_dt < -1000)
 	{
 		peak_counter++;
 		data->heart_beep = 1;
@@ -149,7 +149,7 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 		BSP_LED_Off(2);
 	}
 
-	if (peak_counter >= 5)
+	if (peak_counter >= 7)
 	{
 		pulse_detected = MOVING_AVERAGE_PERIOD;
 		peak_counter = 0;

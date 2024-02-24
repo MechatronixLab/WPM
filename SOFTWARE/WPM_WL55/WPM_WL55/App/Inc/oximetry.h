@@ -42,9 +42,9 @@ typedef struct
 	 int32_t dred_dt;
 	 int32_t dinfrared_dt;
 	   float ratio;
-	 uint8_t spo2;
+	uint16_t spo2;
 	 uint8_t valid_spo2;
-	 uint8_t heart_rate;
+	uint16_t heart_rate;
 	 uint8_t heart_beep;
 	 uint8_t valid_heart_rate;
 	uint16_t temperature;
