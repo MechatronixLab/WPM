@@ -147,7 +147,7 @@ void APP_Run(void)
 				OLED_SetCursor(73, 0);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				sprintf(string_buffer, "T:%3d.%02d\bC",
+				sprintf(string_buffer, "T:%3d.%02d\177C",
 										imu_data.temperature / 100,
 									abs(imu_data.temperature % 100));
 				OLED_SetCursor(0, 2);
