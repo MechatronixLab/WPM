@@ -63,8 +63,8 @@ void 	AUX_CircularBufferPop (circular_buffer_t * c, uint32_t * data)
     if(next >= c->length)
         next = 0;
 
-    *data = c->buffer[c->tail];  // Read data and then move
-    c->tail = next;              // tail to next offset.
+    * data  = c->buffer[c->tail];	// Read data and then move
+    c->tail = next;              	// tail to next offset.
 }
 
 // Map Algorithm ///////////////////////////////////////////////////////////////

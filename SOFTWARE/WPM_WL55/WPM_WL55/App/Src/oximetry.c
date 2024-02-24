@@ -127,11 +127,11 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	aux1 = ((float)data->RMS_AC_red/(float)data->DC_red);
 	aux2 = ((float)data->RMS_AC_infrared/(float)data->DC_infrared);
 
-	AUX_CircularBufferPush(&circular_ratio, (aux1/aux2));
+	AUX_CircularBufferPush(&circular_ratio, (uint32_t)(1000*aux1/aux2));
 
 	data->ratio = AUX_Average((uint32_t *)circular_ratio.buffer, MOVING_AVERAGE_PERIOD);
 
-	data->spo2  = (uint16_t)(1040.0 - 170.0 * data->ratio);
+	data->spo2  = (uint16_t)(1040.0 - (170.0 * data->ratio)/1000.0);
 
 	data->dred_dt 	   = ((int32_t)data->red      - previous_red     ) * OXIMETRY_SAMPLE_RATE;
 	data->dinfrared_dt = ((int32_t)data->infrared - previous_infrared) * OXIMETRY_SAMPLE_RATE;
@@ -164,9 +164,6 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	AUX_CircularBufferPush(&circular_pulse, (pulse_counter * 60)/4);	// TODO: remove magic numbers: pulse * 60[s/min] / avergaing_time[s]
 
 	data->heart_rate = AUX_Average((uint32_t *)circular_pulse.buffer, MOVING_AVERAGE_PERIOD);
-
-//	data->red         = data->red;
-//	data->infrared    = data->infrared;
 
 	previous_red      = data->red;
 	previous_infrared = data->infrared;
