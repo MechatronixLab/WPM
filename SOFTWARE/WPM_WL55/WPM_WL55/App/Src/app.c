@@ -32,7 +32,7 @@ void APP_Run(void)
 	uint8_t	 interrupt_counter = 0;
 
 	IMU_data_t imu_data = {0};
-	OXIMETRY_raw_data_t oximetry_raw_data = {0};
+	//OXIMETRY_raw_data_t oximetry_raw_data = {0};
 	OXIMETRY_data_t oximetry_data = {0};
 
 	BUZZER_SetVolume(1);
@@ -46,8 +46,8 @@ void APP_Run(void)
 
 			IMU_GetData(&imu_data);
 
-			OXIMETRY_GetRawData(&oximetry_raw_data);
-			DISPLAY_DrawPleth(&oximetry_raw_data);
+			OXIMETRY_ProcessDataWPM(&oximetry_data);
+			DISPLAY_DrawPleth(&oximetry_data);
 
 //			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
 //								0,
@@ -90,18 +90,26 @@ void APP_Run(void)
 
 			sprintf(string_buffer,
 					"AC_R:%6lu, DRDTR:%6ld, -:%6ld, AC_IR:%6lu, DIRDT:%6ld, -:%6ld, RATIO:%f, SpO2:%6ld, %d \r\n",
-					RMS_AC_red,
-					d_red_dt, 0L,
-					RMS_AC_infrared,
-					d_infrared_dt, 0L,
-					ratio, ox_spo2, pulse);
+					oximetry_data.RMS_AC_red,
+					oximetry_data.dred_dt, 0L,
+					oximetry_data.RMS_AC_infrared,
+					oximetry_data.dinfrared_dt, 0L,
+					oximetry_data.ratio, oximetry_data.spo2, oximetry_data.heart_rate);
 			CLI_Write(string_buffer);
+
+			if (oximetry_data.heart_beep)
+			{
+				BUZZER_On();
+			}
+			else
+			{
+				BUZZER_Off();
+			}
 
 
 			if (interrupt_counter == (1000/(TIM16_ARR + 1)))	// 1 Hz
 			{
 				BSP_LED_On(LED_GREEN);
-				BUZZER_On();
 
 				interrupt_counter = 0;
 
@@ -110,7 +118,7 @@ void APP_Run(void)
 //				OLED_SetCursor(66, 3);
 //				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				OXIMETRY_ProcessData(&oximetry_data);
+				//OXIMETRY_ProcessDataMaxim(&oximetry_data);
 
 				if (oximetry_data.spo2 > 0)
 				{
@@ -148,7 +156,6 @@ void APP_Run(void)
 
 				HAL_Delay(5);
 				BSP_LED_Off(LED_GREEN);
-				BUZZER_Off();
 			}
 		}
 	}

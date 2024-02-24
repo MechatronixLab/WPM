@@ -24,24 +24,36 @@
 
 #define OXIMETRY_SAMPLE_RATE		30u	// Hz
 
+//typedef struct
+//{
+//	uint32_t red;
+//	uint32_t infrared;
+//	uint16_t temperature;
+//} OXIMETRY_raw_data_t;
+
 typedef struct
 {
 	uint32_t red;
 	uint32_t infrared;
-	uint16_t temperature;
-} OXIMETRY_raw_data_t;
-
-typedef struct
-{
-	 int32_t spo2;
-	 int32_t heart_rate;
+	uint32_t DC_red;
+	uint32_t DC_infrared;
+	uint32_t RMS_AC_red;
+	uint32_t RMS_AC_infrared;
+	 int32_t dred_dt;
+	 int32_t dinfrared_dt;
+	   float ratio;
+	 uint8_t spo2;
+	 uint8_t valid_spo2;
+	 uint8_t heart_rate;
+	 uint8_t heart_beep;
+	 uint8_t valid_heart_rate;
 	uint16_t temperature;
 } OXIMETRY_data_t;
 
-extern int32_t buffer_red[MOVING_AVERAGE_PERIOD];
-extern int32_t buffer_infrared[MOVING_AVERAGE_PERIOD];
-extern int32_t buffer_AC2_red[MOVING_AVERAGE_PERIOD];
-extern int32_t buffer_AC2_infrared[MOVING_AVERAGE_PERIOD];
+//extern int32_t buffer_red[MOVING_AVERAGE_PERIOD];
+//extern int32_t buffer_infrared[MOVING_AVERAGE_PERIOD];
+//extern int32_t buffer_AC2_red[MOVING_AVERAGE_PERIOD];
+//extern int32_t buffer_AC2_infrared[MOVING_AVERAGE_PERIOD];
 
 extern uint32_t DC_red;
 extern uint32_t DC_infrared;
@@ -61,8 +73,8 @@ extern uint8_t pulse;
 
 
 void OXIMETRY_Init(void);
-void OXIMETRY_GetRawData(OXIMETRY_raw_data_t * data);
-void OXIMETRY_ProcessData(OXIMETRY_data_t * data);
+void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data);
+void OXIMETRY_ProcessDataMaxim(OXIMETRY_data_t * data);
 
 // TODO:
 // Map MAX30102 registers and bit fields

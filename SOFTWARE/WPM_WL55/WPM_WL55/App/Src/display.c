@@ -153,7 +153,7 @@ void DISPLAY_Init(void)
 	OLED_Clear();
 }
 
-void DISPLAY_DrawPleth(OXIMETRY_raw_data_t * data)
+void DISPLAY_DrawPleth(OXIMETRY_data_t * data)
 {
 	static uint32_t pleth_min =    1 << 19;	// Raw signal is 18-bit wide
 	static uint32_t pleth_max = 0x00000000;
