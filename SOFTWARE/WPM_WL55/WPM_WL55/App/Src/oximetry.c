@@ -27,29 +27,40 @@ circular_buffer_t circular_infrared =
 		.length = MOVING_AVERAGE_PERIOD
 };
 
-int32_t buffer_AC_red[MOVING_AVERAGE_PERIOD] = {0};
-circular_buffer_t circular_AC_red =
+int32_t buffer_AC2_red[MOVING_AVERAGE_PERIOD] = {0};
+circular_buffer_t circular_AC2_red =
 {
-		.buffer = buffer_AC_red,
+		.buffer = buffer_AC2_red,
 		.head = 0,
 		.tail = 0,
 		.length = MOVING_AVERAGE_PERIOD
 };
 
-int32_t buffer_AC_infrared[MOVING_AVERAGE_PERIOD] = {0};
-circular_buffer_t circular_AC_infrared =
+int32_t buffer_AC2_infrared[MOVING_AVERAGE_PERIOD] = {0};
+circular_buffer_t circular_AC2_infrared =
 {
-		.buffer = buffer_AC_infrared,
+		.buffer = buffer_AC2_infrared,
 		.head = 0,
 		.tail = 0,
 		.length = MOVING_AVERAGE_PERIOD
 };
 
-uint32_t average_red = 0;
-uint32_t average_infrared = 0;
+float buffer_ratio[MOVING_AVERAGE_PERIOD] = {0};
+circular_buffer_t circular_ratio =
+{
+		.buffer = buffer_ratio,
+		.head = 0,
+		.tail = 0,
+		.length = MOVING_AVERAGE_PERIOD
+};
+
+uint32_t DC_red = 0;
+uint32_t DC_infrared = 0;
 
 uint32_t RMS_AC_red = 0;
 uint32_t RMS_AC_infrared = 0;
+
+uint32_t ox_spo2 = 0;
 
 void OXIMETRY_Init(void)
 {
@@ -57,21 +68,36 @@ void OXIMETRY_Init(void)
 	MAX30102_ConfigProximityDetect();
 }
 
+float aux1 = 0;
+float aux2 = 0;
+float ratio = 0;
+
 void OXIMETRY_GetRawData(OXIMETRY_raw_data_t * data)
 {
+
+
 	MAX30102_GetDataMulti(&MAX30102_measurements);
 
 	AUX_CircularBufferPush(&circular_red     , MAX30102_measurements.red     );
 	AUX_CircularBufferPush(&circular_infrared, MAX30102_measurements.infrared);
 
-//	average_red = AVERAGE_avg((uint32_t *)circular_red.buffer, MOVING_AVERAGE_PERIOD);
-//	average_infrared = AVERAGE_avg((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD);
-//
-//	CIRCULAR_Push(&circular_AC_red, pow((float)(MAX30102_measurements.red - average_red), 2));
-//	CIRCULAR_Push(&circular_AC_infrared, pow((float)(MAX30102_measurements.infrared - average_infrared), 2));
-//
-//	RMS_AC_red = (uint32_t) sqrt(AVERAGE_avg((uint32_t *)circular_AC_red.buffer, MOVING_AVERAGE_PERIOD));
-//	RMS_AC_infrared = (uint32_t) sqrt(AVERAGE_avg((uint32_t *)circular_AC_infrared.buffer, MOVING_AVERAGE_PERIOD));
+	DC_red 		= (uint32_t)AUX_Average((uint32_t *)circular_red.buffer     , MOVING_AVERAGE_PERIOD);
+	DC_infrared = (uint32_t)AUX_Average((uint32_t *)circular_infrared.buffer, MOVING_AVERAGE_PERIOD);
+
+	AUX_CircularBufferPush(&circular_AC2_red     , (int32_t)pow((float)((int32_t)(MAX30102_measurements.red      - DC_red     )), 2));
+	AUX_CircularBufferPush(&circular_AC2_infrared, (int32_t)pow((float)((int32_t)(MAX30102_measurements.infrared - DC_infrared)), 2));
+
+	RMS_AC_red 	    = (uint32_t) sqrt(AUX_Average((uint32_t *)circular_AC2_red.buffer     , MOVING_AVERAGE_PERIOD));
+	RMS_AC_infrared = (uint32_t) sqrt(AUX_Average((uint32_t *)circular_AC2_infrared.buffer, MOVING_AVERAGE_PERIOD));
+
+	aux1 = ((float)RMS_AC_red/(float)DC_red);
+	aux2 = ((float)RMS_AC_infrared/(float)DC_infrared);
+
+	AUX_CircularBufferPush(&circular_ratio, (aux1/aux2));
+
+	ratio = AUX_Average((uint32_t *)circular_ratio.buffer, MOVING_AVERAGE_PERIOD);
+
+	ox_spo2 = (uint32_t)(104.0 - 17.0 * ratio);
 
 	data->red      = MAX30102_measurements.red;
 	data->infrared = MAX30102_measurements.infrared;

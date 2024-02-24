@@ -94,9 +94,19 @@ void 	MAX30102_GetDataMulti(MAX30102_data_t * measurements)
 					    	 | I2C_buffer[1] <<  8
 					    	 | I2C_buffer[2];
 
+	if (measurements->red < 1000)
+	{
+		measurements->red = 0;
+	}
+
 	measurements->infrared = ((I2C_buffer[3] & 0x03) << 16)	// 18-bit
 					    	 | I2C_buffer[4] <<  8
 					         | I2C_buffer[5];
+
+	if (measurements->infrared < 1000)
+	{
+		measurements->infrared = 0;
+	}
 }
 
 int16_t MAX30102_GetTemperature(void)

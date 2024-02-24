@@ -12,9 +12,9 @@
 
 // Moving Averages Algorithm ///////////////////////////////////////////////////
 
-#define MOVING_AVERAGE_PERIOD	250
+#define MOVING_AVERAGE_PERIOD	50
 
-uint32_t AUX_Average(uint32_t * array, uint16_t length);
+float AUX_Average(uint32_t * array, uint16_t length);
 
 // Circular Buffer Algorithm ///////////////////////////////////////////////////
 

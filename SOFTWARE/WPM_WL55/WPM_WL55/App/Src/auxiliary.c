@@ -9,10 +9,10 @@
 
 // Moving Averages Algorithm ///////////////////////////////////////////////////
 
-uint32_t AUX_Average(uint32_t * array, uint16_t length)
+float AUX_Average(uint32_t * array, uint16_t length)
 {
 	uint16_t index = 0;
-	uint64_t  average = 0;
+	float  average = 0;
 
 	for (index = 0; index < length; index++)
 	{
@@ -20,7 +20,7 @@ uint32_t AUX_Average(uint32_t * array, uint16_t length)
 	}
 	average /= length;
 
-	return (uint32_t) average;
+	return average;
 }
 
 // Circular Buffer Algorithm ///////////////////////////////////////////////////

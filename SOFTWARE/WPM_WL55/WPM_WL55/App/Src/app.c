@@ -49,18 +49,18 @@ void APP_Run(void)
 			OXIMETRY_GetRawData(&oximetry_raw_data);
 			DISPLAY_DrawPleth(&oximetry_raw_data);
 
-			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
-								0,
-								0,
-								0,
-								imu_data.acceleration[IMU_X],
-								imu_data.acceleration[IMU_Y],
-								imu_data.acceleration[IMU_Z],
-								imu_data.temperature / 100,
-							abs(imu_data.temperature % 100),
-								oximetry_raw_data.red,
-								oximetry_raw_data.infrared);
-			CLI_Write(string_buffer);
+//			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
+//								0,
+//								0,
+//								0,
+//								imu_data.acceleration[IMU_X],
+//								imu_data.acceleration[IMU_Y],
+//								imu_data.acceleration[IMU_Z],
+//								imu_data.temperature / 100,
+//							abs(imu_data.temperature % 100),
+//								oximetry_raw_data.red,
+//								oximetry_raw_data.infrared);
+//			CLI_Write(string_buffer);
 
 
 //			sprintf(string_buffer, "%4d, %4d, %4d, %4d, %4d, %4d, %3d.%02d oC, R %6lu, IR %6lu \r\n",
@@ -76,16 +76,16 @@ void APP_Run(void)
 //								oximetry_raw_data.infrared);
 //			CLI_Write(string_buffer);
 
-//			sprintf(string_buffer,
-//					"R:%6lu, AVG_R:%6lu, AC_R:%6ld, IR:%6lu, AVG_IR:%6lu, AC_IR:%6ld, AC_R:%6ld, AC_IR:%6ld, %d \r\n",
-//					MAX30102_measurements.red,
-//					average_red,
-//					RMS_AC_red,
-//					MAX30102_measurements.infrared,
-//					average_infrared,
-//					RMS_AC_infrared,
-//					RMS_AC_red, RMS_AC_infrared, 0);
-//			CLI_Write(string_buffer);
+			sprintf(string_buffer,
+					"R:%6lu, DC_R:%6lu, AC_R:%6ld, IR:%6lu, DC_IR:%6lu, AC_IR:%6ld, RATIO:%f, SpO2:%6ld, %ld \r\n",
+					oximetry_raw_data.red,
+					DC_red,
+					RMS_AC_red,
+					oximetry_raw_data.infrared,
+					DC_infrared,
+					RMS_AC_infrared,
+					ratio, ox_spo2, 0L);
+			CLI_Write(string_buffer);
 
 
 			if (interrupt_counter == (1000/(TIM16_ARR + 1)))	// 1 Hz
