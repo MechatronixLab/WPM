@@ -43,7 +43,7 @@ circular_buffer_t circular_AC2_infrared =
 		.length = OXIMETRY_SPO2_AVERAGE
 };
 
-static float buffer_ratio[OXIMETRY_SPO2_AVERAGE] = {0};
+static int32_t buffer_ratio[OXIMETRY_SPO2_AVERAGE] = {0};
 circular_buffer_t circular_ratio =
 {
 		.buffer = buffer_ratio,
@@ -84,10 +84,9 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	static uint8_t peak_counter = 0;
 	static uint8_t pulse_detected = 0;
 
-	uint8_t pulse_counter = 0;
+	static uint8_t valid_hr_counter = 0;
 
-	float aux1 = 0;
-	float aux2 = 0;
+	uint8_t pulse_counter = 0;
 
 	static MAX30102_data_t max30102_data = {0};
 
@@ -108,14 +107,15 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	data->RMS_AC_red 	  = (uint32_t) sqrt(AUX_Average((uint32_t *)circular_AC2_red.buffer     , OXIMETRY_SPO2_AVERAGE));
 	data->RMS_AC_infrared = (uint32_t) sqrt(AUX_Average((uint32_t *)circular_AC2_infrared.buffer, OXIMETRY_SPO2_AVERAGE));
 
-	aux1 = ((float)data->RMS_AC_red/(float)data->DC_red);
-	aux2 = ((float)data->RMS_AC_infrared/(float)data->DC_infrared);
-
-	AUX_CircularBufferPush(&circular_ratio, (uint32_t)(1000*aux1/aux2));
+	AUX_CircularBufferPush(&circular_ratio, (uint32_t)((1000 * data->RMS_AC_red * data->DC_infrared)/data->DC_red)/data->RMS_AC_infrared);
 
 	data->ratio = AUX_Average((uint32_t *)circular_ratio.buffer, OXIMETRY_SPO2_AVERAGE);
 
-	data->spo2  = (uint16_t)(1040.0 - (170.0 * data->ratio)/1000.0);
+	data->spo2  = (uint16_t)(1040 - (170 * data->ratio)/1000);
+	if (data->spo2 > 1000)	// If > 100%
+	{
+		data->spo2 = 1000;
+	}
 
 	data->dred_dt 	   = ((int32_t)data->red      - previous_red     ) * OXIMETRY_SAMPLE_RATE;
 	data->dinfrared_dt = ((int32_t)data->infrared - previous_infrared) * OXIMETRY_SAMPLE_RATE;
@@ -127,20 +127,25 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 		if (data->dred_dt < -1000)
 		{
 			data->heart_beep = 1;
-			BSP_LED_On(2);
 		}
 	}
 	else
 	{
 		peak_counter = 0;
 		data->heart_beep = 0;
-		BSP_LED_Off(2);
 	}
 
 	if (peak_counter >= 4)
 	{
 		pulse_detected = OXIMETRY_HR_AVERAGE;
+		data->valid_heart_rate = 1;
+		valid_hr_counter = 0;
 		peak_counter = 0;
+	}
+
+	if (valid_hr_counter++ > 2*OXIMETRY_SAMPLE_RATE)
+	{
+		data->valid_heart_rate = 0;
 	}
 
 	AUX_CircularBufferPush(&circular_pulse_counter, pulse_detected);

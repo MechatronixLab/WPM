@@ -100,10 +100,12 @@ void APP_Run(void)
 			if (oximetry_data.heart_beep)
 			{
 				BUZZER_On();
+				BSP_LED_On(LED_RED);
 			}
 			else
 			{
 				BUZZER_Off();
+				BSP_LED_Off(LED_RED);
 			}
 
 
@@ -120,38 +122,41 @@ void APP_Run(void)
 
 				//OXIMETRY_ProcessDataMaxim(&oximetry_data);
 
-				if (oximetry_data.spo2 > 0)
+				if (oximetry_data.valid_heart_rate)
 				{
-					sprintf(string_buffer, "SpO2:%3d%% ", (uint16_t)oximetry_data.spo2);
+					sprintf(string_buffer, "SpO2:%3d.%1d%%",
+							               (uint16_t)oximetry_data.spo2/10,
+										   (uint16_t)oximetry_data.spo2%10);
 				}
 				else
 				{
-					sprintf(string_buffer, "SpO2:---%% ");
+					sprintf(string_buffer, "SpO2:-----%%");
 				}
 				OLED_SetCursor(0, 0);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				if (oximetry_data.heart_rate > 0)
+				if (oximetry_data.valid_heart_rate)
 				{
-					sprintf(string_buffer, "HR:%3dbpm ", (uint16_t)oximetry_data.heart_rate);
+					sprintf(string_buffer, "HR:%3dbpm",
+							               (uint16_t)oximetry_data.heart_rate);
 				}
 				else
 				{
-					sprintf(string_buffer, "HR:---bpm ");
+					sprintf(string_buffer, "HR:---bpm");
 				}
-				OLED_SetCursor(64, 0);
+				OLED_SetCursor(73, 0);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				sprintf(string_buffer, "T:%3d.%02doC",
+				sprintf(string_buffer, "T:%3d.%02d\bC",
 										imu_data.temperature / 100,
 									abs(imu_data.temperature % 100));
-				OLED_SetCursor(0, 1);
+				OLED_SetCursor(0, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				LORA_TX_counter++;
 				sprintf(string_buffer, "TX:%5lu", LORA_TX_counter);
 				LORA_Tx(string_buffer);
-				OLED_SetCursor(64, 1);
+				OLED_SetCursor(73, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				HAL_Delay(5);
