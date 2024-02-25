@@ -22,7 +22,15 @@ The NUCLEO-WL55JC would be a great platform for prototyping such device, since i
 This kind of device enables caregivers and physicians to monitor their patients remotely and gather information continuously. The data collected can also be processed autonomously using AI to detect potential degradation of patient’s condition and triggering alarms, while simpler analysis could be done directly by the IoT device (edge computing).  
   
 The benefits of the device go beyond patient’s health. The overall treatment cost could be lowered since caregivers and physicians could focus attention on the most critical patients more often, and more stable patients can be visited more sporadically.  
-  
+
+## ⚠️ DISCLAIMER ⚠️  
+
+**THIS PROTOTYPE IS NOT A MEDICAL DEVICE!**  
+Putting a medical device on the market is no joke! It involves severe testing, documentaton and certification.  
+This proof of concept work was not designed or tested for electrical safety and electromagnetic compatibility, nor went through clinical trials.  
+This is a benchtop prototype developed for learning purposes only.  
+**DO NOT TAKE MEDICAL DECISIONS BASED ON MEASUREMENTS TAKEN BY THIS DEVICE!**
+
 ## HARDWARE
 
 ### Prototype  
@@ -31,8 +39,7 @@ The benefits of the device go beyond patient’s health. The overall treatment c
 
 ![Prototype - Parts highlighted](./IMG/prototype_highlighted.png)
   
-**Connections (CubeMX):**  
-  
+**Connections (CubeMX):**    
 ![Hardware connections](./IMG/cubemx_pinout_detail.png)
 
 Pinout table for connection between the Nucleo board 
@@ -58,14 +65,12 @@ which is based on the [SX1276](https://www.semtech.com/products/wireless-rf/lora
 The software running on the BluePill is a slightly modified version of [arduino-LoRa-STM32](https://github.com/armtronix/arduino-LoRa-STM32) that was developed by [ARMtronix Technologies](https://github.com/armtronix).
 
 **LoRa module:**  
-
 ![LoRa Module](./IMG/sx1276_module.png)  
   
 More information about how to make this receiver can be found on this [video](https://www.youtube.com/watch?v=A0RhP0SkhkQ&ab_channel=HowToElectronics) 
 and [arcticle](https://how2electronics.com/interfacing-lora-sx1276-with-stm32-microcontroller-lr1276-915mhz/) from [How To Electronics](https://how2electronics.com/).
 
-**Receiver:**  
-  
+**Receiver:**    
 ![LoRa Receiver](./IMG/lora_receiver.png)  
   
 The software modifications made were necessary to match the radio configurations on the STM32WL55:  
