@@ -3,10 +3,10 @@
 This work is a proof of concept for a connected wearable patient monitor capable of measuring oximetry parameters, 
 body temperature and track the patient's movement, while transmitting data wirelessly via LoRa communication.  
   
-It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) 
-([STM32WL55JC](https://www.st.com/en/microcontrollers-microprocessors/stm32wl55jc.html) from ST Microelectronics), 
-Maxim (now Analog Devices) [**MAX30102**](https://www.analog.com/en/products/max30102.html) pulse oximetry sensor, 
-Würth Elektronik [**WSEN-ISDS**](https://www.we-online.com/en/components/products/WSEN-ISDS) 6-DOF IMU, 
+It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) development board based, on the 
+[STM32WL55JC](https://www.st.com/en/microcontrollers-microprocessors/stm32wl55jc.html), from ST Microelectronics, 
+a Maxim (now Analog Devices) [**MAX30102**](https://www.analog.com/en/products/max30102.html) pulse oximetry sensor, 
+a Würth Elektronik [**WSEN-ISDS**](https://www.we-online.com/en/components/products/WSEN-ISDS) 6-Axis IMU, 
 an **OLED display** and a **Piezoelectric buzzer** for simple audio generation.  
   
 The device features LoRa connection, allowing it to be used in remote locations where telecommunications infrastructure is not well established.
@@ -17,8 +17,8 @@ The device features LoRa connection, allowing it to be used in remote locations 
   
 Putting a medical device on the market is no joke! It involves severe testing, documentation and certification.  
   
-This proof of concept work was not designed or tested for electrical safety and electromagnetic compatibility, nor went through clinical trials. 
-The device presented is a benchtop prototype developed for learning purposes only.  
+The device presented here is a benchtop prototype developed for learning purposes only. 
+This prototype was not designed or tested for electrical safety and electromagnetic compatibility, nor went through clinical trials.  
   
 **DO NOT TAKE MEDICAL DECISIONS BASED ON MEASUREMENTS TAKEN BY THIS DEVICE!**  
   
@@ -33,14 +33,30 @@ The NUCLEO-WL55JC would be a great platform for prototyping such device, since i
 This kind of device enables caregivers and physicians to monitor their patients remotely and gather information continuously. The data collected can also be processed autonomously using AI to detect potential degradation of patient’s condition and triggering alarms, while simpler analysis could be done directly by the IoT device (edge computing).  
   
 The benefits of the device go beyond patient’s health. The overall treatment cost could be lowered since caregivers and physicians could focus attention on the most critical patients more often, and more stable patients can be visited more sporadically.  
+
+This idea was submitted to the [STM32 Wireless Innovation Design Contest](https://www.elektormagazine.com/st-contest), promoted by [Elektor Magazine](https://www.elektormagazine.com/) and [ST Microelectronics](https://github.com/stmicroelectronics). They kindly provided a NUCLEO-WL55JC board, free of charge. Thank you!
   
 ## HARDWARE
+
+### Hardware Block Diagram
+
+![Hardware Block Diagram](./DOC/WPM-WL55_HARDWARE_BLOCK_DIAGRAM.png)
   
 ### Benchtop Prototype  
   
 ![Prototype](./IMG/prototype.png)
 
+The image below highlights the main parts of the hardware (from right to left):  
+- Nucleo board
+- Piezoelectric buzzer
+- MAX30102 breakout board
+- OLED display (monochrome, 128 x 64 pixels)
+- [WSEN-EVAL ISDS](https://www.we-online.com/en/components/products/WSEN-EVAL_ISDS) breakout board
+- Voltage regulators (+5.0V and +3.3V)
+
 ![Prototype - Parts highlighted](./IMG/prototype_highlighted.png)
+
+The sensors and display are all controlled by the MCU via the same I2C bus. The buzzer is driven by a PWM signal with tone frequency of 4 kHz.
   
 **Connections (CubeMX):**    
 ![Hardware connections](./IMG/cubemx_pinout_detail.png)
@@ -60,19 +76,18 @@ and other components on the breadboard:
 | CN7 Pin 38         | PB13           | I2C3 SCL         | I2C SCL       |
 | CN10 Pin 16        | PA8            | TIM1 CH1 PWM Out | BUZZER        |
   
-
 ### LoRa Receiver  
-
+  
 A very simple LoRa receiver was assembled using a [LoRa module](https://www.nicerf.com/lora-module/sx1276-lora-module-lora1276.html) from [G-NiceRF](https://www.nicerf.com/), 
 which is based on the [SX1276](https://www.semtech.com/products/wireless-rf/lora-connect/sx1276) chip from [Semtech](https://www.semtech.com/), and a Blue Pill board, which is based on the ST Microelectronics [STM32F103C6](https://www.st.com/en/microcontrollers-microprocessors/stm32f103c6.html).    
 The software running on the BluePill is a slightly modified version of [arduino-LoRa-STM32](https://github.com/armtronix/arduino-LoRa-STM32) that was developed by [ARMtronix Technologies](https://github.com/armtronix).
-
+  
 **LoRa module:**  
 <img src="https://github.com/MechatronixLab/WPM/blob/master/IMG/sx1276_module.png" width="540">
   
 More information about how to make this receiver can be found on this [video](https://www.youtube.com/watch?v=A0RhP0SkhkQ&ab_channel=HowToElectronics) 
 and [arcticle](https://how2electronics.com/interfacing-lora-sx1276-with-stm32-microcontroller-lr1276-915mhz/) from [How To Electronics](https://how2electronics.com/).
-
+  
 **Receiver:**    
 <img src="https://github.com/MechatronixLab/WPM/blob/master/IMG/lora_receiver.png" width="540">
   
@@ -80,9 +95,9 @@ The software modifications made were necessary to match the radio configurations
 - Frequency: 915 MHz  
 - Bandwidth: 500 kHz  
 - Spreading Factor: 11  
-
+  
 Pinout connections for LoRa receiver (white cable of previous image is not connected):  
-
+  
 | **BLUE PILL (STM32F103C6)** | **SX1276 MODULE** | **FTDI MODULE** |
 |:---------------------------:|:-----------------:|:---------------:|
 | GND                         | GND               | GND             |
@@ -97,27 +112,34 @@ Pinout connections for LoRa receiver (white cable of previous image is not conne
 | PB0                         | RST               | -               |
   
 ## SOFTWARE  
+
+### Software Block Diagram
+
+![Hardware Block Diagram](./DOC/WPM-WL55_SOFTWARE_BLOCK_DIAGRAM.png)
   
-### Software initialization
-
-As the software starts, 3 opening screens are shown:
-
+### Initialization
+  
+As the software starts, 3 opening screens are shown:  
+  
+**Project Title:**  
 ![Opening screen 1 - Project Title](./IMG/screen_opening_1.png)  
   
+**Software Version:**    
 ![Opening screen 2 - Software Version](./IMG/screen_opening_2.png)  
   
+**Elektor/ST Contest information:**  
 ![Opening screen 3 - Elektor/ST Contest information](./IMG/screen_opening_3.png)  
-
+  
 The device also prints data via its serial port. After initialization information, the device continuously transmits raw data from sensors at a rate of 30 Hz.
 This transmission can only be done while the USB cable is connected to the Nucleo board, so it is available mainly for development and debugging purposes.  
-
+  
 Data is sent via LoRa at a rate of 1 Hz.    
   
 **Console:**  
 ![Serial console](./IMG/serial_console.png)    
   
 ### Measurements
-
+  
 The patient should place their finger over the MAX30102 sensor to get oximetry measurements.
 
 The following parameters are present:
@@ -146,19 +168,19 @@ The receiver simply relays data from the LoRa module to the UART, which is then 
   
 **Data received via LoRa:**  
 ![ Data received  via LoRa](./IMG/lora_receiver_serial.png)  
-
+  
 ## PROTOTYPE PERFORMANCE
-
+  
 In order to evaluate the performance of the oximetry, 
 measurements were taken by the WPM prototype and a commercially available pulse oximeter, simultaneously. 
 Results showed good coherence between the two devices.
-
+  
 **Comparison between WPM and a commercial pulse oximeter:**  
 <img src="https://github.com/MechatronixLab/WPM/blob/master/IMG/spo2_comparison.png" width="540">
   
 ## ACKNOWLEDGEMENTS    
   
-My lovely wife and kids, for their everlasting support  
+My lovely wife and kids, for their everlasting support ❤️  
 [**Fabio Souza**](https://github.com/FBSeletronica) and [**Halysson Jr**](https://github.com/halyssonjr) @ [Franzininho](https://github.com/Franzininho)  
 **William Maia** and **Daniel Botelho** @ [ST Microelectronics](https://github.com/stmicroelectronics) Brazil  
 **Fabio Costa** and **Érico Hassegawa** @ [Würth Elektronik](https://github.com/WurthElektronik) Brazil  
