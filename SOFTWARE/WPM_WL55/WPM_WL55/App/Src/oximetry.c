@@ -107,13 +107,14 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	data->DC_red 	  = (uint32_t)AUX_Average((uint32_t *)circular_red.buffer     , OXIMETRY_SPO2_AVERAGE);
 	data->DC_infrared = (uint32_t)AUX_Average((uint32_t *)circular_infrared.buffer, OXIMETRY_SPO2_AVERAGE);
 
-	AUX_CircularBufferPush(&circular_AC2_red     , (int32_t)pow((float)((int32_t)(data->red      - data->DC_red     )), 2));
-	AUX_CircularBufferPush(&circular_AC2_infrared, (int32_t)pow((float)((int32_t)(data->infrared - data->DC_infrared)), 2));
+	AUX_CircularBufferPush(&circular_AC2_red     , (int32_t)pow(((int32_t)(data->red      - data->DC_red     )), 2));
+	AUX_CircularBufferPush(&circular_AC2_infrared, (int32_t)pow(((int32_t)(data->infrared - data->DC_infrared)), 2));
 
 	data->RMS_AC_red 	  = (uint32_t) sqrt(AUX_Average((uint32_t *)circular_AC2_red.buffer     , OXIMETRY_SPO2_AVERAGE));
 	data->RMS_AC_infrared = (uint32_t) sqrt(AUX_Average((uint32_t *)circular_AC2_infrared.buffer, OXIMETRY_SPO2_AVERAGE));
 
 	AUX_CircularBufferPush(&circular_ratio, (uint32_t)((1000 * data->RMS_AC_red * data->DC_infrared) / data->DC_red) / data->RMS_AC_infrared);
+	// TODO: Detected a weird bug where the program hard faults from here, but only when debugging. :|
 
 	data->ratio = AUX_Average((uint32_t *)circular_ratio.buffer, OXIMETRY_SPO2_AVERAGE);
 

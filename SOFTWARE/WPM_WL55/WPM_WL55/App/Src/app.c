@@ -31,6 +31,8 @@ void APP_Run(void)
 	IMU_data_t 		imu_data      = {0};
 	OXIMETRY_data_t oximetry_data = {0};
 
+//	int32_t MAX30102_temperature = 0;
+
 	while(1)
 	{	//LORA_Process();
 		if (ISR_interrupt_flag)
@@ -55,18 +57,6 @@ void APP_Run(void)
 									oximetry_data.red,
 									oximetry_data.infrared);
 			CLI_Write(string_buffer);
-
-//			sprintf(string_buffer,
-//					"R:%6lu, DC_R:%6lu, AC_R:%6ld, IR:%6lu, DC_IR:%6lu, AC_IR:%6ld, RATIO:%f, SpO2:%6ld, %ld \r\n",
-//					oximetry_raw_data.red,
-//					DC_red,
-//					RMS_AC_red,
-//					oximetry_raw_data.infrared,
-//					DC_infrared,
-//					RMS_AC_infrared,
-//					ratio, ox_spo2, 0L);
-//			CLI_Write(string_buffer);
-
 
 //			sprintf(string_buffer,
 //					"AC_R:%6lu, DRDTR:%6ld, -:%6ld, AC_IR:%6lu, DIRDT:%6ld, -:%6ld, RATIO:%d, SpO2:%6d, %6d \r\n",
@@ -109,8 +99,8 @@ void APP_Run(void)
 				if (oximetry_data.valid_heart_rate)
 				{
 					sprintf(string_buffer, "SpO2:%3d.%1d%%",
-							               (uint16_t)oximetry_data.spo2/10,
-										   (uint16_t)oximetry_data.spo2%10);
+							               (uint16_t)oximetry_data.spo2 / 10,
+										   (uint16_t)oximetry_data.spo2 % 10);
 					OLED_SetCursor(0, 0);
 					GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
@@ -120,8 +110,8 @@ void APP_Run(void)
 					GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 					sprintf(string_buffer, "PInd:%3d.%1d%%",
-										   (uint16_t)oximetry_data.perfusion_index/10,
-										   (uint16_t)oximetry_data.perfusion_index%10);
+										   (uint16_t)oximetry_data.perfusion_index / 10,
+										   (uint16_t)oximetry_data.perfusion_index % 10);
 					OLED_SetCursor(0, 2);
 					GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 				}
@@ -140,19 +130,21 @@ void APP_Run(void)
 					GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 				}
 
-				sprintf(string_buffer, "T:%2d.%02d\177C",
-										imu_data.temperature / 100,
-									abs(imu_data.temperature % 100));
-				OLED_SetCursor(73, 2);
+//				sprintf(string_buffer, "T:%2d.%02d\177C",
+//										imu_data.temperature / 100,
+//									abs(imu_data.temperature % 100));
+//				OLED_SetCursor(73, 2);
+//				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+
+//				sprintf(string_buffer, "T:%3ld.%02ld\177C",
+//									   (MAX30102_temperature >> 16) & 0xFF,
+//							           (MAX30102_temperature & 0xFF));
+				OLED_SetCursor(0, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
 				LORA_TX_counter++;
-				//(string_buffer, "TX:%5lu", LORA_TX_counter);
 				LORA_Tx(string_buffer);
-				//OLED_SetCursor(73, 2);
-				//GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				HAL_Delay(5);
 				BSP_LED_Off(LED_GREEN);
 			}
 		}

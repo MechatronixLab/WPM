@@ -17,6 +17,6 @@
 void BUZZER_On(void);
 void BUZZER_Off(void);
 void BUZZER_SetVolume(uint8_t volume);
-void BUZZER_SetTone(uint16_t frequency);
+//void BUZZER_SetTone(uint16_t frequency);
 
 #endif /* INC_BUZZER_H_ */

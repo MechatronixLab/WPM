@@ -109,21 +109,21 @@ void 	MAX30102_GetDataMulti(MAX30102_data_t * measurements)
 	}
 }
 
-int16_t MAX30102_GetTemperature(void)
-{
-	uint8_t I2C_buffer[2];
-	uint16_t temperature = 0;
-
-	MAX30102_Write(MAX30102_DIE_TEMPERATURE_CONFIG, 0x01);
-
-	HAL_Delay(30);	// Datasheet states 29ms for T ADC acquisition time
-
-	MAX30102_Read(MAX30102_DIE_TEMPERATURE_INTEGER, 2, I2C_buffer);
-
-	temperature = I2C_buffer[0];
-
-	return temperature;
-}
+//int16_t MAX30102_GetTemperature(void)
+//{
+//	uint8_t I2C_buffer[2];
+//	int16_t temperature = 0;
+//
+////	MAX30102_Write(MAX30102_DIE_TEMPERATURE_CONFIG, 0x01);
+////
+////	HAL_Delay(30);	// Datasheet states 29ms for T ADC acquisition time
+////
+////	MAX30102_Read(MAX30102_DIE_TEMPERATURE_INTEGER, 2, I2C_buffer);
+////
+////	temperature = (I2C_buffer[0]);// + (I2C_buffer[1] * 625);
+//
+//	return temperature;
+//}
 
 int16_t MAX30102_GetPartID(void)
 {

@@ -22,7 +22,7 @@ void BUZZER_SetVolume(uint8_t volume)
 	__HAL_TIM_SET_COMPARE(&BUZZER_TIMER_HANDLE, BUZZER_PWM_CHANNEL, volume);
 }
 
-void BUZZER_SetTone(uint16_t frequency)
-{
-	;
-}
+//void BUZZER_SetTone(uint16_t frequency)
+//{
+//	;
+//}
