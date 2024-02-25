@@ -3,11 +3,11 @@
 This prototype is a proof of concept for a connected wearable patient monitor capable of measuring oximetry parameters, 
 body temperature and track the patient's movement, while transmitting data wirelessly via LoRa communication.  
   
-It is based on the [Nucleo WL55JC1](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) 
+It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) 
 ([STM32WL55JC](https://www.st.com/en/microcontrollers-microprocessors/stm32wl55jc.html) from ST Microelectronics), 
-Maxim (now Analog Devices) [MAX30102](https://www.analog.com/en/products/max30102.html) pulse oximetry sensor, 
-Würth Elektronik [WSEN-ISDS](https://www.we-online.com/en/components/products/WSEN-ISDS) 6-DOF IMU, 
-an OLED display and a buzzer for simple audio generation.  
+Maxim (now Analog Devices) [**MAX30102**](https://www.analog.com/en/products/max30102.html) pulse oximetry sensor, 
+Würth Elektronik [**WSEN-ISDS**](https://www.we-online.com/en/components/products/WSEN-ISDS) 6-DOF IMU, 
+an **OLED display** and a **Piezoelectric buzzer** for simple audio generation.  
   
 The device features LoRa connection, allowing it to be used in remote locations where telecommunications infrastructure is not well established.
 
@@ -54,7 +54,7 @@ and other components on the breadboard:
 ### LoRa Receiver  
 
 A very simple LoRa receiver was assembled using a [LoRa module](https://www.nicerf.com/lora-module/sx1276-lora-module-lora1276.html) from [G-NiceRF](https://www.nicerf.com/), 
-which is based on the [SX1276](https://www.semtech.com/products/wireless-rf/lora-connect/sx1276) chip from [Semtech](https://www.semtech.com/), and a BluePill board, which is based on ST Microelectronics STM32F103.    
+which is based on the [SX1276](https://www.semtech.com/products/wireless-rf/lora-connect/sx1276) chip from [Semtech](https://www.semtech.com/), and a Blue Pill board, which is based on the ST Microelectronics [STM32F103C6](https://www.st.com/en/microcontrollers-microprocessors/stm32f103c6.html).    
 The software running on the BluePill is a slightly modified version of [arduino-LoRa-STM32](https://github.com/armtronix/arduino-LoRa-STM32) that was developed by [ARMtronix Technologies](https://github.com/armtronix).
 
 **LoRa module:**  
@@ -75,18 +75,18 @@ The software modifications made were necessary to match the radio configurations
 
 Pinout connections for LoRa receiver (white cable of previous image is not connected):  
 
-| **STM32F103C6** | **SX1276 MODULE** | **FTDI MODULE** |
-|:---------------:|:-----------------:|:---------------:|
-| GND             | GND               | GND             |
-| +3.3V           | VCC               | VCC             |
-| PA4             | NSS               | -               |
-| PA1             | DIO0              | -               |
-| PA5             | SCK               | -               |
-| PA6             | MISO              | -               |
-| PA7             | MOSI              | -               |
-| PA9             | -                 | RX              |
-| PA10            | -                 | TX              |
-| PB0             | RST               | -               |
+| **BLUE PILL (STM32F103C6)** | **SX1276 MODULE** | **FTDI MODULE** |
+|:---------------------------:|:-----------------:|:---------------:|
+| GND                         | GND               | GND             |
+| +3.3V                       | VCC               | VCC             |
+| PA4                         | NSS               | -               |
+| PA1                         | DIO0              | -               |
+| PA5                         | SCK               | -               |
+| PA6                         | MISO              | -               |
+| PA7                         | MOSI              | -               |
+| PA9                         | -                 | RX              |
+| PA10                        | -                 | TX              |
+| PB0                         | RST               | -               |
   
 ## SOFTWARE  
   
@@ -104,22 +104,24 @@ The device also prints data via its serial port. After initialization informatio
 This trnasmission can only be done while the USB cable is connected to the Nucleo board, so it is available mainly for development and debugging purposes. 
 
 **Console:**  
-  
 ![Serial console](./IMG/serial_console.png)    
 
 Using the [Serial Oscilloscope](https://x-io.co.uk/serial-oscilloscope/) tool from [x-io Technologies](https://x-io.co.uk/), it is possible to plot the raw data transmitted from the prototype in real time:
   
 **Gyroscope raw data:**  
-  
 ![Serial Oscilloscope - Gyroscope raw data](./IMG/serial_oscilloscope_gyro.png)  
   
 **Accelerometer raw data:**  
-  
 ![Serial Oscilloscope - Accelerometer raw data](./IMG/serial_oscilloscope_accel.png)  
 
 **Oximetry raw data:**  
-  
 ![Serial Oscilloscope - Oximetry raw data](./IMG/serial_oscilloscope_oxim.png)  
+
+The patient should place their finger over the MAX30102 sensor in order to get oximetry measurements.
+
+**Working oximetry measurements:**  
+![Working oximetry measurements](./IMG/spo2_working.png)  
+
 
 
 ### LoRa Receiver
@@ -128,6 +130,9 @@ The receiver simply relays data from the LoRa module to the UART, which is then 
 
 **Received data via LoRa:**  
 ![Received data via LoRa](./IMG/lora_receiver_serial.png)  
+
+## PROTOTYPE PERFORMANCE
+
 
   
 ## Acknowledgements  
