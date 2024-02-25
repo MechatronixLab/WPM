@@ -1,6 +1,6 @@
 # WEARABLE PATIENT MONITOR  
   
-This prototype is a proof of concept for a connected wearable patient monitor capable of measuring oximetry parameters, 
+This work is a proof of concept for a connected wearable patient monitor capable of measuring oximetry parameters, 
 body temperature and track the patient's movement, while transmitting data wirelessly via LoRa communication.  
   
 It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) 
@@ -10,7 +10,18 @@ Würth Elektronik [**WSEN-ISDS**](https://www.we-online.com/en/components/produc
 an **OLED display** and a **Piezoelectric buzzer** for simple audio generation.  
   
 The device features LoRa connection, allowing it to be used in remote locations where telecommunications infrastructure is not well established.
+  
+## ⚠️ DISCLAIMER ⚠️  
 
+**THIS IS NOT A MEDICAL DEVICE!**  
+  
+Putting a medical device on the market is no joke! It involves severe testing, documentation and certification.  
+  
+This proof of concept work was not designed or tested for electrical safety and electromagnetic compatibility, nor went through clinical trials. 
+The device presented is a benchtop prototype developed for learning purposes only.  
+  
+**DO NOT TAKE MEDICAL DECISIONS BASED ON MEASUREMENTS TAKEN BY THIS DEVICE!**  
+  
 ## MOTIVATION
 
 Many patients in need of medical assistance could be treated more comfortably at home, but monitoring their condition in a timely manner could be a challenge, especially if they live in rural areas.  
@@ -22,18 +33,10 @@ The NUCLEO-WL55JC would be a great platform for prototyping such device, since i
 This kind of device enables caregivers and physicians to monitor their patients remotely and gather information continuously. The data collected can also be processed autonomously using AI to detect potential degradation of patient’s condition and triggering alarms, while simpler analysis could be done directly by the IoT device (edge computing).  
   
 The benefits of the device go beyond patient’s health. The overall treatment cost could be lowered since caregivers and physicians could focus attention on the most critical patients more often, and more stable patients can be visited more sporadically.  
-
-## ⚠️ DISCLAIMER ⚠️  
-
-**THIS PROTOTYPE IS NOT A MEDICAL DEVICE!**  
-Putting a medical device on the market is no joke! It involves severe testing, documentaton and certification.  
-This proof of concept work was not designed or tested for electrical safety and electromagnetic compatibility, nor went through clinical trials.  
-This is a benchtop prototype developed for learning purposes only.  
-**DO NOT TAKE MEDICAL DECISIONS BASED ON MEASUREMENTS TAKEN BY THIS DEVICE!**
-
+  
 ## HARDWARE
-
-### Prototype  
+  
+### Benchtop Prototype  
   
 ![Prototype](./IMG/prototype.png)
 
@@ -65,13 +68,13 @@ which is based on the [SX1276](https://www.semtech.com/products/wireless-rf/lora
 The software running on the BluePill is a slightly modified version of [arduino-LoRa-STM32](https://github.com/armtronix/arduino-LoRa-STM32) that was developed by [ARMtronix Technologies](https://github.com/armtronix).
 
 **LoRa module:**  
-![LoRa Module](./IMG/sx1276_module.png)  
+<img src="https://github.com/MechatronixLab/WPM/blob/master/IMG/sx1276_module.png" width="540">
   
 More information about how to make this receiver can be found on this [video](https://www.youtube.com/watch?v=A0RhP0SkhkQ&ab_channel=HowToElectronics) 
 and [arcticle](https://how2electronics.com/interfacing-lora-sx1276-with-stm32-microcontroller-lr1276-915mhz/) from [How To Electronics](https://how2electronics.com/).
 
 **Receiver:**    
-![LoRa Receiver](./IMG/lora_receiver.png)  
+<img src="https://github.com/MechatronixLab/WPM/blob/master/IMG/lora_receiver.png" width="540">
   
 The software modifications made were necessary to match the radio configurations on the STM32WL55:  
 - Frequency: 915 MHz  
@@ -106,10 +109,25 @@ As the software starts, 3 opening screens are shown:
 ![Opening screen 3 - Elektor/ST Contest information](./IMG/screen_opening_3.png)  
 
 The device also prints data via its serial port. After initialization information, the device continuously transmits raw data from sensors at a rate of 30 Hz.
-This trnasmission can only be done while the USB cable is connected to the Nucleo board, so it is available mainly for development and debugging purposes. 
+This transmission can only be done while the USB cable is connected to the Nucleo board, so it is available mainly for development and debugging purposes.  
 
+Data is sent via LoRa at a rate of 1 Hz.    
+  
 **Console:**  
 ![Serial console](./IMG/serial_console.png)    
+  
+### Measurements
+
+The patient should place their finger over the MAX30102 sensor to get oximetry measurements.
+
+The following parameters are present:
+- **SpO2**: Peripheral Saturation of Oxygen (%)
+- **PInd**: Perfusion Index (%)
+- **HR**: Heart rate (beats per minute)
+- **T**: Finger temperature (°C)
+  
+**Working oximetry measurements:**  
+![Working oximetry measurements](./IMG/spo2_working.png)  
 
 Using the [Serial Oscilloscope](https://x-io.co.uk/serial-oscilloscope/) tool from [x-io Technologies](https://x-io.co.uk/), it is possible to plot the raw data transmitted from the prototype in real time:
   
@@ -121,27 +139,26 @@ Using the [Serial Oscilloscope](https://x-io.co.uk/serial-oscilloscope/) tool fr
 
 **Oximetry raw data:**  
 ![Serial Oscilloscope - Oximetry raw data](./IMG/serial_oscilloscope_oxim.png)  
-
-The patient should place their finger over the MAX30102 sensor in order to get oximetry measurements.
-
-**Working oximetry measurements:**  
-![Working oximetry measurements](./IMG/spo2_working.png)  
-
-
-
+  
 ### LoRa Receiver
   
 The receiver simply relays data from the LoRa module to the UART, which is then converted to USB and captured by a computer.  
-
-**Received data via LoRa:**  
-![Received data via LoRa](./IMG/lora_receiver_serial.png)  
+  
+**Data received via LoRa:**  
+![ Data received  via LoRa](./IMG/lora_receiver_serial.png)  
 
 ## PROTOTYPE PERFORMANCE
 
+In order to evaluate the performance of the oximetry, 
+measurements were taken by the WPM prototype and a commercially available pulse oximeter, simultaneously. 
+Results showed good coherence between the two devices.
 
+**Comparison between WPM and a commercial pulse oximeter:**  
+<img src="https://github.com/MechatronixLab/WPM/blob/master/IMG/spo2_comparison.png" width="540">
   
-## Acknowledgements  
+## ACKNOWLEDGEMENTS    
   
+My lovely wife and kids, for their everlasting support  
 [**Fabio Souza**](https://github.com/FBSeletronica) and [**Halysson Jr**](https://github.com/halyssonjr) @ [Franzininho](https://github.com/Franzininho)  
 **William Maia** and **Daniel Botelho** @ [ST Microelectronics](https://github.com/stmicroelectronics) Brazil  
 **Fabio Costa** and **Érico Hassegawa** @ [Würth Elektronik](https://github.com/WurthElektronik) Brazil  
