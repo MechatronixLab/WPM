@@ -44,7 +44,7 @@ void APP_Run(void)
 			OXIMETRY_ProcessDataWPM(&oximetry_data);
 			DISPLAY_DrawPleth(&oximetry_data);
 
-			sprintf(string_buffer, "deg/s: X%4d, Y%4d, Z%4d, m/s2: X%4d, Y%4d, Z%4d, T:%3d.%02doC, OXIMETRY: RED%6lu, INFRARED:%6lu \r\n",
+			sprintf(string_buffer, "deg/s: X%4d, Y%4d, Z%4d, m/s/s: X%4d, Y%4d, Z%4d, T:%3d.%02doC, OXIMETRY: RED%6lu, INFRARED:%6lu \r\n",
 									imu_data.angular_rate[IMU_X],
 									imu_data.angular_rate[IMU_Y],
 									imu_data.angular_rate[IMU_Z],

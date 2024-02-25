@@ -202,22 +202,22 @@ void GFX_DrawHalfFrame(uint8_t * frame_buffer)
 	}
 }
 
-void GFX_DrawFrameArea(uint8_t * frame_buffer, uint8_t xi, uint8_t pagei, uint8_t xf, uint8_t pagef)
-{
-	uint8_t page 	= 0;
-	uint8_t column  = 0;
-	uint16_t sector = 0;
-
-	for (page = pagei; page < pagef; page++)
-	{
-		OLED_SetCursor(xi, page);
-
-		for (column = xi; column < xf; column++)
-		{
-			OLED_SendData(frame_buffer[xi + (pagei * 8) + sector++]);
-		}
-	}
-}
+//void GFX_DrawFrameArea(uint8_t * frame_buffer, uint8_t xi, uint8_t pagei, uint8_t xf, uint8_t pagef)
+//{
+//	uint8_t page 	= 0;
+//	uint8_t column  = 0;
+//	uint16_t sector = 0;
+//
+//	for (page = pagei; page < pagef; page++)
+//	{
+//		OLED_SetCursor(xi, page);
+//
+//		for (column = xi; column < xf; column++)
+//		{
+//			OLED_SendData(frame_buffer[xi + (pagei * 8) + sector++]);
+//		}
+//	}
+//}
 
 void GFX_DrawHorizontalLine	(uint8_t x, uint8_t y, uint8_t dx)
 {

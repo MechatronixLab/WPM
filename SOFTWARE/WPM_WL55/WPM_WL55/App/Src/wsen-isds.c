@@ -59,8 +59,8 @@ void	ISDS_Init(void)	// TODO:
 
 	// Sensor in power down mode
 	// Enable high performance mode
-	// Select output data rate 208 Hz
-	ISDS_Write(ISDS_CTRL1_XL, 0x54);
+	// Select output data rate 52 Hz
+	ISDS_Write(ISDS_CTRL1_XL, 0x53);
 	ISDS_Write(ISDS_CTRL2_G, 0x5C);
 
 	// Enable block data update
