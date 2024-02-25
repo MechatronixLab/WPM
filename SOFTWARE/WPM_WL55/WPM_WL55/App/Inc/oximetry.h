@@ -39,7 +39,7 @@ typedef struct
 	uint16_t heart_rate;		// Heart rate
 	uint8_t  heart_beat;		// Flag for heart beat detection
 	uint8_t  valid_heart_rate;	// Flag for valid heart rate reading
-	uint16_t temperature;		// Oximetry sensor temperature			// TODO
+	 int32_t temperature;		// Oximetry sensor temperature			// TODO
 } OXIMETRY_data_t;
 
 void OXIMETRY_Init(void);

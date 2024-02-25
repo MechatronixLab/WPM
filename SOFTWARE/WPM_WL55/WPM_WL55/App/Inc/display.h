@@ -15,6 +15,10 @@
 
 #include "oximetry.h"
 
+#include "version.h"
+
+#include <stdio.h>
+
 void DISPLAY_Init(void);
 
 void DISPLAY_DrawPleth(OXIMETRY_data_t * data);

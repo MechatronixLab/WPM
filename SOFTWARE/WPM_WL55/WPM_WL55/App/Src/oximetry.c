@@ -85,7 +85,7 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	static uint8_t peak_counter = 0;
 	static uint8_t pulse_detected = 0;
 
-	static uint8_t valid_hr_counter = 0;
+	static uint16_t valid_hr_counter = 0;
 
 	uint8_t pulse_counter = 0;
 
@@ -93,8 +93,9 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 
 	MAX30102_GetDataMulti(&max30102_data);
 
-	data->red 	   = max30102_data.red     ;
-	data->infrared = max30102_data.infrared;
+	data->red 	      = max30102_data.red        ;
+	data->infrared    = max30102_data.infrared   ;
+	data->temperature = max30102_data.temperature;
 
 	// SpO2 calculation ///////////////////////////////////////////////////////
 	// Sources:
@@ -123,6 +124,10 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	if (data->spo2 > 1000)				// If > 100.0%
 	{
 		data->spo2 = 1000;
+	}
+	if (data->valid_heart_rate == 0)
+	{
+		data->spo2 = 0;
 	}
 
 	data->perfusion_index = (1000 * data->RMS_AC_red) / data->DC_red;
@@ -157,7 +162,7 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 		peak_counter = 0;
 	}
 
-	if (valid_hr_counter++ > 2*OXIMETRY_HR_AVERAGE)
+	if (valid_hr_counter++ > 2 * OXIMETRY_SAMPLE_RATE)	// 2s after no signal is detected
 	{
 		data->valid_heart_rate = 0;
 	}

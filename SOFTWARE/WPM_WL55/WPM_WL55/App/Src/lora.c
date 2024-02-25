@@ -79,10 +79,11 @@ void LORA_RadioInit(void)
 	SUBGRF_WriteRegister( 0x0736, SUBGRF_ReadRegister( 0x0736 ) | ( 1 << 2 ) );
 
 	LORA_Tx("Wearable Patient Monitor");
-	HAL_Delay(200);
+	HAL_Delay(300);
 	LORA_Tx("WPM-WL55");
-	HAL_Delay(200);
+	HAL_Delay(300);
 	LORA_Tx("Developed by Eng. Andre A. M. Araujo");
+	HAL_Delay(300);
 }
 
 

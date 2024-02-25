@@ -15,7 +15,7 @@
 #include "isr.h"
 
 // Display
-#include "graphics.h"	// TODO: Ideally, should be called from "display.h" only
+#include "graphics.h"	// TODO: Ideally, should only be called from "display.h"
 #include "display.h"
 
 // Buzzer

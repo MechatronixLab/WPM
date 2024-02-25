@@ -30,8 +30,6 @@ void APP_Run(void)
 	IMU_data_t 		imu_data      = {0};
 	OXIMETRY_data_t oximetry_data = {0};
 
-	int32_t MAX30102_temperature = 0;
-
 	while(1)
 	{	//LORA_Process();
 		if (ISR_interrupt_flag)
@@ -83,8 +81,6 @@ void APP_Run(void)
 
 				interrupt_counter = 0;
 
-				MAX30102_temperature = MAX30102_GetTemperature();
-
 				// OXIMETRY_ProcessDataMaxim(&oximetry_data);
 				// This algorithm from MAXIM did not work well. I suppose it
 				// needs sample rate of 100Hz or more to work well.
@@ -127,11 +123,20 @@ void APP_Run(void)
 				}
 
 				sprintf(string_buffer, "T:%3ld.%1ld\177C",
-									   (MAX30102_temperature >> 16) & 0xFF,
-							           ((MAX30102_temperature & 0x0000FFFF)/1000)%1000);
+									   (oximetry_data.temperature >> 16) & 0xFF,
+							          ((oximetry_data.temperature & 0x0000FFFF)/1000)%1000);
 				OLED_SetCursor(73, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
+				// Data transmission via LoRa //////////////////////////////////
+				sprintf(string_buffer, "SpO2:%3d.%1d%%, HR:%3dbpm, PInd:%3d.%1d%%, T:%3ld.%1ldoC",
+									   (uint16_t)oximetry_data.spo2 / 10,
+									   (uint16_t)oximetry_data.spo2 % 10,
+									   (uint16_t)oximetry_data.heart_rate,
+									   (uint16_t)oximetry_data.perfusion_index / 10,
+									   (uint16_t)oximetry_data.perfusion_index % 10,
+									   (oximetry_data.temperature >> 16) & 0xFF,
+									  ((oximetry_data.temperature & 0x0000FFFF)/1000)%1000);
 				LORA_Tx(string_buffer);
 
 				BSP_LED_Off(LED_GREEN);

@@ -93,8 +93,9 @@ static const uint8_t ELEKTOR_LOGO_64x32[] =
 
 void DISPLAY_Init(void)
 {
-	uint16_t dt = 10;
+	uint16_t dt = 100;
 	uint8_t i = 0;
+	char display_buffer[16];
 
 	OLED_Init();
 	GFX_DrawLogo( 0, 0,64,64, (uint8_t *) MECHATRONIX_LAB_LOGO_64x64);
@@ -121,12 +122,16 @@ void DISPLAY_Init(void)
 
 	HAL_Delay(14 * dt);
 
+	sprintf(display_buffer, "V: %d.%d.%d  ", V_MAJOR, V_MINOR, V_PATCH);
+
 	OLED_SetCursor(64, 0);
 	GFX_DrawString((uint8_t *)GFX_font_5x7, "WPM-WL55  ");
 	OLED_SetCursor(64, 1);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "V: 0.0.1  ");
+	GFX_DrawString((uint8_t *)GFX_font_5x7, display_buffer); // Version
+
+	sprintf(display_buffer, "%4d.%02d.%02d  ", V_YEAR, V_MONTH, V_DAY);
 	OLED_SetCursor(64, 2);
-	GFX_DrawString((uint8_t *)GFX_font_5x7, "2024.02.29");
+	GFX_DrawString((uint8_t *)GFX_font_5x7, display_buffer);
 
 	HAL_Delay(20 * dt);
 

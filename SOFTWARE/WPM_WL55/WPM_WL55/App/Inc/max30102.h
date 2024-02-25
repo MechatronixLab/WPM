@@ -57,7 +57,7 @@ typedef struct
 {
 	uint32_t red;
 	uint32_t infrared;
-	uint16_t temperature;
+	int32_t  temperature;
 } MAX30102_data_t;
 
 void	MAX30102_Read  	(uint8_t register_address, uint8_t data_size, uint8_t * I2C_buffer);

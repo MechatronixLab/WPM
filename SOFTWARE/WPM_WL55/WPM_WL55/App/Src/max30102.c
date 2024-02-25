@@ -107,6 +107,8 @@ void 	MAX30102_GetDataMulti(MAX30102_data_t * measurements)
 	{
 		measurements->infrared = 0;
 	}
+
+	measurements->temperature = MAX30102_GetTemperature();
 }
 
 int32_t MAX30102_GetTemperature(void)
