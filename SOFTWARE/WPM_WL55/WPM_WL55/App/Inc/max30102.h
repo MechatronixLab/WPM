@@ -70,7 +70,7 @@ void	MAX30102_ConfigProximityDetect(void);
 
 void 	MAX30102_GetDataMulti(MAX30102_data_t * measurements);
 
-//int16_t MAX30102_GetTemperature(void);
+int32_t MAX30102_GetTemperature(void);
 
 int16_t MAX30102_GetPartID(void);
 

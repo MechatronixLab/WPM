@@ -17,10 +17,10 @@
 
 #define	OXIMETRY_NUMBER_OF_SAMPLES	MAXIM_BUFFER_SIZE
 
-#define OXIMETRY_SAMPLE_RATE		40u	// Hz
+#define OXIMETRY_SAMPLE_RATE		30u	// Hz
 
-#define OXIMETRY_SPO2_AVERAGE		120 // Samples
-#define OXIMETRY_HR_AVERAGE			120 // Samples
+#define OXIMETRY_SPO2_AVERAGE		240 // Samples
+#define OXIMETRY_HR_AVERAGE			240 // Samples
 
 typedef struct
 {

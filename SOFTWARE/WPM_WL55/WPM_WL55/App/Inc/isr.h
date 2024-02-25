@@ -12,7 +12,7 @@
 
 extern TIM_HandleTypeDef htim16;
 
-#define TIM16_SAMPLE_RATE	40					// Hz
+#define TIM16_SAMPLE_RATE	30					// Hz
 
 #define TIM16_PSC (48000 - 1)					// 1 kHz
 #define TIM16_ARR (1000/TIM16_SAMPLE_RATE - 1)	// TIM16_SAMPLE_RATE Hz

@@ -109,21 +109,25 @@ void 	MAX30102_GetDataMulti(MAX30102_data_t * measurements)
 	}
 }
 
-//int16_t MAX30102_GetTemperature(void)
-//{
-//	uint8_t I2C_buffer[2];
-//	int16_t temperature = 0;
-//
-////	MAX30102_Write(MAX30102_DIE_TEMPERATURE_CONFIG, 0x01);
-////
-////	HAL_Delay(30);	// Datasheet states 29ms for T ADC acquisition time
-////
-////	MAX30102_Read(MAX30102_DIE_TEMPERATURE_INTEGER, 2, I2C_buffer);
-////
-////	temperature = (I2C_buffer[0]);// + (I2C_buffer[1] * 625);
-//
-//	return temperature;
-//}
+int32_t MAX30102_GetTemperature(void)
+{
+	uint8_t I2C_buffer[2];
+	int32_t temperature = 0;
+
+	MAX30102_Write(MAX30102_DIE_TEMPERATURE_CONFIG, 0x01);
+
+//	HAL_Delay(30);	// Datasheet states 29ms for T ADC acquisition time
+					// But here one new conversion is triggered and the old
+					// value is read; this function is called at 1 Hz so
+					// temperature values are delayed by 1s which is fine
+					// for this application
+
+	MAX30102_Read(MAX30102_DIE_TEMPERATURE_INTEGER, 2, I2C_buffer);
+
+	temperature = (I2C_buffer[0] << 16) + (I2C_buffer[1] * 625); // °C/10000
+
+	return temperature;
+}
 
 int16_t MAX30102_GetPartID(void)
 {

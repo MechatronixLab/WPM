@@ -115,6 +115,7 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 
 	AUX_CircularBufferPush(&circular_ratio, (uint32_t)((1000 * data->RMS_AC_red * data->DC_infrared) / data->DC_red) / data->RMS_AC_infrared);
 	// TODO: Detected a weird bug where the program hard faults from here, but only when debugging. :|
+	// I have debugged earlier today, so must be something that changed today.
 
 	data->ratio = AUX_Average((uint32_t *)circular_ratio.buffer, OXIMETRY_SPO2_AVERAGE);
 
@@ -137,7 +138,7 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 	{
 		peak_counter++;
 
-		if (data->dred_dt < -1000)
+		if (data->dred_dt < -2000)
 		{
 			data->heart_beat = 1;
 		}
@@ -148,7 +149,7 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 		data->heart_beat = 0;
 	}
 
-	if (peak_counter >= 4)
+	if (peak_counter >= 6)	// This needs improvement, a better way to detect heart beat
 	{
 		pulse_detected = OXIMETRY_HR_AVERAGE;
 		data->valid_heart_rate = 1;
@@ -156,7 +157,7 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 		peak_counter = 0;
 	}
 
-	if (valid_hr_counter++ > 2*OXIMETRY_SAMPLE_RATE)
+	if (valid_hr_counter++ > 2*OXIMETRY_HR_AVERAGE)
 	{
 		data->valid_heart_rate = 0;
 	}
@@ -167,7 +168,8 @@ void OXIMETRY_ProcessDataWPM(OXIMETRY_data_t * data)
 
 	pulse_counter = AUX_Average((uint32_t *)circular_pulse_counter.buffer, OXIMETRY_HR_AVERAGE);
 
-	AUX_CircularBufferPush(&circular_pulse, (pulse_counter * 60)/(OXIMETRY_HR_AVERAGE/OXIMETRY_SAMPLE_RATE));	// TODO: remove magic numbers: pulse * 60[s/min] / avergaing_time[s]
+	AUX_CircularBufferPush(&circular_pulse,
+			               (pulse_counter * 60 * OXIMETRY_SAMPLE_RATE / OXIMETRY_HR_AVERAGE));
 
 	data->heart_rate = AUX_Average((uint32_t *)circular_pulse.buffer, OXIMETRY_HR_AVERAGE);
 

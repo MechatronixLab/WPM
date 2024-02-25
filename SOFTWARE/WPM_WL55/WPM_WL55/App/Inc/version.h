@@ -9,7 +9,7 @@
 #define INC_VERSION_H_
 
 #define V_MAJOR	0
-#define	V_MINOR	0
-#define V_PATCH	1
+#define	V_MINOR	1
+#define V_PATCH	0
 
 #endif /* INC_VERSION_H_ */

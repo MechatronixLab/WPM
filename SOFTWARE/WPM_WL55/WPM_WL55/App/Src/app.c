@@ -25,13 +25,12 @@ void APP_Run(void)
 {
 	char string_buffer[128];
 
-	uint32_t LORA_TX_counter = 0;
-	uint8_t	 interrupt_counter = 0;
+	uint8_t	 interrupt_counter = (1000/(TIM16_ARR + 1)) - 1; // To print whole screen on first run
 
 	IMU_data_t 		imu_data      = {0};
 	OXIMETRY_data_t oximetry_data = {0};
 
-//	int32_t MAX30102_temperature = 0;
+	int32_t MAX30102_temperature = 0;
 
 	while(1)
 	{	//LORA_Process();
@@ -84,10 +83,7 @@ void APP_Run(void)
 
 				interrupt_counter = 0;
 
-//				MAX30102_temperature = MAX30102_GetTemperature();	// Takes 30ms
-//				sprintf(string_buffer, "%3d oC", MAX30102_temperature);
-//				OLED_SetCursor(66, 3);
-//				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
+				MAX30102_temperature = MAX30102_GetTemperature();
 
 				// OXIMETRY_ProcessDataMaxim(&oximetry_data);
 				// This algorithm from MAXIM did not work well. I suppose it
@@ -130,19 +126,12 @@ void APP_Run(void)
 					GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 				}
 
-//				sprintf(string_buffer, "T:%2d.%02d\177C",
-//										imu_data.temperature / 100,
-//									abs(imu_data.temperature % 100));
-//				OLED_SetCursor(73, 2);
-//				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
-
-//				sprintf(string_buffer, "T:%3ld.%02ld\177C",
-//									   (MAX30102_temperature >> 16) & 0xFF,
-//							           (MAX30102_temperature & 0xFF));
-				OLED_SetCursor(0, 2);
+				sprintf(string_buffer, "T:%3ld.%1ld\177C",
+									   (MAX30102_temperature >> 16) & 0xFF,
+							           ((MAX30102_temperature & 0x0000FFFF)/1000)%1000);
+				OLED_SetCursor(73, 2);
 				GFX_DrawString((uint8_t *)GFX_font_5x7, string_buffer);
 
-				LORA_TX_counter++;
 				LORA_Tx(string_buffer);
 
 				BSP_LED_Off(LED_GREEN);
