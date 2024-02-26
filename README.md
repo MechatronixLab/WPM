@@ -3,8 +3,8 @@
 This work is a proof of concept for a connected wearable patient monitor capable of measuring oximetry parameters, 
 body temperature and track the patient's movement, while transmitting data wirelessly via LoRa communication.  
   
-It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) development board based, on the 
-[STM32WL55JC](https://www.st.com/en/microcontrollers-microprocessors/stm32wl55jc.html), from ST Microelectronics, 
+It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) development board, 
+based on the [STM32WL55JC](https://www.st.com/en/microcontrollers-microprocessors/stm32wl55jc.html), from ST Microelectronics, 
 a Maxim (now Analog Devices) [**MAX30102**](https://www.analog.com/en/products/max30102.html) pulse oximetry sensor, 
 a Würth Elektronik [**WSEN-ISDS**](https://www.we-online.com/en/components/products/WSEN-ISDS) 6-Axis IMU, 
 an **OLED display** and a **Piezoelectric buzzer** for simple audio generation.  
