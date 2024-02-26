@@ -181,6 +181,7 @@ Results showed good coherence between the two devices.
 ## ACKNOWLEDGEMENTS    
   
 My lovely wife and kids, for their everlasting support ❤️  
+**Karine Moriya** and everyone @ [J.G. Moriya](https://jgmoriya.com.br/)
 [**Fabio Souza**](https://github.com/FBSeletronica) and [**Halysson Jr**](https://github.com/halyssonjr) @ [Franzininho](https://github.com/Franzininho)  
 **William Maia** and **Daniel Botelho** @ [ST Microelectronics](https://github.com/stmicroelectronics) Brazil  
 **Fabio Costa** and **Érico Hassegawa** @ [Würth Elektronik](https://github.com/WurthElektronik) Brazil  
