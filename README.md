@@ -22,6 +22,10 @@ This prototype was not designed or tested for electrical safety and electromagne
   
 **DO NOT TAKE MEDICAL DECISIONS BASED ON MEASUREMENTS TAKEN BY THIS DEVICE!**  
   
+## VIDEO DEMONSTRATION
+
+[![Video Demonstration](https://img.youtube.com/vi/pYWwEWDq1WM/0.jpg)](https://www.youtube.com/watch?v=pYWwEWDq1WM)  
+  
 ## MOTIVATION
 
 Many patients in need of medical assistance could be treated more comfortably at home, but monitoring their condition in a timely manner could be a challenge, especially if they live in rural areas.  
