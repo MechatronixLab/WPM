@@ -172,6 +172,43 @@ The receiver simply relays data from the LoRa module to the UART, which is then 
   
 **Data received via LoRa:**  
 ![ Data received  via LoRa](./IMG/lora_receiver_serial.png)  
+
+### Code organization
+  
+Code is organized according to the following layered architecture diagram.
+
+**Layered architecture software diagram:**
+![ Data received  via LoRa](./DOC/WPM-WL55_LAYERED_DIAGRAM.png)  
+
+The idea is that each block in the diagram corresponds to a pair of .c/.h files that are loosely coupled, so the interfaces of libraries occur only in the vertical direction, and only one layer at a time. 
+However, since the code is still in development, there are a few exceptions to this guideline throughout the code. Data is manipulated between layers using structures and pointers.  
+
+### Sub-GHz module
+  
+The most complex part of the project was to get the Sub-GHz module working correctly. 
+Most of the examples available on the CubeMX package rely on a scheduler that uses function pointers and is not trivial to understand. 
+Additionally, most examples demand two Nucleo boards, and this project had only one available. 
+Therefore, a simpler approach was used by configuring the Sub-GHz module using the Low Lever drivers.
+[This arcticle](https://forum.digikey.com/t/using-the-low-level-sub-ghz-radio-driver-for-the-stm32wl-series/18253) 
+detais the procedure on how to set the radio correctly, and was used as base for starting software development. All other modules were added upon this foundation.  
+  
+## SIGNAL PROCESSING
+  
+One of the most interesting part of this project was dealing with the raw data coming from the red and infrared LEDs present on the oximetry sensor.  
+
+In order to obtain the peripheral oxygen saturation value, the algorithm detailed on [this application note from Maxim](https://pdfserv.maximintegrated.com/en/an/AN6409.pdf).  
+Another great resource about this topic is [this one from Texas Instruments](https://www.ti.com/lit/an/slaa655/slaa655.pdf).  
+
+The basic idea is to get the DC and AC component from both red and infrared signals, then obtain the "Ratio of Ratios" and use it in a linear regression to finally get an approximate SpO2 value. 
+This obviously leads to deviations from the real oxygen saturation of the patient, but this simplification is reasonable for this POC.  
+
+**Raw signal with DC and AC components; Linear regression using the Ratio of Ratios:**
+![ Data received  via LoRa](./DOC/signal_processing.png)  
+
+A series of circular buffers were used to calculate the moving average of the two signals, to get DC values and the RMS calculation was used to obtain the AC values.
+
+To get the heart rate, the derivative of the red signal in respect to time is used, and since the negative parts of the derivative are more abrupt, they were used to signal a heartbeat detection.
+Again, circular buffer were used to get moving averages of beats for a number of samples, and then the heart rate in beats per minute is calculated.  
   
 ## PROTOTYPE PERFORMANCE
   
