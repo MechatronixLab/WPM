@@ -3,8 +3,8 @@
 This work is a proof of concept for a connected wearable patient monitor capable of measuring oximetry parameters, 
 body temperature and track the patient's movement, while transmitting data wirelessly via LoRa communication.  
   
-It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) development board based, on the 
-[STM32WL55JC](https://www.st.com/en/microcontrollers-microprocessors/stm32wl55jc.html), from ST Microelectronics, 
+It is based on the [**Nucleo WL55JC1**](https://www.st.com/en/evaluation-tools/nucleo-wl55jc.html) development board, 
+based on the [STM32WL55JC](https://www.st.com/en/microcontrollers-microprocessors/stm32wl55jc.html), from ST Microelectronics, 
 a Maxim (now Analog Devices) [**MAX30102**](https://www.analog.com/en/products/max30102.html) pulse oximetry sensor, 
 a Würth Elektronik [**WSEN-ISDS**](https://www.we-online.com/en/components/products/WSEN-ISDS) 6-Axis IMU, 
 an **OLED display** and a **Piezoelectric buzzer** for simple audio generation.  
@@ -21,6 +21,10 @@ The device presented here is a benchtop prototype developed for learning purpose
 This prototype was not designed or tested for electrical safety and electromagnetic compatibility, nor went through clinical trials.  
   
 **DO NOT TAKE MEDICAL DECISIONS BASED ON MEASUREMENTS TAKEN BY THIS DEVICE!**  
+  
+## VIDEO DEMONSTRATION
+
+[![Video Demonstration](https://img.youtube.com/vi/pYWwEWDq1WM/0.jpg)](https://www.youtube.com/watch?v=pYWwEWDq1WM)  
   
 ## MOTIVATION
 
@@ -181,8 +185,11 @@ Results showed good coherence between the two devices.
 ## ACKNOWLEDGEMENTS    
   
 My lovely wife and kids, for their everlasting support ❤️  
+**Karine Moriya** and everyone @ [J.G. Moriya](https://jgmoriya.com.br/)  
+[**Elecia White**](https://github.com/eleciawhite) and everyone @ [Classpert](https://lms.classpert.com/)  
 [**Fabio Souza**](https://github.com/FBSeletronica) and [**Halysson Jr**](https://github.com/halyssonjr) @ [Franzininho](https://github.com/Franzininho)  
 **William Maia** and **Daniel Botelho** @ [ST Microelectronics](https://github.com/stmicroelectronics) Brazil  
 **Fabio Costa** and **Érico Hassegawa** @ [Würth Elektronik](https://github.com/WurthElektronik) Brazil  
+**Maristone Gomes**, **Gabriel de Benevides** and **Fernando Júdice** @ [Salvus](https://www.salvus.me/)  
 **Matt Mielke** @ DigiKey, for writing [this arcticle](https://forum.digikey.com/t/using-the-low-level-sub-ghz-radio-driver-for-the-stm32wl-series/18253) explaining how to use the Sub-GHz module on the STM32WL55  
 [**Elektor Magazine**](https://www.elektormagazine.com/) and [**ST Microelectronics**](https://github.com/stmicroelectronics), for promoting the [STM32 Wireless Innovation Design Contest](https://www.elektormagazine.com/st-contest)  
